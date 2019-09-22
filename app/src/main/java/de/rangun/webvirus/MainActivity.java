@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.RequestQueue;
@@ -37,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements IMoviesAvailable 
     private TextView status = null;
     private MovieList movies = null;
     private StringBuilder preZeros = null;
+    private Long currentId = null;
 
     public MainActivity() {
         Log.d(TAG, "MainActivity()");
@@ -47,15 +49,24 @@ public class MainActivity extends AppCompatActivity implements IMoviesAvailable 
 
         super.onCreate(savedInstanceState);
 
+        Log.d(TAG, "onCreate()");
+
+        if(savedInstanceState != null) {
+            currentId = savedInstanceState.getLong("currentId", -1L);
+
+            if (currentId == -1L) currentId = null;
+        }
+
         queue = Volley.newRequestQueue(this);
 
         setContentView(R.layout.activity_main);
+
         status = findViewById(R.id.status);
 
         final NetworkImageView cov = findViewById(R.id.cover);
         cov.setDefaultImageResId(R.drawable.nocover);
 
-        MovieFactory.instance(this).allMovies(queue);
+        if(movies == null) MovieFactory.instance(this).allMovies(queue);
 
         final Button search = findViewById(R.id.search);
         search.setOnClickListener(v -> {
@@ -80,16 +91,47 @@ public class MainActivity extends AppCompatActivity implements IMoviesAvailable 
     }
 
     @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+
+        Log.d(TAG, "onSaveInstanceState()");
+        if(currentId != null) outState.putLong("currentId", currentId);
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+
+        super.onRestoreInstanceState(savedInstanceState);
+
+        Log.d(TAG, "onRestoreInstanceState()");
+        currentId = savedInstanceState.getLong("currentId", -1L);
+
+        if(currentId == -1L) currentId = null;
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
+
+        Log.d(TAG, "onStop(): cur: " + currentId);
 
         if (queue != null) {
             queue.cancelAll(MovieFactory.instance(this).tag());
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
+    }
+
     private void updateMovie(long id) {
-        updateMovie(movies.getByMovieId(id));
+        try {
+            updateMovie(movies.getByMovieId(id));
+        } catch (IndexOutOfBoundsException ex) {
+            Log.d(TAG, "Exc: " + ex.getMessage());
+        }
     }
 
     private void updateMovie(IMovie m) {
@@ -98,6 +140,8 @@ public class MainActivity extends AppCompatActivity implements IMoviesAvailable 
             status.setText(R.string.notfound);
             return;
         }
+
+        Log.d(TAG, "updateMovie(): id=" + currentId + "; t=" + m.title());
 
         final View top250 = findViewById(R.id.top250);
         final TextView mid = findViewById(R.id.m_id);
@@ -108,35 +152,34 @@ public class MainActivity extends AppCompatActivity implements IMoviesAvailable 
         final NetworkImageView cov = findViewById(R.id.cover);
         final CustomAutoCompleteTextView srt = findViewById(R.id.searchTerm);
 
-        try {
+        currentId = m.id();
 
-            final String idNum = preZeros.toString() + m.id();
+        final String idNum = preZeros.toString() + m.id();
 
-            top250.setVisibility(m.top250() ? View.VISIBLE : View.INVISIBLE);
-            mid.setText(idNum.substring(idNum.length() - preZeros.length()));
-            tit.setText(m.title());
-            srt.setText(m.title());
-            srt.setSelection(m.title().length());
-            srt.dismissDropDown();
-            dus.setText(m.durationString());
-            dis.setText(m.disc());
-            abs.setText(m.description());
+        top250.setVisibility(m.top250() ? View.VISIBLE : View.INVISIBLE);
+        mid.setText(idNum.substring(idNum.length() - preZeros.length()));
+        tit.setText(m.title());
+        srt.setText(m.title());
+        srt.setSelection(m.title().length());
+        srt.dismissDropDown();
+        dus.setText(m.durationString());
+        dis.setText(m.disc());
+        abs.setText(m.description());
 
-            final InputMethodManager imm = (InputMethodManager)getSystemService(
-                    Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(srt.getWindowToken(), 0);
+        final InputMethodManager imm = (InputMethodManager)getSystemService(
+                Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(srt.getWindowToken(), 0);
 
-            if (m.oid() != null) {
+        if (m.oid() != null) {
 
-                cov.setImageUrl("https://rangun.de/db/omdb.php?cover-oid=" + m.oid() +
-                                (m.top250() ? "&top250=true" : ""),
-                        new ImageLoader(queue, new BitmapMemCache()));
-            } else {
-                cov.setImageUrl(null, null);
-            }
-
-        } catch (IndexOutOfBoundsException ex) {
+            cov.setImageUrl("https://rangun.de/db/omdb.php?cover-oid=" + m.oid() +
+                            (m.top250() ? "&top250=true" : ""),
+                    new ImageLoader(queue, new BitmapMemCache()));
+        } else {
+            cov.setImageUrl(null, null);
         }
+
+        Log.d(TAG, "updateMovie(): id=" + currentId + "; t=" + m.title() + " - updated");
     }
 
     @Override
@@ -155,7 +198,8 @@ public class MainActivity extends AppCompatActivity implements IMoviesAvailable 
             preZeros.append('0');
         }
 
-        updateMovie(1);
+        Log.d(TAG, "loaded(): cur: " + currentId);
+        updateMovie(currentId != null ? currentId : 1L);
     }
 
     @Override
