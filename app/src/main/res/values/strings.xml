@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Webvirus</string>
+    <string name="title">Heikos Schrott- &amp; Rentnerfilme</string>
+    <string name="version">✋ Die Zombieboxversion ✋</string>
+    <string name="copyright">© 2019 by Heiko Schäfer</string>
+    <string name="m.title">Movie title here</string>
+    <string name="m.id">#0000</string>
+    <string name="m.disc">DVD</string>
+    <string name="cover.desc">TODO</string>
+    <string name="m.duration">Länge</string>
+    <string name="top250.desc">TODO</string>
+    <string name="movie_abstract">OMDB Kurzbeschreibung</string>
+    <string name="searchboxhint">Suchbegriff(e)</string>
+</resources>
