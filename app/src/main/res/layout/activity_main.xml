@@ -124,14 +124,12 @@
         android:layout_marginTop="16dp"
         android:contentDescription="@string/cover.desc"
         android:paddingTop="8dp"
-        android:scaleType="fitCenter"
-        android:visibility="invisible"
+        android:scaleType="fitStart"
         app:layout_constraintEnd_toStartOf="@+id/m.id"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchTerm"
-        app:srcCompat="@drawable/nocover" />
+        app:layout_constraintTop_toBottomOf="@+id/searchTerm" />
 
     <TextView
         android:id="@+id/m.id"

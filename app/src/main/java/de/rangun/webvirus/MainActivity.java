@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements IMoviesAvailable 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
 
         queue = Volley.newRequestQueue(this);
@@ -52,7 +53,6 @@ public class MainActivity extends AppCompatActivity implements IMoviesAvailable 
         status = findViewById(R.id.status);
 
         final NetworkImageView cov = findViewById(R.id.cover);
-        cov.setVisibility(View.VISIBLE);
         cov.setDefaultImageResId(R.drawable.nocover);
 
         MovieFactory.instance(this).allMovies(queue);
@@ -129,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements IMoviesAvailable 
                                 (m.top250() ? "&top250=true" : ""),
                         new ImageLoader(queue, new BitmapMemCache()));
             } else {
-                cov.setDefaultImageResId(R.drawable.nocover);
+                cov.setImageUrl(null, null);
             }
 
         } catch (IndexOutOfBoundsException ex) {
