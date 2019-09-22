@@ -11,4 +11,6 @@
     <string name="top250.desc">TODO</string>
     <string name="movie_abstract">OMDB Kurzbeschreibung</string>
     <string name="searchboxhint">Suchbegriff(e)</string>
+    <string name="notfound">Du kannst nur nach Schrott- oder Rentnerfilmen suchen. Somit habe ich Deinen hippen Film nicht gefunden.</string>
+    <string name="loading">Lade hirnlose Schrott- oder Rentnerfilme …</string>
 </resources>

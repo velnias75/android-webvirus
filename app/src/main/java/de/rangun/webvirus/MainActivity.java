@@ -94,7 +94,10 @@ public class MainActivity extends AppCompatActivity implements IMoviesAvailable 
 
     private void updateMovie(IMovie m) {
 
-        if(m == null) return;
+        if(m == null) {
+            status.setText(R.string.notfound);
+            return;
+        }
 
         final View top250 = findViewById(R.id.top250);
         final TextView mid = findViewById(R.id.m_id);
@@ -138,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements IMoviesAvailable 
 
     @Override
     public void loading() {
-        status.setText("Lade hirnlose Schrott- oder Rentnerfilme …");
+        status.setText(R.string.loading);
     }
 
     @Override

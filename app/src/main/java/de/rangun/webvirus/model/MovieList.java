@@ -38,7 +38,7 @@ public final class MovieList extends ArrayList<IMovie> {
 
             IMovie m = get(idx);
 
-            if (text.equals(m.title())) {
+            if (text.equalsIgnoreCase(m.title())) {
                 return m;
             }
         }
