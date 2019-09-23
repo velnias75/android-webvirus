@@ -26,10 +26,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -41,6 +38,7 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import de.rangun.webvirus.fragments.SearchBarFragment;
 import de.rangun.webvirus.model.BitmapMemCache;
 import de.rangun.webvirus.model.IMovie;
 import de.rangun.webvirus.model.IMoviesAvailable;
@@ -50,7 +48,8 @@ import de.rangun.webvirus.model.MovieList;
 import static java.lang.Math.ceil;
 import static java.lang.Math.log;
 
-public class MainActivity extends AppCompatActivity implements IMoviesAvailable {
+public class MainActivity extends AppCompatActivity implements IMoviesAvailable,
+        SearchBarFragment.iface {
 
     private static final String TAG = "MainActivity";
     private static final double LN10 = log(10);
@@ -88,27 +87,6 @@ public class MainActivity extends AppCompatActivity implements IMoviesAvailable 
         cov.setDefaultImageResId(R.drawable.nocover);
 
         if(movies == null) MovieFactory.instance(this).allMovies(queue);
-
-        final Button search = findViewById(R.id.search);
-        search.setOnClickListener(v -> {
-
-            final CustomAutoCompleteTextView textView = findViewById(R.id.searchTerm);
-
-            if(movies != null) {
-                updateMovie(movies.findByTitle(textView.getText().toString()));
-            }
-        });
-
-        final CustomAutoCompleteTextView textView = findViewById(R.id.searchTerm);
-        textView.setDrawableClickListener(target -> {
-            if (target == DrawableClickListener.DrawablePosition.RIGHT) {
-                textView.setText(null);
-                textView.requestFocus();
-                final InputMethodManager imm = (InputMethodManager)getSystemService(
-                        Context.INPUT_METHOD_SERVICE);
-                imm.showSoftInput(textView, 0);
-            }
-        });
     }
 
     @Override
@@ -145,6 +123,13 @@ public class MainActivity extends AppCompatActivity implements IMoviesAvailable 
     @Override
     public void onBackPressed() {
         moveTaskToBack(true);
+    }
+
+    @Override
+    public void updateMovieByTitle(String title) {
+        if(movies != null) {
+            updateMovie(movies.findByTitle(title));
+        }
     }
 
     private void updateMovie(long id) {
@@ -226,40 +211,13 @@ public class MainActivity extends AppCompatActivity implements IMoviesAvailable 
     @Override
     public void movies(MovieList ml) {
 
-        final Spinner spinner = findViewById(R.id.searchTermSpinner);
-        final CustomAutoCompleteTextView textView = findViewById(R.id.searchTerm);
-
         movies = ml;
 
-        final ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, movies.titles());
+        ((SearchBarFragment)getSupportFragmentManager().findFragmentById(R.id.searchBar)).
+                populateCompleter(new ArrayAdapter<>(this,
+                        android.R.layout.simple_spinner_item,
+                        movies.titles()));
 
-        adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-
-        spinner.setAdapter(adapter);
-        textView.setAdapter(adapter);
-
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-
-            private void setSelectedItem() {
-                final Object item = spinner.getSelectedItem();
-                if(item != null) {
-                    textView.setText(item.toString());
-                    textView.setSelection(item.toString().length());
-                }
-                textView.dismissDropDown();
-            }
-
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                setSelectedItem();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                setSelectedItem();
-            }
-        });
     }
 
     @Override
