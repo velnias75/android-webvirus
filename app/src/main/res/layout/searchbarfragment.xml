@@ -55,6 +55,7 @@
         android:paddingEnd="0dp"
         android:paddingRight="0dp"
         android:singleLine="true"
+        android:imeOptions="actionSearch"
         app:layout_constraintBottom_toBottomOf="@+id/search"
         app:layout_constraintEnd_toStartOf="@+id/searchTermSpinner"
         app:layout_constraintHorizontal_bias="0.5"

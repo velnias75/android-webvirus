@@ -27,10 +27,10 @@ import com.android.volley.toolbox.StringRequest;
 final class Movie extends AbstractMovie {
 
     private final StringRequest rq;
-    private final IMoviesAvailable cb;
+    private final MovieFactory.OnMoviesAvailableListener cb;
     private String dsc = null;
 
-    public Movie(IMovie m, IMoviesAvailable cb) {
+    public Movie(IMovie m, MovieFactory.OnMoviesAvailableListener cb) {
 
         super(m);
 

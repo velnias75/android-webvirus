@@ -26,6 +26,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -42,10 +43,10 @@ import de.rangun.webvirus.R;
 
 public class SearchBarFragment extends Fragment {
 
-    private iface listener;
+    private OnMovieUpdateRequestListener listener;
 
-    public interface iface {
-        void updateMovieByTitle(String title);
+    public interface OnMovieUpdateRequestListener {
+        void onUpdateMovieByTitle(String title);
     }
 
     @Override
@@ -54,7 +55,7 @@ public class SearchBarFragment extends Fragment {
         super.onAttach(context);
 
         try {
-            listener = (iface)context;
+            listener = (OnMovieUpdateRequestListener)context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString() +
                     " must implement OnArticleSelectedListener");
@@ -70,31 +71,32 @@ public class SearchBarFragment extends Fragment {
                 false);
 
         final CustomAutoCompleteTextView textView = fragmentLayout.findViewById(R.id.searchTerm);
+        final Spinner spinner = fragmentLayout.findViewById(R.id.searchTermSpinner);
+        final Button search = fragmentLayout.findViewById(R.id.search);
+
         textView.setDrawableClickListener(target -> {
             if (target == DrawableClickListener.DrawablePosition.RIGHT) {
+
                 textView.setText(null);
                 textView.requestFocus();
+
                 final InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(
                         Context.INPUT_METHOD_SERVICE);
-                imm.showSoftInput(textView, 0);
+                if(imm != null) imm.showSoftInput(textView, 0);
             }
         });
 
-        return fragmentLayout;
-    }
+        textView.setOnEditorActionListener((v, actionId, event) -> {
 
-    public void populateCompleter(ArrayAdapter<String> adapter) {
+            if(EditorInfo.IME_ACTION_SEARCH == actionId) {
+                listener.onUpdateMovieByTitle(v.getText().toString());
+                return true;
+            }
 
-        final Spinner spinner = getView().findViewById(R.id.searchTermSpinner);
-        final CustomAutoCompleteTextView textView = getView().findViewById(R.id.searchTerm);
-        final Button search = getView().findViewById(R.id.search);
+            return false;
+        });
 
-        adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-
-        spinner.setAdapter(adapter);
-        textView.setAdapter(adapter);
-
-        search.setOnClickListener(v -> listener.updateMovieByTitle(textView.getText().toString()));
+        search.setOnClickListener(v -> listener.onUpdateMovieByTitle(textView.getText().toString()));
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
@@ -117,5 +119,16 @@ public class SearchBarFragment extends Fragment {
                 setSelectedItem();
             }
         });
+
+        return fragmentLayout;
+    }
+
+    public void populateCompleter(ArrayAdapter<String> adapter) {
+
+        final Spinner spinner = getView().findViewById(R.id.searchTermSpinner);
+        final CustomAutoCompleteTextView textView = getView().findViewById(R.id.searchTerm);
+
+        spinner.setAdapter(adapter);
+        textView.setAdapter(adapter);
     }
 }

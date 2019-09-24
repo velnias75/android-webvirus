@@ -41,15 +41,15 @@ import com.android.volley.toolbox.Volley;
 import de.rangun.webvirus.fragments.SearchBarFragment;
 import de.rangun.webvirus.model.BitmapMemCache;
 import de.rangun.webvirus.model.IMovie;
-import de.rangun.webvirus.model.IMoviesAvailable;
 import de.rangun.webvirus.model.MovieFactory;
 import de.rangun.webvirus.model.MovieList;
 
 import static java.lang.Math.ceil;
 import static java.lang.Math.log;
 
-public class MainActivity extends AppCompatActivity implements IMoviesAvailable,
-        SearchBarFragment.iface {
+public class MainActivity extends AppCompatActivity implements
+        MovieFactory.OnMoviesAvailableListener,
+        SearchBarFragment.OnMovieUpdateRequestListener {
 
     private static final String TAG = "MainActivity";
     private static final double LN10 = log(10);
@@ -60,16 +60,10 @@ public class MainActivity extends AppCompatActivity implements IMoviesAvailable,
     private StringBuilder preZeros = null;
     private Long currentId = null;
 
-    public MainActivity() {
-        Log.d(TAG, "MainActivity()");
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-
-        Log.d(TAG, "onCreate()");
 
         if(savedInstanceState != null) {
             currentId = savedInstanceState.getLong("currentId", -1L);
@@ -77,22 +71,40 @@ public class MainActivity extends AppCompatActivity implements IMoviesAvailable,
             if (currentId == -1L) currentId = null;
         }
 
-        queue = Volley.newRequestQueue(this);
-
         setContentView(R.layout.activity_main);
-
-        status = findViewById(R.id.status);
 
         final NetworkImageView cov = findViewById(R.id.cover);
         cov.setDefaultImageResId(R.drawable.nocover);
+    }
 
-        if(movies == null) MovieFactory.instance(this).allMovies(queue);
+    @Override
+    protected void onDestroy() {
+
+        queue.stop();
+        movies = null;
+
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onResume() {
+
+        super.onResume();
+
+        Log.d(TAG, "onResume()");
+
+        status = findViewById(R.id.status);
+
+        if(queue == null) queue = Volley.newRequestQueue(this);
+        if(movies == null) {
+            MovieFactory.instance().setOnMoviesAvailableListener(this);
+            MovieFactory.instance().allMovies(queue);
+        }
     }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
 
-        Log.d(TAG, "onSaveInstanceState()");
         if(currentId != null) outState.putLong("currentId", currentId);
 
         super.onSaveInstanceState(outState);
@@ -103,7 +115,6 @@ public class MainActivity extends AppCompatActivity implements IMoviesAvailable,
 
         super.onRestoreInstanceState(savedInstanceState);
 
-        Log.d(TAG, "onRestoreInstanceState()");
         currentId = savedInstanceState.getLong("currentId", -1L);
 
         if(currentId == -1L) currentId = null;
@@ -111,12 +122,11 @@ public class MainActivity extends AppCompatActivity implements IMoviesAvailable,
 
     @Override
     protected void onStop() {
+
         super.onStop();
 
-        Log.d(TAG, "onStop(): cur: " + currentId);
-
         if (queue != null) {
-            queue.cancelAll(MovieFactory.instance(this).tag());
+            queue.cancelAll(MovieFactory.instance().tag());
         }
     }
 
@@ -126,9 +136,12 @@ public class MainActivity extends AppCompatActivity implements IMoviesAvailable,
     }
 
     @Override
-    public void updateMovieByTitle(String title) {
+    public void onUpdateMovieByTitle(String title) {
+
         if(movies != null) {
             updateMovie(movies.findByTitle(title));
+        } else {
+            hideSoftKeyboard();
         }
     }
 
@@ -142,12 +155,14 @@ public class MainActivity extends AppCompatActivity implements IMoviesAvailable,
 
     private void updateMovie(IMovie m) {
 
+        final CustomAutoCompleteTextView srt = hideSoftKeyboard();
+
         if(m == null) {
             status.setText(R.string.notfound);
             return;
+        } else {
+            status.setText(getString(R.string.loaded, movies.size()));
         }
-
-        Log.d(TAG, "updateMovie(): id=" + currentId + "; t=" + m.title());
 
         final View top250 = findViewById(R.id.top250);
         final TextView mid = findViewById(R.id.m_id);
@@ -156,7 +171,6 @@ public class MainActivity extends AppCompatActivity implements IMoviesAvailable,
         final TextView dis = findViewById(R.id.m_disc);
         final TextView abs = findViewById(R.id.m_abstract);
         final NetworkImageView cov = findViewById(R.id.cover);
-        final CustomAutoCompleteTextView srt = findViewById(R.id.searchTerm);
 
         currentId = m.id();
 
@@ -172,10 +186,6 @@ public class MainActivity extends AppCompatActivity implements IMoviesAvailable,
         dis.setText(m.disc());
         abs.setText(m.description());
 
-        final InputMethodManager imm = (InputMethodManager)getSystemService(
-                Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(srt.getWindowToken(), 0);
-
         if (m.oid() != null) {
 
             cov.setImageUrl("https://rangun.de/db/omdb.php?cover-oid=" + m.oid() +
@@ -184,8 +194,16 @@ public class MainActivity extends AppCompatActivity implements IMoviesAvailable,
         } else {
             cov.setImageUrl(null, null);
         }
+    }
 
-        Log.d(TAG, "updateMovie(): id=" + currentId + "; t=" + m.title() + " - updated");
+    private CustomAutoCompleteTextView hideSoftKeyboard() {
+
+        final CustomAutoCompleteTextView srt = findViewById(R.id.searchTerm);
+        final InputMethodManager imm = (InputMethodManager)getSystemService(
+                Context.INPUT_METHOD_SERVICE);
+        if(imm != null) imm.hideSoftInputFromWindow(srt.getWindowToken(), 0);
+
+        return srt;
     }
 
     @Override
@@ -196,7 +214,7 @@ public class MainActivity extends AppCompatActivity implements IMoviesAvailable,
     @Override
     public void loaded(int num) {
 
-        status.setText("" + num + " hirnlose Schrott- oder Rentnerfilme geladen.");
+        status.setText(getString(R.string.loaded, num));
 
         preZeros = new StringBuilder();
 
@@ -204,7 +222,6 @@ public class MainActivity extends AppCompatActivity implements IMoviesAvailable,
             preZeros.append('0');
         }
 
-        Log.d(TAG, "loaded(): cur: " + currentId);
         updateMovie(currentId != null ? currentId : 1L);
     }
 
@@ -213,10 +230,17 @@ public class MainActivity extends AppCompatActivity implements IMoviesAvailable,
 
         movies = ml;
 
-        ((SearchBarFragment)getSupportFragmentManager().findFragmentById(R.id.searchBar)).
-                populateCompleter(new ArrayAdapter<>(this,
-                        android.R.layout.simple_spinner_item,
-                        movies.titles()));
+        final SearchBarFragment sbf =
+                (SearchBarFragment)getSupportFragmentManager().findFragmentById(R.id.searchBar);
+
+        if(sbf != null) {
+            final ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                    android.R.layout.simple_spinner_item, movies.titles());
+
+            adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+
+            sbf.populateCompleter(adapter);
+        }
 
     }
 

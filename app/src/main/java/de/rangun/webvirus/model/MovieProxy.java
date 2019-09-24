@@ -32,9 +32,9 @@ final class MovieProxy implements IMovie {
     private final String title;
     private final String duration;
     private final String disc;
-    private final IMoviesAvailable cb;
+    private final MovieFactory.OnMoviesAvailableListener cb;
 
-    public MovieProxy(IMoviesAvailable cb, long id, String title, String dur_str, String disc,
+    public MovieProxy(MovieFactory.OnMoviesAvailableListener cb, long id, String title, String dur_str, String disc,
                       boolean top250, Long oid) {
         this.id = id;
         this.oid = oid;
