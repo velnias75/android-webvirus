@@ -22,6 +22,8 @@
 package de.rangun.webvirus;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -89,14 +91,24 @@ public class MainActivity extends AppCompatActivity implements
 
         super.onResume();
 
-        Log.d(TAG, "onResume()");
-
         status = findViewById(R.id.status);
 
-        if(queue == null) queue = Volley.newRequestQueue(this);
-        if(movies == null) {
-            MovieFactory.instance().setOnMoviesAvailableListener(this);
-            MovieFactory.instance().fetchMovies(queue);
+        ConnectivityManager cm =
+                (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+
+        if(activeNetwork != null && activeNetwork.isConnected()) {
+
+            if (queue == null) queue = Volley.newRequestQueue(this);
+
+            if (movies == null) {
+                MovieFactory.instance().setOnMoviesAvailableListener(this);
+                MovieFactory.instance().fetchMovies(queue);
+            }
+
+        } else {
+            findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+            status.setText(R.string.not_connected);
         }
     }
 

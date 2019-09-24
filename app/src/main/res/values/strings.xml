@@ -38,4 +38,5 @@
     <string name="loading">Lade hirnlose Schrott- oder Rentnerfilme …</string>
     <string name="loaded">%1$d hirnlose Schrott- oder Rentnerfilme geladen.</string>
     <string name="initial_status">Es sind keine hirnlose Schrott- oder Rentnerfilme geladen.</string>
+    <string name="not_connected">Facebook und Google mögen es können, aber Webvirus fehlt die Intelligenz <b>OHNE</b> Internetverbindung Daten aus dem Internet zu laden.</string>
 </resources>
