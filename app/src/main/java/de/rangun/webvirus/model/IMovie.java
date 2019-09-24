@@ -21,6 +21,8 @@
 
 package de.rangun.webvirus.model;
 
+import android.content.Context;
+
 import java.util.List;
 
 public interface IMovie {
@@ -47,5 +49,5 @@ public interface IMovie {
 
     Long oid();
 
-    String description();
+    String description(Context ctx);
 }

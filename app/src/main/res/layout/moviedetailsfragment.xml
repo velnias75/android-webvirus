@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright 2019 by Heiko Schäfer <heiko@rangun.de>
+  ~
+  ~  This file is part of android-webvirus.
+  ~
+  ~  android-webvirus is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU Lesser General Public License as
+  ~  published by the Free Software Foundation, either version 3 of
+  ~  the License, or (at your option) any later version.
+  ~
+  ~  android-webvirus is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU Lesser General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU Lesser General Public License
+  ~  along with android-webvirus.  If not, see <http://www.gnu.org/licenses/>.
+  ~
+  ~  Last modified 24.09.19 07:47 by heiko
+  -->
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    android:visibility="gone"
+    tools:visibility="visible">
+
+    <ImageView
+        android:id="@+id/top250"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/top250.desc"
+        android:foregroundGravity="right"
+        app:layout_constraintBottom_toBottomOf="@+id/m.id"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_weight="2"
+        app:layout_constraintStart_toEndOf="@+id/m.id"
+        app:layout_constraintTop_toTopOf="@id/m.id"
+        app:srcCompat="@drawable/top250" />
+
+    <TextView
+        android:id="@+id/m.id"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:text="@string/m.id"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textColor="@android:color/black"
+        android:textStyle="bold|italic"
+        app:fontFamily="monospace"
+        app:layout_constraintEnd_toStartOf="@+id/top250"
+        app:layout_constraintHorizontal_weight="2"
+        app:layout_constraintStart_toEndOf="@+id/cover"
+        app:layout_constraintTop_toTopOf="@id/cover" />
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:gravity="start"
+        android:maxLines="2"
+        android:text="@string/m.title"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="@android:color/black"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@id/top250"
+        app:layout_constraintStart_toStartOf="@+id/m.id"
+        app:layout_constraintTop_toBottomOf="@id/m.id" />
+
+    <TextView
+        android:id="@+id/m.duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="bottom"
+        android:text="@string/m.duration"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@android:color/black"
+        app:fontFamily="monospace"
+        app:layout_constraintStart_toStartOf="@id/title"
+        app:layout_constraintTop_toBottomOf="@id/title" />
+
+    <TextView
+        android:id="@+id/m.disc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="bottom"
+        android:text="@string/m.disc"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@android:color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/m.duration" />
+
+    <TextView
+        android:id="@+id/m.abstract"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:text="@string/movie_abstract"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="@android:color/black"
+        android:typeface="normal"
+        app:fontFamily="sans-serif-medium"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/cover"
+        app:layout_constraintTop_toBottomOf="@id/cover" />
+
+    <com.android.volley.toolbox.NetworkImageView
+        android:id="@+id/cover"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/cover.desc"
+        android:scaleType="fitStart"
+        app:layout_constraintEnd_toStartOf="@+id/m.id"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:background="@drawable/nocover"
+        tools:layout_height="100dp"
+        tools:layout_width="100dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

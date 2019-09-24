@@ -38,6 +38,7 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import de.rangun.webvirus.fragments.MovieDetailsFragment;
 import de.rangun.webvirus.fragments.SearchBarFragment;
 import de.rangun.webvirus.model.BitmapMemCache;
 import de.rangun.webvirus.model.IMovie;
@@ -72,9 +73,6 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         setContentView(R.layout.activity_main);
-
-        final NetworkImageView cov = findViewById(R.id.cover);
-        cov.setDefaultImageResId(R.drawable.nocover);
     }
 
     @Override
@@ -155,22 +153,28 @@ public class MainActivity extends AppCompatActivity implements
 
     private void updateMovie(IMovie m) {
 
-        final CustomAutoCompleteTextView srt = hideSoftKeyboard();
+        final SearchBarFragment sbf = hideSoftKeyboard();
+        final MovieDetailsFragment mdf =
+                (MovieDetailsFragment) getSupportFragmentManager().
+                        findFragmentById(R.id.moviedetailsfragment);
 
         if(m == null) {
+            mdf.getView().setVisibility(View.GONE);
             status.setText(R.string.notfound);
             return;
         } else {
+            mdf.getView().setVisibility(View.VISIBLE);
             status.setText(getString(R.string.loaded, movies.size()));
         }
 
-        final View top250 = findViewById(R.id.top250);
-        final TextView mid = findViewById(R.id.m_id);
-        final TextView tit = findViewById(R.id.m_title);
-        final TextView dus = findViewById(R.id.m_duration);
-        final TextView dis = findViewById(R.id.m_disc);
-        final TextView abs = findViewById(R.id.m_abstract);
-        final NetworkImageView cov = findViewById(R.id.cover);
+        final View top250 = mdf.getView().findViewById(R.id.top250);
+        final TextView mid = mdf.getView().findViewById(R.id.m_id);
+        final TextView tit = mdf.getView().findViewById(R.id.title);
+        final TextView dus = mdf.getView().findViewById(R.id.m_duration);
+        final TextView dis = mdf.getView().findViewById(R.id.m_disc);
+        final TextView abs = mdf.getView().findViewById(R.id.m_abstract);
+        final NetworkImageView cov = mdf.getView().findViewById(R.id.cover);
+        final CustomAutoCompleteTextView srt = sbf.getView().findViewById(R.id.searchTerm);
 
         currentId = m.id();
 
@@ -184,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements
         srt.dismissDropDown();
         dus.setText(m.durationString());
         dis.setText(m.disc());
-        abs.setText(m.description());
+        abs.setText(m.description(this));
 
         if (m.oid() != null) {
 
@@ -196,14 +200,18 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    private CustomAutoCompleteTextView hideSoftKeyboard() {
+    private SearchBarFragment hideSoftKeyboard() {
 
-        final CustomAutoCompleteTextView srt = findViewById(R.id.searchTerm);
+        final SearchBarFragment sbf =
+                (SearchBarFragment) getSupportFragmentManager().
+                        findFragmentById(R.id.searchBar);
+
+        final CustomAutoCompleteTextView srt = sbf.getView().findViewById(R.id.searchTerm);
         final InputMethodManager imm = (InputMethodManager)getSystemService(
                 Context.INPUT_METHOD_SERVICE);
         if(imm != null) imm.hideSoftInputFromWindow(srt.getWindowToken(), 0);
 
-        return srt;
+        return sbf;
     }
 
     @Override
@@ -222,6 +230,7 @@ public class MainActivity extends AppCompatActivity implements
             preZeros.append('0');
         }
 
+        findViewById(R.id.loadingPanel).setVisibility(View.GONE);
         updateMovie(currentId != null ? currentId : 1L);
     }
 

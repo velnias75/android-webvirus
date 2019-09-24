@@ -21,6 +21,8 @@
 
 package de.rangun.webvirus.model;
 
+import android.content.Context;
+
 import java.util.List;
 
 final class MovieProxy implements IMovie {
@@ -34,8 +36,9 @@ final class MovieProxy implements IMovie {
     private final String disc;
     private final MovieFactory.OnMoviesAvailableListener cb;
 
-    public MovieProxy(MovieFactory.OnMoviesAvailableListener cb, long id, String title, String dur_str, String disc,
-                      boolean top250, Long oid) {
+    public MovieProxy(MovieFactory.OnMoviesAvailableListener cb, long id, String title,
+                      String dur_str, String disc, boolean top250, Long oid) {
+
         this.id = id;
         this.oid = oid;
         this.title = title;
@@ -101,12 +104,12 @@ final class MovieProxy implements IMovie {
     }
 
     @Override
-    public String description() {
+    public String description(Context ctx) {
 
         if(movie == null) {
             movie = new Movie(this, cb);
         }
 
-        return movie.description();
+        return movie.description(ctx);
     }
 }

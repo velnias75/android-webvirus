@@ -21,14 +21,19 @@
 
 package de.rangun.webvirus.model;
 
+import android.content.Context;
+
 import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
+
+import de.rangun.webvirus.R;
 
 final class Movie extends AbstractMovie {
 
     private final StringRequest rq;
     private final MovieFactory.OnMoviesAvailableListener cb;
     private String dsc = null;
+
 
     public Movie(IMovie m, MovieFactory.OnMoviesAvailableListener cb) {
 
@@ -47,13 +52,13 @@ final class Movie extends AbstractMovie {
     }
 
     @Override
-    public String description() {
+    public String description(Context ctx) {
         if(dsc == null) {
             if(oid() != null) {
                 cb.fetchDescription(rq);
-                return "Hole Kurzbeschreibung von OMDB …";
+                return ctx.getResources().getString(R.string.fetch_abstract);
             } else {
-                dsc = "Aufgrund fehlender Intelligenz kann diese App keine Kurzbeschreibung erfinden.";
+                dsc = ctx.getResources().getString(R.string.no_abstract);
             }
         }
 
