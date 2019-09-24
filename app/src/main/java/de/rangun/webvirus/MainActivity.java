@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements
         if(queue == null) queue = Volley.newRequestQueue(this);
         if(movies == null) {
             MovieFactory.instance().setOnMoviesAvailableListener(this);
-            MovieFactory.instance().allMovies(queue);
+            MovieFactory.instance().fetchMovies(queue);
         }
     }
 

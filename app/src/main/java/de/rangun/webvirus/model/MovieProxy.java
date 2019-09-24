@@ -27,40 +27,94 @@ import java.util.List;
 
 final class MovieProxy implements IMovie {
 
-    private final long id;
-    private final Long oid;
-    private final boolean top250;
-    private IMovie movie = null;
-    private final String title;
-    private final String duration;
-    private final String disc;
+    static class MovieParameters {
+
+        private final long id;
+        private final String title;
+        private final String dur_str;
+        private final long dur_sec;
+        private final String languages;
+        private final String disc;
+        private final int category;
+        private final String filename;
+        private final boolean omu;
+        private final boolean top250;
+        private final Long oid;
+
+        MovieParameters(long id, String title, String dur_str, long dur_sec, String languages,
+                        String disc, int category, String filename, boolean omu, boolean top250,
+                        Long oid) {
+
+            this.id = id;
+            this.title = title;
+            this.dur_str = dur_str;
+            this.dur_sec = dur_sec;
+            this.languages = languages;
+            this.disc = disc;
+            this.category = category;
+            this.filename = filename;
+            this.omu = omu;
+            this.top250 = top250;
+            this.oid = oid;
+        }
+
+        public long getId() {
+            return id;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public String getDur_str() {
+            return dur_str;
+        }
+
+        public String getLanguages() { return languages; }
+
+        public long getDur_sec() { return dur_sec; }
+
+        public String getDisc() {
+            return disc;
+        }
+
+        public int getCategory() { return category; }
+
+        public String getFilename() { return filename; }
+
+        public boolean isOmu() { return omu; }
+
+        public boolean isTop250() {
+            return top250;
+        }
+
+        public Long getOid() {
+            return oid;
+        }
+    }
+
     private final MovieFactory.OnMoviesAvailableListener cb;
+    private final MovieParameters mp;
+    private IMovie movie = null;
 
-    public MovieProxy(MovieFactory.OnMoviesAvailableListener cb, long id, String title,
-                      String dur_str, String disc, boolean top250, Long oid) {
-
-        this.id = id;
-        this.oid = oid;
-        this.title = title;
-        this.duration = dur_str;
-        this.disc = disc;
-        this.top250 = top250;
+    public MovieProxy(MovieFactory.OnMoviesAvailableListener cb, MovieParameters mp) {
+        this.mp = mp;
         this.cb = cb;
     }
 
     @Override
     public long id() {
-        return id;
+        return mp.getId();
     }
 
     @Override
     public Long oid() {
-        return oid;
+        return mp.getOid();
     }
 
     @Override
     public String title() {
-        return title;
+        return mp.getTitle();
     }
 
     @Override
@@ -70,7 +124,7 @@ final class MovieProxy implements IMovie {
 
     @Override
     public String durationString() {
-        return duration;
+        return mp.getDur_str();
     }
 
     @Override
@@ -80,7 +134,7 @@ final class MovieProxy implements IMovie {
 
     @Override
     public String disc() {
-        return disc;
+        return mp.getDisc();
     }
 
     @Override
@@ -100,14 +154,14 @@ final class MovieProxy implements IMovie {
 
     @Override
     public boolean top250() {
-        return top250;
+        return mp.isTop250();
     }
 
     @Override
     public String description(Context ctx) {
 
         if(movie == null) {
-            movie = new Movie(this, cb);
+            movie = new Movie(mp, cb);
         }
 
         return movie.description(ctx);

@@ -35,7 +35,7 @@ final class Movie extends AbstractMovie {
     private String dsc = null;
 
 
-    public Movie(IMovie m, MovieFactory.OnMoviesAvailableListener cb) {
+    public Movie(MovieProxy.MovieParameters m, MovieFactory.OnMoviesAvailableListener cb) {
 
         super(m);
 
@@ -47,8 +47,7 @@ final class Movie extends AbstractMovie {
                     dsc = response;
                     cb.descriptionAvailable(dsc);
                 }, error -> {
-
-                });
+        });
     }
 
     @Override

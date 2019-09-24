@@ -60,13 +60,18 @@ public final class MovieFactory {
             for (int i = 0; i < response.length(); ++i) {
                 try {
                     JSONObject item = response.getJSONObject(i);
-                    movies.add(new MovieProxy(cb,
-                            item.getLong("id"),
+                    movies.add(new MovieProxy(cb, new MovieProxy.
+                            MovieParameters(item.getLong("id"),
                             item.getString("title"),
                             item.getString("duration"),
+                            item.getLong("dur_sec"),
+                            item.getString("languages"),
                             item.getString("disc"),
+                            item.getInt("category"),
+                            item.getString("filename"),
+                            item.getBoolean("omu"),
                             item.getBoolean("top250"),
-                            item.isNull("oid") ? null : item.getLong("oid")));
+                            item.isNull("oid") ? null : item.getLong("oid"))));
                 } catch (JSONException ex) {
                     cb.error("Error: " + ex.getLocalizedMessage());
                 }
@@ -101,7 +106,7 @@ public final class MovieFactory {
         this.cb = cb;
     }
 
-    public void allMovies(RequestQueue q) {
+    public void fetchMovies(RequestQueue q) {
         if(cb != null) cb.loading();
         jsonArrayRequest.setTag(TAG);
         q.add(jsonArrayRequest);

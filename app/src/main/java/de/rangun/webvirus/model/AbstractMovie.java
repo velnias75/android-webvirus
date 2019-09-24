@@ -25,64 +25,56 @@ import java.util.List;
 
 abstract class AbstractMovie implements IMovie {
 
-    private final IMovie m;
+    private final MovieProxy.MovieParameters m;
 
-    AbstractMovie(IMovie m) {
+    AbstractMovie(MovieProxy.MovieParameters m) {
         this.m = m;
     }
 
     @Override
     public long id() {
-        return m.id();
+        return m.getId();
     }
 
     @Override
     public Long oid() {
-        return m.oid();
+        return m.getOid();
     }
 
     @Override
     public String title() {
-        return m.title();
+        return m.getTitle();
     }
 
     @Override
-    public long duration() {
-        return m.duration();
-    }
+    public long duration() { return m.getDur_sec(); }
 
     @Override
     public String durationString() {
-        return m.durationString();
+        return m.getDur_str();
     }
 
     @Override
     public List<String> languages() {
-        return m.languages();
+        throw new IllegalStateException("languages() not implemented yet");
     }
 
     @Override
     public String disc() {
-        return m.disc();
+        return m.getDisc();
     }
 
     @Override
-    public int category() {
-        return m.category();
-    }
+    public int category() { return m.getCategory(); }
 
     @Override
-    public String filename() {
-        return m.filename();
-    }
+    public String filename() { return m.getFilename(); }
 
     @Override
-    public boolean omu() {
-        return m.omu();
-    }
+    public boolean omu() { return m.isOmu(); }
 
     @Override
     public boolean top250() {
-        return m.top250();
+        return m.isTop250();
     }
 }
