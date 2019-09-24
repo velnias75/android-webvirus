@@ -46,7 +46,7 @@ public class SearchBarFragment extends Fragment {
     private OnMovieUpdateRequestListener listener;
 
     public interface OnMovieUpdateRequestListener {
-        void onUpdateMovieByTitle(String title);
+        void onUpdateMovieByTitle(String title, SearchBarFragment sbf);
     }
 
     @Override
@@ -89,14 +89,15 @@ public class SearchBarFragment extends Fragment {
         textView.setOnEditorActionListener((v, actionId, event) -> {
 
             if(EditorInfo.IME_ACTION_SEARCH == actionId) {
-                listener.onUpdateMovieByTitle(v.getText().toString());
+                listener.onUpdateMovieByTitle(v.getText().toString(), this);
                 return true;
             }
 
             return false;
         });
 
-        search.setOnClickListener(v -> listener.onUpdateMovieByTitle(textView.getText().toString()));
+        search.setOnClickListener(v ->
+                listener.onUpdateMovieByTitle(textView.getText().toString(), this));
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
@@ -123,12 +124,30 @@ public class SearchBarFragment extends Fragment {
         return fragmentLayout;
     }
 
-    public void populateCompleter(ArrayAdapter<String> adapter) {
+    public final void populateCompleter(ArrayAdapter<String> adapter) {
 
         final Spinner spinner = getView().findViewById(R.id.searchTermSpinner);
         final CustomAutoCompleteTextView textView = getView().findViewById(R.id.searchTerm);
 
         spinner.setAdapter(adapter);
         textView.setAdapter(adapter);
+    }
+
+    public final void setText(String title) {
+
+        final CustomAutoCompleteTextView srt = getView().findViewById(R.id.searchTerm);
+
+        srt.setText(title);
+        srt.setSelection(title.length());
+        srt.dismissDropDown();
+    }
+
+    public final void hideSoftKeyboard() {
+
+        final CustomAutoCompleteTextView srt = getView().findViewById(R.id.searchTerm);
+        final InputMethodManager imm = (InputMethodManager)getContext().getSystemService(
+                Context.INPUT_METHOD_SERVICE);
+
+        if(imm != null) imm.hideSoftInputFromWindow(srt.getWindowToken(), 0);
     }
 }

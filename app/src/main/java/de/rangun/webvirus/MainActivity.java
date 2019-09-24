@@ -27,7 +27,6 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
@@ -35,14 +34,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import de.rangun.webvirus.fragments.MovieDetailsFragment;
 import de.rangun.webvirus.fragments.SearchBarFragment;
-import de.rangun.webvirus.model.BitmapMemCache;
 import de.rangun.webvirus.model.IMovie;
 import de.rangun.webvirus.model.MovieFactory;
 import de.rangun.webvirus.model.MovieList;
@@ -146,12 +142,12 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onUpdateMovieByTitle(String title) {
+    public void onUpdateMovieByTitle(String title, SearchBarFragment sbf) {
 
         if(movies != null) {
             updateMovie(movies.findByTitle(title));
         } else {
-            hideSoftKeyboard();
+            sbf.hideSoftKeyboard();
         }
     }
 
@@ -165,65 +161,29 @@ public class MainActivity extends AppCompatActivity implements
 
     private void updateMovie(IMovie m) {
 
-        final SearchBarFragment sbf = hideSoftKeyboard();
-        final MovieDetailsFragment mdf =
-                (MovieDetailsFragment) getSupportFragmentManager().
-                        findFragmentById(R.id.moviedetailsfragment);
-
-        if(m == null) {
-            mdf.getView().setVisibility(View.GONE);
-            status.setText(R.string.notfound);
-            return;
-        } else {
-            mdf.getView().setVisibility(View.VISIBLE);
-            status.setText(getString(R.string.loaded, movies.size()));
-        }
-
-        final View top250 = mdf.getView().findViewById(R.id.top250);
-        final TextView mid = mdf.getView().findViewById(R.id.m_id);
-        final TextView tit = mdf.getView().findViewById(R.id.title);
-        final TextView dus = mdf.getView().findViewById(R.id.m_duration);
-        final TextView dis = mdf.getView().findViewById(R.id.m_disc);
-        final TextView abs = mdf.getView().findViewById(R.id.m_abstract);
-        final NetworkImageView cov = mdf.getView().findViewById(R.id.cover);
-        final CustomAutoCompleteTextView srt = sbf.getView().findViewById(R.id.searchTerm);
-
-        currentId = m.id();
-
-        final String idNum = preZeros.toString() + m.id();
-
-        top250.setVisibility(m.top250() ? View.VISIBLE : View.INVISIBLE);
-        mid.setText(idNum.substring(idNum.length() - preZeros.length()));
-        tit.setText(m.title());
-        srt.setText(m.title());
-        srt.setSelection(m.title().length());
-        srt.dismissDropDown();
-        dus.setText(m.durationString());
-        dis.setText(m.disc());
-        abs.setText(m.description(this));
-
-        if (m.oid() != null) {
-
-            cov.setImageUrl("https://rangun.de/db/omdb.php?cover-oid=" + m.oid() +
-                            (m.top250() ? "&top250=true" : ""),
-                    new ImageLoader(queue, new BitmapMemCache()));
-        } else {
-            cov.setImageUrl(null, null);
-        }
-    }
-
-    private SearchBarFragment hideSoftKeyboard() {
-
         final SearchBarFragment sbf =
                 (SearchBarFragment) getSupportFragmentManager().
                         findFragmentById(R.id.searchBar);
 
-        final CustomAutoCompleteTextView srt = sbf.getView().findViewById(R.id.searchTerm);
-        final InputMethodManager imm = (InputMethodManager)getSystemService(
-                Context.INPUT_METHOD_SERVICE);
-        if(imm != null) imm.hideSoftInputFromWindow(srt.getWindowToken(), 0);
+        final MovieDetailsFragment mdf =
+                (MovieDetailsFragment) getSupportFragmentManager().
+                        findFragmentById(R.id.moviedetailsfragment);
 
-        return sbf;
+        sbf.hideSoftKeyboard();
+
+        if(m == null) {
+            mdf.setVisibility(View.GONE);
+            status.setText(R.string.notfound);
+            return;
+        } else {
+            mdf.setVisibility(View.VISIBLE);
+            status.setText(getString(R.string.loaded, movies.size()));
+        }
+
+        currentId = m.id();
+
+        mdf.setContents(m, queue, preZeros.toString());
+        sbf.setText(m.title());
     }
 
     @Override
@@ -262,7 +222,6 @@ public class MainActivity extends AppCompatActivity implements
 
             sbf.populateCompleter(adapter);
         }
-
     }
 
     @Override

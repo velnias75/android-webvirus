@@ -97,6 +97,15 @@
         app:layout_constraintTop_toTopOf="@id/m.duration" />
 
     <TextView
+        android:id="@+id/languages"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        app:layout_constraintEnd_toStartOf="@+id/filename"
+        app:layout_constraintStart_toStartOf="@+id/m.duration"
+        app:layout_constraintTop_toBottomOf="@+id/m.duration" />
+
+    <TextView
         android:id="@+id/m.abstract"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -128,5 +137,13 @@
         tools:background="@drawable/nocover"
         tools:layout_height="100dp"
         tools:layout_width="100dp" />
+
+    <TextView
+        android:id="@+id/filename"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        app:layout_constraintEnd_toEndOf="@+id/m.disc"
+        app:layout_constraintTop_toTopOf="@+id/languages" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
