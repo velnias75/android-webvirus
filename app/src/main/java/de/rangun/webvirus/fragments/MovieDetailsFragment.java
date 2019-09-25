@@ -35,6 +35,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 
+import de.rangun.webvirus.CategoryTextView;
 import de.rangun.webvirus.R;
 import de.rangun.webvirus.model.BitmapMemCache;
 import de.rangun.webvirus.model.IMovie;
@@ -63,7 +64,7 @@ public class MovieDetailsFragment extends Fragment {
 
         final View top250 = getView().findViewById(R.id.top250);
         final TextView mid = getView().findViewById(R.id.m_id);
-        final TextView tit = getView().findViewById(R.id.title);
+        final CategoryTextView tit = getView().findViewById(R.id.title);
         final TextView dus = getView().findViewById(R.id.m_duration);
         final TextView dis = getView().findViewById(R.id.m_disc);
         final TextView abs = getView().findViewById(R.id.m_abstract);
@@ -73,7 +74,7 @@ public class MovieDetailsFragment extends Fragment {
 
         top250.setVisibility(m.top250() ? View.VISIBLE : View.INVISIBLE);
         mid.setText(idNum.substring(idNum.length() - preZeros.length()));
-        tit.setText(m.title());
+        tit.setText(m.title(), m.category());
         dus.setText(m.durationString());
         dis.setText(m.disc());
         abs.setText(m.description(getContext()));

@@ -24,4 +24,9 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+    <color name="categoryAny">#3333FF</color>
+    <color name="categoryFeature">#000000</color>
+    <color name="categoryYouth">#66339f</color>
+    <color name="categoryDocumentary">#253100</color>
+    <color name="categoryConcert">#510000</color>
 </resources>

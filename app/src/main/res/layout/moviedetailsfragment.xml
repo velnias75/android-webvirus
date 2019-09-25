@@ -58,7 +58,7 @@
         app:layout_constraintStart_toEndOf="@+id/cover"
         app:layout_constraintTop_toTopOf="@id/cover" />
 
-    <TextView
+    <de.rangun.webvirus.CategoryTextView
         android:id="@+id/title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -67,7 +67,7 @@
         android:maxLines="2"
         android:text="@string/m.title"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textColor="@android:color/black"
+        android:textColor="@color/categoryAny"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@id/top250"
         app:layout_constraintStart_toStartOf="@+id/m.id"

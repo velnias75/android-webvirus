@@ -118,9 +118,7 @@ final class MovieProxy implements IMovie {
     }
 
     @Override
-    public long duration() {
-        return 0;
-    }
+    public long duration() { return mp.getDur_sec(); }
 
     @Override
     public String durationString() {
@@ -138,18 +136,16 @@ final class MovieProxy implements IMovie {
     }
 
     @Override
-    public int category() {
-        return 0;
-    }
+    public int category() { return mp.getCategory(); }
 
     @Override
     public String filename() {
-        return null;
+        return mp.getFilename();
     }
 
     @Override
     public boolean omu() {
-        return false;
+        return mp.isOmu();
     }
 
     @Override
