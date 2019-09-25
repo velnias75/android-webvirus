@@ -68,7 +68,7 @@ public final class MovieFactory {
                             item.getString("languages"),
                             item.getString("disc"),
                             item.getInt("category"),
-                            item.getString("filename"),
+                            item.isNull("filename") ? null :item.getString("filename"),
                             item.getBoolean("omu"),
                             item.getBoolean("top250"),
                             item.isNull("oid") ? null : item.getLong("oid"))));

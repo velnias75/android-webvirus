@@ -21,6 +21,8 @@
 
 package de.rangun.webvirus.model;
 
+import android.content.Context;
+
 import java.util.List;
 
 abstract class AbstractMovie implements IMovie {
@@ -68,7 +70,7 @@ abstract class AbstractMovie implements IMovie {
     public int category() { return m.getCategory(); }
 
     @Override
-    public String filename() { return m.getFilename(); }
+    public String filename(Context ctx) { return m.getFilename(ctx); }
 
     @Override
     public boolean omu() { return m.isOmu(); }

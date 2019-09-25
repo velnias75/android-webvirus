@@ -23,7 +23,10 @@ package de.rangun.webvirus.model;
 
 import android.content.Context;
 
+import java.util.Arrays;
 import java.util.List;
+
+import de.rangun.webvirus.R;
 
 final class MovieProxy implements IMovie {
 
@@ -33,7 +36,7 @@ final class MovieProxy implements IMovie {
         private final String title;
         private final String dur_str;
         private final long dur_sec;
-        private final String languages;
+        private final List<String> languages;
         private final String disc;
         private final int category;
         private final String filename;
@@ -41,15 +44,15 @@ final class MovieProxy implements IMovie {
         private final boolean top250;
         private final Long oid;
 
-        MovieParameters(long id, String title, String dur_str, long dur_sec, String languages,
-                        String disc, int category, String filename, boolean omu, boolean top250,
-                        Long oid) {
+        MovieParameters(long id, String title, String dur_str, long dur_sec,
+                        String languages, String disc, int category, String filename, boolean omu,
+                        boolean top250, Long oid) {
 
             this.id = id;
             this.title = title;
             this.dur_str = dur_str;
             this.dur_sec = dur_sec;
-            this.languages = languages;
+            this.languages = Arrays.asList(languages.split(", "));
             this.disc = disc;
             this.category = category;
             this.filename = filename;
@@ -70,7 +73,7 @@ final class MovieProxy implements IMovie {
             return dur_str;
         }
 
-        public String getLanguages() { return languages; }
+        public List<String> getLanguages() { return languages; }
 
         public long getDur_sec() { return dur_sec; }
 
@@ -80,7 +83,9 @@ final class MovieProxy implements IMovie {
 
         public int getCategory() { return category; }
 
-        public String getFilename() { return filename; }
+        public String getFilename(Context ctx) {
+            return filename != null ? filename : ctx.getResources().getString(R.string.no_filename);
+        }
 
         public boolean isOmu() { return omu; }
 
@@ -127,7 +132,7 @@ final class MovieProxy implements IMovie {
 
     @Override
     public List<String> languages() {
-        return null;
+        return mp.getLanguages();
     }
 
     @Override
@@ -139,9 +144,7 @@ final class MovieProxy implements IMovie {
     public int category() { return mp.getCategory(); }
 
     @Override
-    public String filename() {
-        return mp.getFilename();
-    }
+    public String filename(Context ctx) { return mp.getFilename(ctx); }
 
     @Override
     public boolean omu() {

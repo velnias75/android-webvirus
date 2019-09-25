@@ -67,16 +67,29 @@ public class MovieDetailsFragment extends Fragment {
         final CategoryTextView tit = getView().findViewById(R.id.title);
         final TextView dus = getView().findViewById(R.id.m_duration);
         final TextView dis = getView().findViewById(R.id.m_disc);
+        final TextView lan = getView().findViewById(R.id.languages);
+        final TextView fin = getView().findViewById(R.id.filename);
+        final CategoryTextView cat = getView().findViewById(R.id.category);
         final TextView abs = getView().findViewById(R.id.m_abstract);
         final NetworkImageView cov = getView().findViewById(R.id.cover);
 
         final String idNum = preZeros + m.id();
+
+        StringBuilder sb = new StringBuilder();
+
+        for(String l: m.languages()) {
+            sb.append(l);
+            sb.append(", ");
+        }
 
         top250.setVisibility(m.top250() ? View.VISIBLE : View.INVISIBLE);
         mid.setText(idNum.substring(idNum.length() - preZeros.length()));
         tit.setText(m.title(), m.category());
         dus.setText(m.durationString());
         dis.setText(m.disc());
+        lan.setText(sb.toString().substring(0, sb.toString().length() - 2));
+        fin.setText(m.filename(getContext()));
+        cat.setCategoryText(m.category());
         abs.setText(m.description(getContext()));
 
         if (m.oid() != null) {

@@ -101,9 +101,32 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="TextView"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textColor="@android:color/black"
         app:layout_constraintEnd_toStartOf="@+id/filename"
         app:layout_constraintStart_toStartOf="@+id/m.duration"
         app:layout_constraintTop_toBottomOf="@+id/m.duration" />
+
+    <TextView
+        android:id="@+id/filename"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textColor="@android:color/black"
+        app:layout_constraintEnd_toEndOf="@+id/m.disc"
+        app:layout_constraintTop_toTopOf="@+id/languages" />
+
+    <de.rangun.webvirus.CategoryTextView
+        android:id="@+id/category"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/categoryAny"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@color/categoryAny"
+        app:layout_constraintEnd_toEndOf="@+id/filename"
+        app:layout_constraintStart_toStartOf="@+id/languages"
+        app:layout_constraintTop_toBottomOf="@+id/languages" />
 
     <TextView
         android:id="@+id/m.abstract"
@@ -137,13 +160,5 @@
         tools:background="@drawable/nocover"
         tools:layout_height="100dp"
         tools:layout_width="100dp" />
-
-    <TextView
-        android:id="@+id/filename"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        app:layout_constraintEnd_toEndOf="@+id/m.disc"
-        app:layout_constraintTop_toTopOf="@+id/languages" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

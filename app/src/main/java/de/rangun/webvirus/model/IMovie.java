@@ -41,7 +41,7 @@ public interface IMovie {
 
     int category();
 
-    String filename();
+    String filename(Context ctx);
 
     boolean omu();
 

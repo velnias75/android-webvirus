@@ -32,9 +32,29 @@ public class CategoryTextView extends AppCompatTextView {
         super(ctx, atts);
     }
 
+    public final void setCategoryText(int cat) {
+        super.setText(catText(cat));
+        super.setTextColor(color(cat));
+    }
+
     public final void setText(CharSequence txt, int cat) {
         super.setText(txt);
         super.setTextColor(color(cat));
+    }
+
+    private String catText(int cat) {
+        switch (cat) {
+            case 1:
+                return getResources().getString(R.string.categoryFeature);
+            case 2:
+                return getResources().getString(R.string.categoryYouth);
+            case 3:
+                return getResources().getString(R.string.categoryDocumentary);
+            case 4:
+                return getResources().getString(R.string.categoryConcert);
+            default:
+                return getResources().getString(R.string.categoryAny);
+        }
     }
 
     private int color(int cat) {

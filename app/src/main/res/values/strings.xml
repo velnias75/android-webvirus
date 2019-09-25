@@ -39,4 +39,10 @@
     <string name="loaded">%1$d hirnlose Schrott- oder Rentnerfilme geladen.</string>
     <string name="initial_status">Es sind keine hirnlose Schrott- oder Rentnerfilme geladen.</string>
     <string name="not_connected">Facebook und Google mögen es können, aber Webvirus fehlt die Intelligenz <b>OHNE</b> Internetverbindung Daten aus dem Internet zu laden.</string>
+    <string name="no_filename">Video-DVD</string>
+    <string name="categoryAny">Alle Videos</string>
+    <string name="categoryFeature">Spielfilm</string>
+    <string name="categoryYouth">Märchen- oder Jugendfilm</string>
+    <string name="categoryDocumentary">Dokumentation</string>
+    <string name="categoryConcert">Konzert</string>
 </resources>
