@@ -37,7 +37,7 @@
         app:layout_constraintStart_toStartOf="@+id/searchTerm"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <de.rangun.webvirus.CustomAutoCompleteTextView
+    <de.rangun.webvirus.widgets.CustomAutoCompleteTextView
         android:id="@+id/searchTerm"
         style="?android:attr/spinnerItemStyle"
         android:layout_width="0dp"

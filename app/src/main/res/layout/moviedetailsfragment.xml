@@ -58,7 +58,7 @@
         app:layout_constraintStart_toEndOf="@+id/cover"
         app:layout_constraintTop_toTopOf="@id/cover" />
 
-    <de.rangun.webvirus.CategoryTextView
+    <de.rangun.webvirus.widgets.CategoryTextView
         android:id="@+id/title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -117,7 +117,7 @@
         app:layout_constraintEnd_toEndOf="@+id/m.disc"
         app:layout_constraintTop_toTopOf="@+id/languages" />
 
-    <de.rangun.webvirus.CategoryTextView
+    <de.rangun.webvirus.widgets.CategoryTextView
         android:id="@+id/category"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

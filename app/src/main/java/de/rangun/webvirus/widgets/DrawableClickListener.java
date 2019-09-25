@@ -16,10 +16,10 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with android-webvirus.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  Last modified 23.09.19 06:31 by heiko
+ *  Last modified 23.09.19 06:33 by heiko
  */
 
-package de.rangun.webvirus;
+package de.rangun.webvirus.widgets;
 
 public interface DrawableClickListener {
 

@@ -16,10 +16,10 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with android-webvirus.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  Last modified 23.09.19 06:31 by heiko
+ *  Last modified 23.09.19 06:33 by heiko
  */
 
-package de.rangun.webvirus;
+package de.rangun.webvirus.widgets;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -95,7 +95,6 @@ public class CustomAutoCompleteTextView extends AppCompatAutoCompleteTextView {
 
             // this works for left since container shares 0,0 origin with bounds
             if (drawableLeft != null) {
-                bounds = null;
                 bounds = drawableLeft.getBounds();
 
                 int x, y;
@@ -129,7 +128,6 @@ public class CustomAutoCompleteTextView extends AppCompatAutoCompleteTextView {
 
             if (drawableRight != null) {
 
-                bounds = null;
                 bounds = drawableRight.getBounds();
 
                 int x, y;

@@ -49,6 +49,7 @@ public final class MovieFactory {
     //private final String URL = "http://192.168.1.156/~heiko/db/movies-json.php";
 
     private OnMoviesAvailableListener cb = null;
+    private BKTree<String> bktree = null;
 
     private final JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET,
             URL, null, response -> {
@@ -58,11 +59,17 @@ public final class MovieFactory {
         if (cb != null) {
 
             for (int i = 0; i < response.length(); ++i) {
+
                 try {
-                    JSONObject item = response.getJSONObject(i);
+
+                    final JSONObject item = response.getJSONObject(i);
+                    final String title = item.getString("title");
+
+                    bktree.Add(title);
+
                     movies.add(new MovieProxy(cb, new MovieProxy.
                             MovieParameters(item.getLong("id"),
-                            item.getString("title"),
+                            title,
                             item.getString("duration"),
                             item.getLong("dur_sec"),
                             item.getString("languages"),
@@ -90,11 +97,7 @@ public final class MovieFactory {
     }
 
     public static MovieFactory instance() {
-
-        if (_instance == null) {
-            _instance = new MovieFactory();
-        }
-
+        if (_instance == null) _instance = new MovieFactory();
         return _instance;
     }
 
@@ -106,8 +109,12 @@ public final class MovieFactory {
         this.cb = cb;
     }
 
-    public void fetchMovies(RequestQueue q) {
+    public void fetchMovies(RequestQueue q, BKTree<String> bktree) {
+
         if(cb != null) cb.loading();
+
+        this.bktree = bktree;
+
         jsonArrayRequest.setTag(TAG);
         q.add(jsonArrayRequest);
     }

@@ -35,10 +35,10 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 
-import de.rangun.webvirus.CategoryTextView;
 import de.rangun.webvirus.R;
 import de.rangun.webvirus.model.BitmapMemCache;
 import de.rangun.webvirus.model.IMovie;
+import de.rangun.webvirus.widgets.CategoryTextView;
 
 public class MovieDetailsFragment extends Fragment {
 

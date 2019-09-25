@@ -73,7 +73,7 @@ final class MovieProxy implements IMovie {
             return dur_str;
         }
 
-        public List<String> getLanguages() { return languages; }
+        List<String> getLanguages() { return languages; }
 
         public long getDur_sec() { return dur_sec; }
 

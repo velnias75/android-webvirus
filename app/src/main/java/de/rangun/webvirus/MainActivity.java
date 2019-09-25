@@ -39,6 +39,8 @@ import com.android.volley.toolbox.Volley;
 
 import de.rangun.webvirus.fragments.MovieDetailsFragment;
 import de.rangun.webvirus.fragments.SearchBarFragment;
+import de.rangun.webvirus.model.BKTree;
+import de.rangun.webvirus.model.BKTreeArrayAdapter;
 import de.rangun.webvirus.model.IMovie;
 import de.rangun.webvirus.model.MovieFactory;
 import de.rangun.webvirus.model.MovieList;
@@ -58,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements
     private MovieList movies = null;
     private StringBuilder preZeros = null;
     private Long currentId = null;
+    private final BKTree<String> bktree = new BKTree<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements
 
             if (movies == null) {
                 MovieFactory.instance().setOnMoviesAvailableListener(this);
-                MovieFactory.instance().fetchMovies(queue);
+                MovieFactory.instance().fetchMovies(queue, bktree);
             }
 
         } else {
@@ -215,8 +218,9 @@ public class MainActivity extends AppCompatActivity implements
                 (SearchBarFragment)getSupportFragmentManager().findFragmentById(R.id.searchBar);
 
         if(sbf != null) {
-            final ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                    android.R.layout.simple_spinner_item, movies.titles());
+
+            final ArrayAdapter<String> adapter = new BKTreeArrayAdapter(this,
+                    android.R.layout.simple_spinner_item, movies.titles(), bktree);
 
             adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
 

@@ -37,9 +37,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import de.rangun.webvirus.CustomAutoCompleteTextView;
-import de.rangun.webvirus.DrawableClickListener;
 import de.rangun.webvirus.R;
+import de.rangun.webvirus.widgets.CustomAutoCompleteTextView;
+import de.rangun.webvirus.widgets.DrawableClickListener;
 
 public class SearchBarFragment extends Fragment {
 

@@ -16,15 +16,17 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with android-webvirus.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  Last modified 25.09.19 01:39 by heiko
+ *  Last modified 25.09.19 03:42 by heiko
  */
 
-package de.rangun.webvirus;
+package de.rangun.webvirus.widgets;
 
 import android.content.Context;
 import android.util.AttributeSet;
 
 import androidx.appcompat.widget.AppCompatTextView;
+
+import de.rangun.webvirus.R;
 
 public class CategoryTextView extends AppCompatTextView {
 
