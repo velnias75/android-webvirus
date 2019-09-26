@@ -23,6 +23,8 @@ package de.rangun.webvirus.model;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -164,5 +166,11 @@ final class MovieProxy implements IMovie {
         }
 
         return movie.description(ctx);
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return title();
     }
 }

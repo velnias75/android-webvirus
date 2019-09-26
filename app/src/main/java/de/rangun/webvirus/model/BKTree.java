@@ -99,9 +99,9 @@ public final class BKTree<T> implements Iterable<T> {
         ++size;
     }
 
-    public List<String> Search(T item, int d) {
+    public List<String> Search(String word, int d) {
         List<String> rtn = new ArrayList<>();
-        RecursiveSearch(_Root, rtn, item.toString().toLowerCase(), d);
+        RecursiveSearch(_Root, rtn, word.toLowerCase(), d);
         return rtn;
     }
 

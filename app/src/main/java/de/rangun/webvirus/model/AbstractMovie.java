@@ -23,6 +23,8 @@ package de.rangun.webvirus.model;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+
 import java.util.List;
 
 abstract class AbstractMovie implements IMovie {
@@ -78,5 +80,11 @@ abstract class AbstractMovie implements IMovie {
     @Override
     public boolean top250() {
         return m.isTop250();
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return title();
     }
 }

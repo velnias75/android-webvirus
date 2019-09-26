@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements
     private MovieList movies = null;
     private StringBuilder preZeros = null;
     private Long currentId = null;
-    private final BKTree<String> bktree = new BKTree<>();
+    private final BKTree<IMovie> bktree = new BKTree<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

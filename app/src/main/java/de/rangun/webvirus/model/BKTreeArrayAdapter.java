@@ -36,13 +36,13 @@ import java.util.TreeSet;
 
 public class BKTreeArrayAdapter extends ArrayAdapter<String> {
 
-    private final BKTree<String> bktree;
+    private final BKTree<IMovie> bktree;
     private final List<String>  objects;
 
     private List<String> filtered;
 
     public BKTreeArrayAdapter(@NonNull Context context, @LayoutRes int resource,
-                              @NonNull List<String> objects, BKTree<String> bkt) {
+                              @NonNull List<String> objects, BKTree<IMovie> bkt) {
 
         super(context, resource, objects);
 
