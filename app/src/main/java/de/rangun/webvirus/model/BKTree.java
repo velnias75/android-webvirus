@@ -21,18 +21,21 @@
 
 package de.rangun.webvirus.model;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import static java.lang.Math.min;
 
-public final class BKTree<T> {
+public final class BKTree<T> implements Iterable<T> {
 
     private final class Node<N> {
 
-        private T item;
+        private final T item;
         private Map<Integer, Node<N>> children = null;
 
         Node(T item) {
@@ -65,6 +68,7 @@ public final class BKTree<T> {
     }
 
     private Node<T> _Root = null;
+    private int size = 0;
 
     public BKTree() {}
 
@@ -72,6 +76,7 @@ public final class BKTree<T> {
 
         if(_Root == null) {
             _Root = new Node<>(item);
+            ++size;
             return;
         }
 
@@ -91,6 +96,7 @@ public final class BKTree<T> {
         }
 
         curNode.AddChild(dist, item);
+        ++size;
     }
 
     public List<String> Search(T item, int d) {
@@ -141,5 +147,44 @@ public final class BKTree<T> {
         }
 
         return d[lenFirst][lenSecond];
+    }
+
+    @NonNull
+    @Override
+    public Iterator<T> iterator() {
+
+        final class _iterator implements Iterator<T> {
+
+            final Iterator<T> iter;
+            final List<T> items = new ArrayList<>(size);
+
+            private _iterator() {
+                items.add(_Root.item());
+                nextNode(_Root.children);
+                iter = items.iterator();
+            }
+
+            private void nextNode(Map<Integer, Node<T>> children) {
+
+                if(children != null) {
+                    for(Node<T> n: children.values()) {
+                        items.add(n.item());
+                        nextNode(n.children);
+                    }
+                }
+            }
+
+            @Override
+            public boolean hasNext() {
+                return iter.hasNext();
+            }
+
+            @Override
+            public T next() {
+                return iter.next();
+            }
+        }
+
+        return new _iterator();
     }
 }
