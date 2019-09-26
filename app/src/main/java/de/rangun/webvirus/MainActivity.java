@@ -218,9 +218,7 @@ public class MainActivity extends AppCompatActivity implements
         if(sbf != null) {
 
             final ArrayAdapter<String> adapter = new MovieBKTreeAdapter(this,
-                    android.R.layout.simple_spinner_item, movies);
-
-            adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                    R.layout.searchsuggestions, movies);
 
             sbf.populateCompleter(adapter);
         }

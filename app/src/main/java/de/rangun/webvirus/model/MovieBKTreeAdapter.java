@@ -22,17 +22,27 @@
 package de.rangun.webvirus.model;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.util.TypedValue;
+import android.view.Gravity;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
+import android.widget.TextView;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+
+import de.rangun.webvirus.R;
 
 public class MovieBKTreeAdapter extends ArrayAdapter<String> {
 
@@ -40,6 +50,8 @@ public class MovieBKTreeAdapter extends ArrayAdapter<String> {
     private final List<String> titles;
 
     private List<String> filtered;
+
+    private Integer separatorPos = null;
 
     public MovieBKTreeAdapter(@NonNull Context context, @LayoutRes int resource,
                               MovieBKTree movies) {
@@ -49,6 +61,37 @@ public class MovieBKTreeAdapter extends ArrayAdapter<String> {
         this.movies = movies;
         this.titles = this.movies.titles();
         filtered = this.titles;
+    }
+
+    @Override
+    public boolean isEnabled(int position) {
+
+        if(separatorPos != null && separatorPos == position) {
+            return false;
+        }
+
+        return super.isEnabled(position);
+    }
+
+    @NotNull
+    @Override
+    public View getView(int position, @Nullable View convertView,
+                                @NonNull ViewGroup parent) {
+
+        final View v = super.getView(position, convertView, parent);
+        final TextView tv = (TextView)v;
+
+        if(separatorPos != null && position == separatorPos) {
+            tv.setTextColor(Color.GRAY);
+            tv.setGravity(Gravity.CENTER_HORIZONTAL);
+            tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+        } else {
+            tv.setTextColor(Color.BLACK);
+            tv.setGravity(Gravity.START);
+            tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+        }
+
+        return v;
     }
 
     @Override
@@ -92,10 +135,16 @@ public class MovieBKTreeAdapter extends ArrayAdapter<String> {
 
                     near.removeAll(best);
 
-                    fr.values = new ArrayList<String>(best.size() + near.size());
+                    fr.values = new ArrayList<String>(best.size() + near.size() + 1);
+                    separatorPos = near.isEmpty() ? null : best.size();
 
                     //noinspection unchecked
                     ((List<String>)fr.values).addAll(best);
+
+                    if(!near.isEmpty()) //noinspection unchecked
+                        ((List<String>)fr.values).add(getContext().
+                            getResources().getString(R.string.bksuggests));
+
                     //noinspection unchecked
                     ((List<String>)fr.values).addAll(near);
 
@@ -106,6 +155,7 @@ public class MovieBKTreeAdapter extends ArrayAdapter<String> {
                     fr.count = ((List<String>)fr.values).size();
 
                 } else {
+                    separatorPos = null;
                     fr.values = titles;
                     fr.count  = titles.size();
                 }
