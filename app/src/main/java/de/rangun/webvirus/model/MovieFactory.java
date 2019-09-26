@@ -36,7 +36,7 @@ public final class MovieFactory {
     public interface OnMoviesAvailableListener {
         void loading();
         void loaded(int num);
-        void movies(MovieList movies);
+        void movies(MovieBKTree movies);
         void error(String localizedMessage);
         void fetchDescription(StringRequest rq);
         void descriptionAvailable(String dsc);
@@ -49,12 +49,11 @@ public final class MovieFactory {
     //private final String URL = "http://192.168.1.156/~heiko/db/movies-json.php";
 
     private OnMoviesAvailableListener cb = null;
-    private BKTree<IMovie> bktree = null;
 
     private final JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET,
             URL, null, response -> {
 
-        MovieList movies = new MovieList();
+        MovieBKTree movies = new MovieBKTree();
 
         if (cb != null) {
 
@@ -76,8 +75,7 @@ public final class MovieFactory {
                             item.getBoolean("top250"),
                             item.isNull("oid") ? null : item.getLong("oid")));
 
-                    bktree.Add(m);
-                    movies.add(m);
+                    movies.Add(m);
 
                 } catch (JSONException ex) {
                     cb.error("Error: " + ex.getLocalizedMessage());
@@ -109,11 +107,9 @@ public final class MovieFactory {
         this.cb = cb;
     }
 
-    public void fetchMovies(RequestQueue q, BKTree<IMovie> bktree) {
+    public void fetchMovies(RequestQueue q) {
 
         if(cb != null) cb.loading();
-
-        this.bktree = bktree;
 
         jsonArrayRequest.setTag(TAG);
         q.add(jsonArrayRequest);

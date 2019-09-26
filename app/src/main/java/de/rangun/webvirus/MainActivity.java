@@ -39,11 +39,10 @@ import com.android.volley.toolbox.Volley;
 
 import de.rangun.webvirus.fragments.MovieDetailsFragment;
 import de.rangun.webvirus.fragments.SearchBarFragment;
-import de.rangun.webvirus.model.BKTree;
-import de.rangun.webvirus.model.BKTreeArrayAdapter;
 import de.rangun.webvirus.model.IMovie;
+import de.rangun.webvirus.model.MovieBKTree;
+import de.rangun.webvirus.model.MovieBKTreeAdapter;
 import de.rangun.webvirus.model.MovieFactory;
-import de.rangun.webvirus.model.MovieList;
 
 import static java.lang.Math.ceil;
 import static java.lang.Math.log;
@@ -57,10 +56,9 @@ public class MainActivity extends AppCompatActivity implements
 
     private RequestQueue queue = null;
     private TextView status = null;
-    private MovieList movies = null;
+    private MovieBKTree movies = null;
     private StringBuilder preZeros = null;
     private Long currentId = null;
-    private final BKTree<IMovie> bktree = new BKTree<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements
 
             if (movies == null) {
                 MovieFactory.instance().setOnMoviesAvailableListener(this);
-                MovieFactory.instance().fetchMovies(queue, bktree);
+                MovieFactory.instance().fetchMovies(queue);
             }
 
         } else {
@@ -210,7 +208,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void movies(MovieList ml) {
+    public void movies(MovieBKTree ml) {
 
         movies = ml;
 
@@ -219,8 +217,8 @@ public class MainActivity extends AppCompatActivity implements
 
         if(sbf != null) {
 
-            final ArrayAdapter<String> adapter = new BKTreeArrayAdapter(this,
-                    android.R.layout.simple_spinner_item, movies.titles(), bktree);
+            final ArrayAdapter<String> adapter = new MovieBKTreeAdapter(this,
+                    android.R.layout.simple_spinner_item, movies);
 
             adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
 

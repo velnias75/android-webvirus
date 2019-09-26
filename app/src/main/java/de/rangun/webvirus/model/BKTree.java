@@ -31,7 +31,7 @@ import java.util.Map;
 
 import static java.lang.Math.min;
 
-public final class BKTree<T> implements Iterable<T> {
+public class BKTree<T> implements Iterable<T> {
 
     private final class Node<N> {
 
@@ -58,8 +58,7 @@ public final class BKTree<T> implements Iterable<T> {
         }
 
         List<Integer> Keys() {
-            return children == null ? new ArrayList<>() :
-                    new ArrayList<>(children.keySet());
+            return children == null ? new ArrayList<>() : new ArrayList<>(children.keySet());
         }
 
         boolean ContainsKey(int key) {
@@ -70,9 +69,17 @@ public final class BKTree<T> implements Iterable<T> {
     private Node<T> _Root = null;
     private int size = 0;
 
-    public BKTree() {}
+    BKTree() {}
 
-    public void Add(T item) {
+    public final int size() {
+        return size;
+    }
+
+    final T getRootItem() {
+        return _Root.item();
+    }
+
+    public final void Add(T item) {
 
         if(_Root == null) {
             _Root = new Node<>(item);
@@ -99,9 +106,10 @@ public final class BKTree<T> implements Iterable<T> {
         ++size;
     }
 
-    public List<String> Search(String word, int d) {
-        List<String> rtn = new ArrayList<>();
+    public final List<String> Search(String word, int d) {
+        ArrayList<String> rtn = new ArrayList<>(size);
         RecursiveSearch(_Root, rtn, word.toLowerCase(), d);
+        rtn.trimToSize();
         return rtn;
     }
 
@@ -156,11 +164,12 @@ public final class BKTree<T> implements Iterable<T> {
         final class _iterator implements Iterator<T> {
 
             final Iterator<T> iter;
-            final List<T> items = new ArrayList<>(size);
+            final ArrayList<T> items = new ArrayList<>(size);
 
             private _iterator() {
                 items.add(_Root.item());
                 nextNode(_Root.children);
+                items.trimToSize();
                 iter = items.iterator();
             }
 

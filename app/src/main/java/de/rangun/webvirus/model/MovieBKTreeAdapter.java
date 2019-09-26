@@ -34,21 +34,21 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class BKTreeArrayAdapter extends ArrayAdapter<String> {
+public class MovieBKTreeAdapter extends ArrayAdapter<String> {
 
-    private final BKTree<IMovie> bktree;
-    private final List<String>  objects;
+    private final MovieBKTree movies;
+    private final List<String> titles;
 
     private List<String> filtered;
 
-    public BKTreeArrayAdapter(@NonNull Context context, @LayoutRes int resource,
-                              @NonNull List<String> objects, BKTree<IMovie> bkt) {
+    public MovieBKTreeAdapter(@NonNull Context context, @LayoutRes int resource,
+                              MovieBKTree movies) {
 
-        super(context, resource, objects);
+        super(context, resource);
 
-        this.objects = objects;
-        filtered = this.objects;
-        this.bktree = bkt;
+        this.movies = movies;
+        this.titles = this.movies.titles();
+        filtered = this.titles;
     }
 
     @Override
@@ -80,19 +80,19 @@ public class BKTreeArrayAdapter extends ArrayAdapter<String> {
 
                 if(constraint != null) {
 
-                    fr.values = new ArrayList<String>();
-
                     final String lowerConstraint = constraint.toString().toLowerCase();
 
                     final Set<String>  best = new TreeSet<>();
-                    final List<String> near = bktree.Search(lowerConstraint,
+                    final List<String> near = movies.Search(lowerConstraint,
                             lowerConstraint.length() >> 1);
 
-                    for(String s: objects) {
+                    for(String s: titles) {
                         if(s.toLowerCase().contains(lowerConstraint)) best.add(s);
                     }
 
                     near.removeAll(best);
+
+                    fr.values = new ArrayList<String>(best.size() + near.size());
 
                     //noinspection unchecked
                     ((List<String>)fr.values).addAll(best);
@@ -100,11 +100,14 @@ public class BKTreeArrayAdapter extends ArrayAdapter<String> {
                     ((List<String>)fr.values).addAll(near);
 
                     //noinspection unchecked
+                    ((ArrayList<String>)fr.values).trimToSize();
+
+                    //noinspection unchecked
                     fr.count = ((List<String>)fr.values).size();
 
                 } else {
-                    fr.values = objects;
-                    fr.count  = objects.size();
+                    fr.values = titles;
+                    fr.count  = titles.size();
                 }
 
                 return fr;
