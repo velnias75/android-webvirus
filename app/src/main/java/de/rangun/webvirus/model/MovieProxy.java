@@ -63,39 +63,39 @@ final class MovieProxy implements IMovie {
             this.oid = oid;
         }
 
-        public long getId() {
+        long getId() {
             return id;
         }
 
-        public String getTitle() {
+        String getTitle() {
             return title;
         }
 
-        public String getDur_str() {
+        String getDur_str() {
             return dur_str;
         }
 
         List<String> getLanguages() { return languages; }
 
-        public long getDur_sec() { return dur_sec; }
+        long getDur_sec() { return dur_sec; }
 
-        public String getDisc() {
+        String getDisc() {
             return disc;
         }
 
-        public int getCategory() { return category; }
+        int getCategory() { return category; }
 
-        public String getFilename(Context ctx) {
+        String getFilename(Context ctx) {
             return filename != null ? filename : ctx.getResources().getString(R.string.no_filename);
         }
 
-        public boolean isOmu() { return omu; }
+        boolean isOmu() { return omu; }
 
-        public boolean isTop250() {
+        boolean isTop250() {
             return top250;
         }
 
-        public Long getOid() {
+        Long getOid() {
             return oid;
         }
     }
@@ -104,7 +104,7 @@ final class MovieProxy implements IMovie {
     private final MovieParameters mp;
     private IMovie movie = null;
 
-    public MovieProxy(MovieFactory.OnMoviesAvailableListener cb, MovieParameters mp) {
+    MovieProxy(MovieFactory.OnMoviesAvailableListener cb, MovieParameters mp) {
         this.mp = mp;
         this.cb = cb;
     }

@@ -23,9 +23,9 @@ package de.rangun.webvirus.model;
 
 import android.content.Context;
 
-public class DummyMovie extends AbstractMovie {
+class DummyMovie extends AbstractMovie {
 
-    public DummyMovie(String title) {
+    DummyMovie(String title) {
         super(title);
     }
 

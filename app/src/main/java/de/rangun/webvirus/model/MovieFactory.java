@@ -73,7 +73,7 @@ public final class MovieFactory {
                             item.getBoolean("top250"),
                             item.isNull("oid") ? null : item.getLong("oid")));
 
-                    movies.Add(m);
+                    movies.add(m);
 
                 } catch (JSONException ex) {
                     cb.error(ex.getMessage());

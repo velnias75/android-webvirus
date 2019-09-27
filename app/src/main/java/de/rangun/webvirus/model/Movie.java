@@ -34,8 +34,7 @@ final class Movie extends AbstractMovie {
     private final MovieFactory.OnMoviesAvailableListener cb;
     private String dsc = null;
 
-
-    public Movie(MovieProxy.MovieParameters m, MovieFactory.OnMoviesAvailableListener cb) {
+    Movie(MovieProxy.MovieParameters m, MovieFactory.OnMoviesAvailableListener cb) {
 
         super(m);
 

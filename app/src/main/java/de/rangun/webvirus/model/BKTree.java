@@ -31,14 +31,14 @@ import java.util.Map;
 
 import static java.lang.Math.min;
 
-public class BKTree<T> implements Iterable<T> {
+class BKTree<T> implements Iterable<T> {
 
-    private final class Node<N> {
+    private final class _node<N> {
 
         private final T item;
-        private Map<Integer, Node<N>> children = null;
+        private Map<Integer, _node<N>> children = null;
 
-        Node(T item) {
+        _node(T item) {
             this.item = item;
         }
 
@@ -46,27 +46,27 @@ public class BKTree<T> implements Iterable<T> {
             return item;
         }
 
-        void AddChild(int key, T item) {
+        void addChild(int key, T item) {
 
             if(children == null) children = new Hashtable<>();
 
-            children.put(key, new Node<>(item));
+            children.put(key, new _node<>(item));
         }
 
-        Node<N> Get(int key) {
+        _node<N> get(int key) {
             return children.get(key);
         }
 
-        List<Integer> Keys() {
+        List<Integer> keys() {
             return children == null ? new ArrayList<>() : new ArrayList<>(children.keySet());
         }
 
-        boolean ContainsKey(int key) {
+        boolean containsKey(int key) {
             return children != null && children.containsKey(key);
         }
     }
 
-    private Node<T> _Root = null;
+    private _node<T> _root = null;
     private int size = 0;
 
     BKTree() {}
@@ -76,60 +76,59 @@ public class BKTree<T> implements Iterable<T> {
     }
 
     final T getRootItem() {
-        return _Root.item();
+        return _root.item();
     }
 
-    public final void Add(T item) {
+    void add(T item) {
 
-        if(_Root == null) {
-            _Root = new Node<>(item);
+        if(_root == null) {
+            _root = new _node<>(item);
             ++size;
             return;
         }
 
-        Node<T> curNode = _Root;
+        _node<T> curNode = _root;
 
         final String it = item.toString().toLowerCase();
 
-        int dist = LevenshteinDistance(curNode.item().toString().toLowerCase(), it);
+        int dist = levenshteinDistance(curNode.item().toString().toLowerCase(), it);
 
-        while(curNode.ContainsKey(dist)) {
+        while(curNode.containsKey(dist)) {
 
             if(dist == 0) return;
 
-            curNode = curNode.Get(dist);
+            curNode = curNode.get(dist);
 
-            dist = LevenshteinDistance(curNode.item().toString().toLowerCase(), it);
+            dist = levenshteinDistance(curNode.item().toString().toLowerCase(), it);
         }
 
-        curNode.AddChild(dist, item);
+        curNode.addChild(dist, item);
         ++size;
     }
 
-    public final List<T> Search(String word, int d) {
+    final List<T> search(String word, int d) {
         ArrayList<T> rtn = new ArrayList<>(size);
-        RecursiveSearch(_Root, rtn, word.toLowerCase(), d);
+        recursiveSearch(_root, rtn, word.toLowerCase(), d);
         rtn.trimToSize();
         return rtn;
     }
 
-    private void RecursiveSearch(Node<T> node, List<T> rtn, String word, int d) {
+    private void recursiveSearch(_node<T> node, List<T> rtn, String word, int d) {
 
-        final int curDist = LevenshteinDistance(node.item().toString().toLowerCase(), word);
-
+        final int curDist = levenshteinDistance(node.item().toString().toLowerCase(), word);
         final int minDist = curDist - d;
         final int maxDist = curDist + d;
 
         if(curDist <= d) rtn.add(node.item());
 
-        for(int key: node.Keys()) {
+        for(int key: node.keys()) {
             if(key >= minDist && key <= maxDist) {
-                RecursiveSearch(node.Get(key), rtn, word, d);
+                recursiveSearch(node.get(key), rtn, word, d);
             }
         }
     }
 
-    private static int LevenshteinDistance(String first, String second) {
+    private static int levenshteinDistance(String first, String second) {
 
         if(first.length() == 0) return second.length();
         if(second.length() == 0) return first.length();
@@ -157,14 +156,9 @@ public class BKTree<T> implements Iterable<T> {
         return d[lenFirst][lenSecond];
     }
 
-    public ArrayList<T> asList() {
-
+    ArrayList<T> asList() {
         final ArrayList<T> l = new ArrayList<>(size);
-
-        for(T t: this) {
-            l.add(t);
-        }
-
+        for(T t: this) l.add(t);
         return l;
     }
 
@@ -178,16 +172,16 @@ public class BKTree<T> implements Iterable<T> {
             final ArrayList<T> items = new ArrayList<>(size);
 
             private _iterator() {
-                items.add(_Root.item());
-                nextNode(_Root.children);
+                items.add(_root.item());
+                nextNode(_root.children);
                 items.trimToSize();
                 iter = items.iterator();
             }
 
-            private void nextNode(Map<Integer, Node<T>> children) {
+            private void nextNode(Map<Integer, _node<T>> children) {
 
                 if(children != null) {
-                    for(Node<T> n: children.values()) {
+                    for(_node<T> n: children.values()) {
                         items.add(n.item());
                         nextNode(n.children);
                     }

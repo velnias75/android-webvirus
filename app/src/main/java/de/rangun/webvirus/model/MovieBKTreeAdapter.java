@@ -149,7 +149,7 @@ public final class MovieBKTreeAdapter extends ArrayAdapter<String> {
                     final Set<IMovie>  best = rexConstraint == null ? new TreeSet<>() :
                             new LinkedHashSet<>();
                     final List<IMovie> near = (rexConstraint == null && !isSpecialSearch) ?
-                            movies.Search(lowerConstraint,lowerConstraint.length() >> 1) :
+                            movies.search(lowerConstraint,lowerConstraint.length() >> 1) :
                             new ArrayList<>();
 
                     if(rexConstraint == null) {

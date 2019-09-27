@@ -42,9 +42,11 @@ import com.android.volley.toolbox.ImageLoader;
         return (bitmap.getByteCount() >> 10);
     }
 
-    public boolean contains(String key) {
-        return get(key) != null;
-    }
+// --Commented out by Inspection START (28.09.19 00:23):
+//    public boolean contains(String key) {
+//        return get(key) != null;
+//    }
+// --Commented out by Inspection STOP (28.09.19 00:23)
 
     public Bitmap getBitmap(String key) {
         return get(key);
