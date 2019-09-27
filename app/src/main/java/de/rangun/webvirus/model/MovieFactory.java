@@ -21,8 +21,6 @@
 
 package de.rangun.webvirus.model;
 
-import android.util.Log;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonArrayRequest;
@@ -78,7 +76,7 @@ public final class MovieFactory {
                     movies.Add(m);
 
                 } catch (JSONException ex) {
-                    cb.error("Error: " + ex.getLocalizedMessage());
+                    cb.error(ex.getMessage());
                 }
             }
 
@@ -87,12 +85,10 @@ public final class MovieFactory {
         }
 
     }, error -> {
-        if (cb != null) cb.error("Error: " + error.getLocalizedMessage());
+        if (cb != null) cb.error("" + error.networkResponse.statusCode);
     });
 
-    private MovieFactory() {
-        Log.d(TAG, "MovieFactory constructed");
-    }
+    private MovieFactory() {}
 
     public static MovieFactory instance() {
         if (_instance == null) _instance = new MovieFactory();
@@ -112,6 +108,7 @@ public final class MovieFactory {
         if(cb != null) cb.loading();
 
         jsonArrayRequest.setTag(TAG);
+        jsonArrayRequest.setShouldCache(false);
         q.add(jsonArrayRequest);
     }
 }

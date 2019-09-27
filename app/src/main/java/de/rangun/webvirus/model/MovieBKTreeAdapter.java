@@ -23,6 +23,7 @@ package de.rangun.webvirus.model;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -38,13 +39,21 @@ import androidx.annotation.Nullable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
 import de.rangun.webvirus.R;
+import jregex.Matcher;
+import jregex.Pattern;
+import jregex.PatternSyntaxException;
+import jregex.REFlags;
 
 public class MovieBKTreeAdapter extends ArrayAdapter<String> {
+
+    private final static Pattern rexSearch = new Pattern("/([^/]+)/",
+            REFlags.IGNORE_CASE|REFlags.UNICODE);
 
     private final MovieBKTree movies;
     private final List<String> titles;
@@ -96,7 +105,7 @@ public class MovieBKTreeAdapter extends ArrayAdapter<String> {
 
     @Override
     public int getCount() {
-        return filtered.size();
+        return filtered != null ? filtered.size() : 0;
     }
 
     @Nullable
@@ -125,23 +134,52 @@ public class MovieBKTreeAdapter extends ArrayAdapter<String> {
 
                     final String lowerConstraint = constraint.toString().toLowerCase();
 
-                    final Set<String>  best = new TreeSet<>();
-                    final List<String> near = movies.Search(lowerConstraint,
-                            lowerConstraint.length() >> 1);
+                    Pattern rexConstraint = null;
 
-                    for(String s: titles) {
-                        if(s.toLowerCase().contains(lowerConstraint)) best.add(s);
+                    Matcher m = rexSearch.matcher(lowerConstraint);
+
+                    if(m.matches()) {
+                        try {
+                            rexConstraint = new Pattern(".*(" + m.group(1) + ").*");
+                        } catch(PatternSyntaxException ex) {
+                            Log.i(getClass().getName(),
+                                    "provided regular expression pattern", ex);
+                        }
                     }
 
-                    near.removeAll(best);
+                    final Set<String>  best = rexConstraint == null ? new TreeSet<>() :
+                            new LinkedHashSet<>();
+                    final List<String> near = rexConstraint == null ? movies.Search(lowerConstraint,
+                            lowerConstraint.length() >> 1) : new ArrayList<>();
+
+                    if(rexConstraint == null) {
+
+                        for (String s : titles) {
+                            if (s.toLowerCase().contains(lowerConstraint)) best.add(s);
+                        }
+
+                        near.removeAll(best);
+
+                        separatorPos = near.isEmpty() ? null : best.size();
+
+                    } else {
+
+                        separatorPos = 0;
+
+                        best.add(getContext().getResources().getString(R.string.rexsuggests));
+
+                        for (String s : titles) {
+                            Matcher rxMatcher = rexConstraint.matcher(s.toLowerCase());
+                            if(rxMatcher.matches()) best.add(s);
+                        }
+                    }
 
                     fr.values = new ArrayList<String>(best.size() + near.size() + 1);
-                    separatorPos = near.isEmpty() ? null : best.size();
 
                     //noinspection unchecked
                     ((List<String>)fr.values).addAll(best);
 
-                    if(!near.isEmpty()) //noinspection unchecked
+                    if(!near.isEmpty() && rexConstraint == null) //noinspection unchecked
                         ((List<String>)fr.values).add(getContext().
                             getResources().getString(R.string.bksuggests));
 

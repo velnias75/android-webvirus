@@ -33,7 +33,7 @@
     <string name="movie_abstract">OMDB Kurzbeschreibung</string>
     <string name="fetch_abstract">"Hole Kurzbeschreibung von OMDB …"</string>
     <string name="no_abstract">Aufgrund fehlender Intelligenz kann Webvirus keine Kurzbeschreibung für Dich erfinden.</string>
-    <string name="searchboxhint">Suchbegriff(e)</string>
+    <string name="searchboxhint">Suchbegriff(e) oder /regulärer Ausdruck/</string>
     <string name="notfound"><font color="red"><b>Du kannst nur nach Schrott- oder Rentnerfilmen suchen. Somit habe ich Deinen hippen Film nicht gefunden.</b></font></string>
     <string name="loading">Lade hirnlose Schrott- oder Rentnerfilme …</string>
     <string name="loaded">%1$d hirnlose Schrott- oder Rentnerfilme geladen.</string>
@@ -45,6 +45,8 @@
     <string name="categoryYouth">Märchen- oder Jugendfilm</string>
     <string name="categoryDocumentary">Dokumentation</string>
     <string name="categoryConcert">Konzert</string>
-    <string name="bksuggests">Hirnlose Rentnerfilmvorschläge von Burkhard und Kellers Baum</string>
+    <string name="bksuggests">hirnlose Rentnerfilmvorschläge von Burkhard und Kellers Baum</string>
+    <string name="rexsuggests">hirnlose Rentnerfilmvorschläge vom unbewiesenen Halteproblem</string>
     <string name="reload">Lade hirnlose Rentnerfilme neu</string>
+    <string name="network_error"><font color="red">hirnloser Fähler: <b>%1$s</b></font></string>
 </resources>

@@ -244,8 +244,9 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void error(String localizedMessage) {
-        status.setText(localizedMessage);
+    public void error(String msg) {
+        findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+        status.setText(getString(R.string.network_error, msg));
     }
 
     @Override
