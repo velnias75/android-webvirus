@@ -46,7 +46,7 @@ public final class SearchBarFragment extends Fragment {
     private OnMovieUpdateRequestListener listener;
 
     public interface OnMovieUpdateRequestListener {
-        void onUpdateMovieByTitle(String title, SearchBarFragment sbf);
+        void onUpdateMovieByTitleOrId(String text, SearchBarFragment sbf);
     }
 
     @Override
@@ -89,7 +89,7 @@ public final class SearchBarFragment extends Fragment {
         textView.setOnEditorActionListener((v, actionId, event) -> {
 
             if(EditorInfo.IME_ACTION_SEARCH == actionId) {
-                listener.onUpdateMovieByTitle(v.getText().toString(), this);
+                listener.onUpdateMovieByTitleOrId(v.getText().toString(), this);
                 return true;
             }
 
@@ -97,7 +97,7 @@ public final class SearchBarFragment extends Fragment {
         });
 
         search.setOnClickListener(v ->
-                listener.onUpdateMovieByTitle(textView.getText().toString(), this));
+                listener.onUpdateMovieByTitleOrId(textView.getText().toString(), this));
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 

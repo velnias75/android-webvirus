@@ -172,10 +172,14 @@ public final class MovieBKTreeAdapter extends ArrayAdapter<String> {
                         best.add(new DummyMovie(getContext().getResources().
                                 getString(R.string.rexsuggests)));
 
+                        final Set<IMovie> aux = new TreeSet<>();
+
                         for (IMovie s : movies) {
                             Matcher rxMatcher = rexConstraint.matcher(s.title().toLowerCase());
-                            if(rxMatcher.matches()) best.add(s);
+                            if(rxMatcher.matches()) aux.add(s);
                         }
+
+                        best.addAll(aux);
                     }
 
                     fr.values = new ArrayList<String>(best.size() + near.size() + 1);
