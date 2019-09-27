@@ -30,7 +30,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
-import android.widget.TextView;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
@@ -45,6 +44,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import de.rangun.webvirus.R;
+import de.rangun.webvirus.widgets.CategoryTextView;
 import jregex.Matcher;
 import jregex.Pattern;
 import jregex.PatternSyntaxException;
@@ -56,10 +56,7 @@ public class MovieBKTreeAdapter extends ArrayAdapter<String> {
             REFlags.IGNORE_CASE|REFlags.UNICODE);
 
     private final MovieBKTree movies;
-    private final List<String> titles;
-
-    private List<String> filtered;
-
+    private List<IMovie> filtered;
     private Integer separatorPos = null;
 
     public MovieBKTreeAdapter(@NonNull Context context, @LayoutRes int resource,
@@ -68,8 +65,7 @@ public class MovieBKTreeAdapter extends ArrayAdapter<String> {
         super(context, resource);
 
         this.movies = movies;
-        this.titles = this.movies.titles();
-        filtered = this.titles;
+        filtered = this.movies.asList();
     }
 
     @Override
@@ -88,14 +84,14 @@ public class MovieBKTreeAdapter extends ArrayAdapter<String> {
                                 @NonNull ViewGroup parent) {
 
         final View v = super.getView(position, convertView, parent);
-        final TextView tv = (TextView)v;
+        final CategoryTextView tv = (CategoryTextView)v;
 
         if(separatorPos != null && position == separatorPos) {
             tv.setTextColor(Color.GRAY);
             tv.setGravity(Gravity.CENTER_HORIZONTAL);
             tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
         } else {
-            tv.setTextColor(Color.BLACK);
+            tv.setTextColorByCategory(filtered.get(position).category());
             tv.setGravity(Gravity.START);
             tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
         }
@@ -111,7 +107,7 @@ public class MovieBKTreeAdapter extends ArrayAdapter<String> {
     @Nullable
     @Override
     public String getItem(int position) {
-        return filtered.get(position);
+        return filtered.get(position).toString();
     }
 
     @Override
@@ -147,15 +143,15 @@ public class MovieBKTreeAdapter extends ArrayAdapter<String> {
                         }
                     }
 
-                    final Set<String>  best = rexConstraint == null ? new TreeSet<>() :
+                    final Set<IMovie>  best = rexConstraint == null ? new TreeSet<>() :
                             new LinkedHashSet<>();
-                    final List<String> near = rexConstraint == null ? movies.Search(lowerConstraint,
+                    final List<IMovie> near = rexConstraint == null ? movies.Search(lowerConstraint,
                             lowerConstraint.length() >> 1) : new ArrayList<>();
 
                     if(rexConstraint == null) {
 
-                        for (String s : titles) {
-                            if (s.toLowerCase().contains(lowerConstraint)) best.add(s);
+                        for (IMovie s : movies) {
+                            if (s.title().toLowerCase().contains(lowerConstraint)) best.add(s);
                         }
 
                         near.removeAll(best);
@@ -166,10 +162,11 @@ public class MovieBKTreeAdapter extends ArrayAdapter<String> {
 
                         separatorPos = 0;
 
-                        best.add(getContext().getResources().getString(R.string.rexsuggests));
+                        best.add(new DummyMovie(getContext().getResources().
+                                getString(R.string.rexsuggests)));
 
-                        for (String s : titles) {
-                            Matcher rxMatcher = rexConstraint.matcher(s.toLowerCase());
+                        for (IMovie s : movies) {
+                            Matcher rxMatcher = rexConstraint.matcher(s.title().toLowerCase());
                             if(rxMatcher.matches()) best.add(s);
                         }
                     }
@@ -177,25 +174,25 @@ public class MovieBKTreeAdapter extends ArrayAdapter<String> {
                     fr.values = new ArrayList<String>(best.size() + near.size() + 1);
 
                     //noinspection unchecked
-                    ((List<String>)fr.values).addAll(best);
+                    ((List<IMovie>)fr.values).addAll(best);
 
                     if(!near.isEmpty() && rexConstraint == null) //noinspection unchecked
-                        ((List<String>)fr.values).add(getContext().
-                            getResources().getString(R.string.bksuggests));
+                        ((List<IMovie>)fr.values).add(new DummyMovie(getContext().
+                            getResources().getString(R.string.bksuggests)));
 
                     //noinspection unchecked
-                    ((List<String>)fr.values).addAll(near);
+                    ((List<IMovie>)fr.values).addAll(near);
 
                     //noinspection unchecked
-                    ((ArrayList<String>)fr.values).trimToSize();
+                    ((ArrayList<IMovie>)fr.values).trimToSize();
 
                     //noinspection unchecked
-                    fr.count = ((List<String>)fr.values).size();
+                    fr.count = ((List<IMovie>)fr.values).size();
 
                 } else {
                     separatorPos = null;
-                    fr.values = titles;
-                    fr.count  = titles.size();
+                    fr.values = null;
+                    fr.count  = 0;
                 }
 
                 return fr;
@@ -204,7 +201,7 @@ public class MovieBKTreeAdapter extends ArrayAdapter<String> {
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
                 //noinspection unchecked
-                filtered = (List<String>)results.values;
+                filtered = (List<IMovie>)results.values;
                 notifyDataSetChanged();
             }
         };

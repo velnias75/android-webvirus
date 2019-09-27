@@ -16,38 +16,21 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with android-webvirus.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  Last modified 23.09.19 06:31 by heiko
+ *  Last modified 27.09.19 05:03 by heiko
  */
 
 package de.rangun.webvirus.model;
 
 import android.content.Context;
 
-import java.util.List;
+class DummyMovie extends AbstractMovie {
 
-public interface IMovie extends Comparable<IMovie> {
+    public DummyMovie(String title) {
+        super(title);
+    }
 
-    long id();
-
-    String title();
-
-    long duration();
-
-    String durationString();
-
-    List<String> languages();
-
-    String disc();
-
-    int category();
-
-    String filename(Context ctx);
-
-    boolean omu();
-
-    boolean top250();
-
-    Long oid();
-
-    String description(Context ctx);
+    @Override
+    public String description(Context ctx) {
+        return "dummy";
+    }
 }

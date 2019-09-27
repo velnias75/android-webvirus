@@ -20,7 +20,8 @@
   ~  Last modified 26.09.19 11:10 by heiko
   -->
 
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+<de.rangun.webvirus.widgets.CategoryTextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     style="@android:style/TextAppearance.DeviceDefault.Widget.DropDownItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"

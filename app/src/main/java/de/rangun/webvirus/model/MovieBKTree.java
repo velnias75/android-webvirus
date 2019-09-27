@@ -21,13 +21,7 @@
 
 package de.rangun.webvirus.model;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 public final class MovieBKTree extends BKTree<IMovie> {
-
-    private ArrayList<String> titles = null;
 
     public IMovie getByMovieId(long id) {
 
@@ -38,23 +32,6 @@ public final class MovieBKTree extends BKTree<IMovie> {
         }
 
         return getRootItem();
-    }
-
-    public List<String> titles() {
-
-        if(titles == null) {
-
-            titles = new ArrayList<>(size());
-
-            for(IMovie m: this) {
-                titles.add(m.title());
-            }
-
-            titles.trimToSize();
-        }
-
-        Collections.sort(titles);
-        return Collections.unmodifiableList(titles);
     }
 
     public IMovie findByTitle(String text) {

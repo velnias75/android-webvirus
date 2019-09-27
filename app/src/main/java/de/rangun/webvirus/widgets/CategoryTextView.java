@@ -36,11 +36,15 @@ public class CategoryTextView extends AppCompatTextView {
 
     public final void setCategoryText(int cat) {
         super.setText(catText(cat));
-        super.setTextColor(color(cat));
+        setTextColorByCategory(cat);
     }
 
     public final void setText(CharSequence txt, int cat) {
         super.setText(txt);
+        setTextColorByCategory(cat);
+    }
+
+    public final void setTextColorByCategory(int cat) {
         super.setTextColor(color(cat));
     }
 

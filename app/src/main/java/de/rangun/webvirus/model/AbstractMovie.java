@@ -31,6 +31,12 @@ abstract class AbstractMovie implements IMovie {
 
     private final MovieProxy.MovieParameters m;
 
+    AbstractMovie(String title) {
+        m = new MovieProxy.MovieParameters(0, title, null,0L,
+                "", null, -1, null, false,
+                false, null);
+    }
+
     AbstractMovie(MovieProxy.MovieParameters m) {
         this.m = m;
     }
@@ -80,6 +86,11 @@ abstract class AbstractMovie implements IMovie {
     @Override
     public boolean top250() {
         return m.isTop250();
+    }
+
+    @Override
+    public int compareTo(IMovie o) {
+        return title().compareTo(o.title());
     }
 
     @NonNull

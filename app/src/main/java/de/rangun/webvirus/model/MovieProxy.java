@@ -168,6 +168,11 @@ final class MovieProxy implements IMovie {
         return movie.description(ctx);
     }
 
+    @Override
+    public int compareTo(IMovie o) {
+        return title().compareTo(o.title());
+    }
+
     @NonNull
     @Override
     public String toString() {

@@ -106,21 +106,21 @@ public class BKTree<T> implements Iterable<T> {
         ++size;
     }
 
-    public final List<String> Search(String word, int d) {
-        ArrayList<String> rtn = new ArrayList<>(size);
+    public final List<T> Search(String word, int d) {
+        ArrayList<T> rtn = new ArrayList<>(size);
         RecursiveSearch(_Root, rtn, word.toLowerCase(), d);
         rtn.trimToSize();
         return rtn;
     }
 
-    private void RecursiveSearch(Node<T> node, List<String> rtn, String word, int d) {
+    private void RecursiveSearch(Node<T> node, List<T> rtn, String word, int d) {
 
         final int curDist = LevenshteinDistance(node.item().toString().toLowerCase(), word);
 
         final int minDist = curDist - d;
         final int maxDist = curDist + d;
 
-        if(curDist <= d) rtn.add(node.item().toString());
+        if(curDist <= d) rtn.add(node.item());
 
         for(int key: node.Keys()) {
             if(key >= minDist && key <= maxDist) {
@@ -155,6 +155,17 @@ public class BKTree<T> implements Iterable<T> {
         }
 
         return d[lenFirst][lenSecond];
+    }
+
+    public ArrayList<T> asList() {
+
+        final ArrayList<T> l = new ArrayList<>(size);
+
+        for(T t: this) {
+            l.add(t);
+        }
+
+        return l;
     }
 
     @NonNull
