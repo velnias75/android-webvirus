@@ -30,7 +30,7 @@ import android.view.MotionEvent;
 
 import androidx.appcompat.widget.AppCompatAutoCompleteTextView;
 
-public class CustomAutoCompleteTextView extends AppCompatAutoCompleteTextView {
+public final class CustomAutoCompleteTextView extends AppCompatAutoCompleteTextView {
 
     private Drawable drawableRight;
     private Drawable drawableLeft;

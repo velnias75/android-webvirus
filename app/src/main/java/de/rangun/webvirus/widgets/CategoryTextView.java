@@ -28,7 +28,7 @@ import androidx.appcompat.widget.AppCompatTextView;
 
 import de.rangun.webvirus.R;
 
-public class CategoryTextView extends AppCompatTextView {
+public final class CategoryTextView extends AppCompatTextView {
 
     public CategoryTextView(Context ctx, AttributeSet atts) {
         super(ctx, atts);

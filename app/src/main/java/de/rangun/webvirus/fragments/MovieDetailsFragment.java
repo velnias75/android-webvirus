@@ -40,7 +40,7 @@ import de.rangun.webvirus.model.BitmapMemCache;
 import de.rangun.webvirus.model.IMovie;
 import de.rangun.webvirus.widgets.CategoryTextView;
 
-public class MovieDetailsFragment extends Fragment {
+public final class MovieDetailsFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,

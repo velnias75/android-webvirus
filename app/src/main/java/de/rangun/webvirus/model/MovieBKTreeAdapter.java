@@ -50,7 +50,7 @@ import jregex.Pattern;
 import jregex.PatternSyntaxException;
 import jregex.REFlags;
 
-public class MovieBKTreeAdapter extends ArrayAdapter<String> {
+public final class MovieBKTreeAdapter extends ArrayAdapter<String> {
 
     private final static Pattern rexSearch = new Pattern("/([^/]+)/",
             REFlags.IGNORE_CASE|REFlags.UNICODE);
@@ -104,7 +104,6 @@ public class MovieBKTreeAdapter extends ArrayAdapter<String> {
         return filtered != null ? filtered.size() : 0;
     }
 
-    @Nullable
     @Override
     public String getItem(int position) {
         return filtered.get(position).toString();

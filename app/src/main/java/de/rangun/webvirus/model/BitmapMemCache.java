@@ -26,7 +26,8 @@ import android.util.LruCache;
 
 import com.android.volley.toolbox.ImageLoader;
 
-public class BitmapMemCache extends LruCache<String, Bitmap> implements ImageLoader.ImageCache {
+ public final class BitmapMemCache extends LruCache<String, Bitmap>
+         implements ImageLoader.ImageCache {
 
     public BitmapMemCache() {
         this((int) (Runtime.getRuntime().maxMemory() >> 10) >> 3);

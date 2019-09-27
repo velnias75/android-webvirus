@@ -41,7 +41,7 @@ import de.rangun.webvirus.R;
 import de.rangun.webvirus.widgets.CustomAutoCompleteTextView;
 import de.rangun.webvirus.widgets.DrawableClickListener;
 
-public class SearchBarFragment extends Fragment {
+public final class SearchBarFragment extends Fragment {
 
     private OnMovieUpdateRequestListener listener;
 
