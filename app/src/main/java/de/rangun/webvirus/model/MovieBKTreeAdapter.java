@@ -127,15 +127,19 @@ public final class MovieBKTreeAdapter extends ArrayAdapter<String> {
 
                 if(constraint != null) {
 
-                    final String lowerConstraint = constraint.toString().toLowerCase();
+                    final String  lowerConstraint = constraint.toString().toLowerCase();
+                    final boolean isSpecialSearch = MovieBKTree.isSpecialSearch(lowerConstraint);
 
                     Pattern rexConstraint = null;
 
-                    Matcher m = rexSearch.matcher(lowerConstraint);
+                    final Matcher rexMatcher = rexSearch.matcher(lowerConstraint);
+                    final Long lid = isSpecialSearch ?
+                            MovieBKTree.extractId(lowerConstraint) : null;
 
-                    if(m.matches()) {
+                    if(rexMatcher.matches()) {
                         try {
-                            rexConstraint = new Pattern(".*(" + m.group(1) + ").*");
+                            rexConstraint = new Pattern(".*(" + rexMatcher.group(1) +
+                                    ").*");
                         } catch(PatternSyntaxException ex) {
                             Log.i(getClass().getName(),
                                     "provided regular expression pattern", ex);
@@ -144,18 +148,22 @@ public final class MovieBKTreeAdapter extends ArrayAdapter<String> {
 
                     final Set<IMovie>  best = rexConstraint == null ? new TreeSet<>() :
                             new LinkedHashSet<>();
-                    final List<IMovie> near = rexConstraint == null ? movies.Search(lowerConstraint,
-                            lowerConstraint.length() >> 1) : new ArrayList<>();
+                    final List<IMovie> near = (rexConstraint == null && !isSpecialSearch) ?
+                            movies.Search(lowerConstraint,lowerConstraint.length() >> 1) :
+                            new ArrayList<>();
 
                     if(rexConstraint == null) {
 
                         for (IMovie s : movies) {
-                            if (s.title().toLowerCase().contains(lowerConstraint)) best.add(s);
+                            if((isSpecialSearch && lid != null && lid.equals(s.id()))
+                                    || s.title().toLowerCase().contains(lowerConstraint)) {
+                                best.add(s);
+                            }
                         }
 
                         near.removeAll(best);
 
-                        separatorPos = near.isEmpty() ? null : best.size();
+                        separatorPos = (near.isEmpty() || isSpecialSearch) ? null : best.size();
 
                     } else {
 
@@ -175,7 +183,7 @@ public final class MovieBKTreeAdapter extends ArrayAdapter<String> {
                     //noinspection unchecked
                     ((List<IMovie>)fr.values).addAll(best);
 
-                    if(!near.isEmpty() && rexConstraint == null) //noinspection unchecked
+                    if(!near.isEmpty() && rexConstraint == null && !isSpecialSearch) //noinspection unchecked
                         ((List<IMovie>)fr.values).add(new DummyMovie(getContext().
                             getResources().getString(R.string.bksuggests)));
 

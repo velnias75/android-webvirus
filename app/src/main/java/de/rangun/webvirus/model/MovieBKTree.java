@@ -21,9 +21,31 @@
 
 package de.rangun.webvirus.model;
 
+import jregex.Matcher;
+import jregex.Pattern;
+
 public final class MovieBKTree extends BKTree<IMovie> {
 
+    private final static Pattern idSearch = new Pattern("#(\\d+)");
+
+    static boolean isSpecialSearch(String text) {
+        return ('#' == text.charAt(0) && MovieBKTree.idSearch.matches(text));
+    }
+
+    static Long extractId(String text) {
+
+        final Matcher idMatcher = MovieBKTree.idSearch.matcher(text);
+
+        if(idMatcher.matches()) return Long.parseLong(idMatcher.group(1));
+
+        return null;
+    }
+
     public IMovie getByMovieId(long id) {
+        return getByMovieId(id, true);
+    }
+
+    private IMovie getByMovieId(long id, boolean returnRoot) {
 
         for(IMovie m: this) {
             if (m.id() == id) {
@@ -31,15 +53,24 @@ public final class MovieBKTree extends BKTree<IMovie> {
             }
         }
 
-        return getRootItem();
+        return returnRoot ? getRootItem() : null;
     }
 
-    public IMovie findByTitle(String text) {
+    public IMovie findByTitleOrId(String text) {
 
-        for(IMovie m: this) {
-            if (text.equalsIgnoreCase(m.title())) {
-                return m;
+        if(!isSpecialSearch(text)) {
+
+            for(IMovie m: this) {
+                if (text.equalsIgnoreCase(m.title())) {
+                    return m;
+                }
             }
+
+        } else {
+
+            final Long lid = extractId(text);
+
+            if(lid != null) return getByMovieId(lid, false);
         }
 
         return null;

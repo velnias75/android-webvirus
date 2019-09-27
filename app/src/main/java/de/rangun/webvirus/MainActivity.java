@@ -165,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements
     public void onUpdateMovieByTitle(String title, SearchBarFragment sbf) {
 
         if(movies != null) {
-            updateMovie(movies.findByTitle(title));
+            updateMovie(movies.findByTitleOrId(title));
         } else {
             sbf.hideSoftKeyboard();
         }
