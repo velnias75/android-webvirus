@@ -67,7 +67,7 @@ public class MovieFetcherService extends Service implements MovieFactory.OnMovie
         LOADED(2, android.R.drawable.stat_notify_sync, NotificationCompat.PRIORITY_MIN,
                 CHANNEL_MIN, 10000L),
         NOTFOUND(3, android.R.drawable.stat_notify_error, NotificationCompat.PRIORITY_LOW,
-                CHANNEL_LOW, 5000L);
+                CHANNEL_LOW, 10000L);
 
         private final int id;
         private final int prio;
@@ -87,7 +87,8 @@ public class MovieFetcherService extends Service implements MovieFactory.OnMovie
 // --Commented out by Inspection STOP (28.09.19 03:47)
 
         NOTIFICATION(int id, int icon, int prio, String chan) {
-            this(id, icon, prio, chan, null);
+            this(id, icon, prio, chan,
+                    null);
         }
 
         NOTIFICATION(int id, int icon, int prio, String chan, Long duration) {

@@ -32,11 +32,13 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.text.Html;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -83,7 +85,6 @@ public class MainActivity extends AppCompatActivity implements
     };
 
     private boolean mBound = false;
-    private TextView status = null;
     private StringBuilder preZeros = null;
     private Long currentId = null;
     private MovieFetcherService mfs;
@@ -133,8 +134,6 @@ public class MainActivity extends AppCompatActivity implements
 
         super.onResume();
 
-        status = findViewById(R.id.status);
-
         ConnectivityManager cm =
                 (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -142,11 +141,7 @@ public class MainActivity extends AppCompatActivity implements
 
             NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
 
-            if (activeNetwork != null && activeNetwork.isConnected()) {
-
-                //TODO: move in service
-
-            } else {
+            if (!(activeNetwork != null && activeNetwork.isConnected())) {
                 findViewById(R.id.loadingPanel).setVisibility(View.GONE);
                 setStatus(R.string.not_connected);
             }
@@ -314,8 +309,18 @@ public class MainActivity extends AppCompatActivity implements
 
     private void setStatus(String txt, int color, NOTIFICATION notification) {
 
-        status.setTextColor(color);
-        status.setText(Html.fromHtml(txt));
+        LayoutInflater inflater = getLayoutInflater();
+        View layout = inflater.inflate(R.layout.custom_toast,
+                findViewById(R.id.custom_toast_container));
+
+        TextView text = (TextView) layout.findViewById(R.id.text);
+        text.setText(Html.fromHtml(txt));
+        text.setTextColor(color);
+
+        Toast toast = new Toast(getApplicationContext());
+        toast.setDuration(Toast.LENGTH_LONG);
+        toast.setView(layout);
+        toast.show();
 
         if(NOTIFICATION.NONE != notification) {
             if(mBound) mfs.notify(txt, notification);

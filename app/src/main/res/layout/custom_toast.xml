@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright 2019 by Heiko Schäfer <heiko@rangun.de>
+  ~
+  ~  This file is part of android-webvirus.
+  ~
+  ~  android-webvirus is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU Lesser General Public License as
+  ~  published by the Free Software Foundation, either version 3 of
+  ~  the License, or (at your option) any later version.
+  ~
+  ~  android-webvirus is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU Lesser General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU Lesser General Public License
+  ~  along with android-webvirus.  If not, see <http://www.gnu.org/licenses/>.
+  ~
+  ~  Last modified 28.09.19 15:07 by heiko
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/custom_toast_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@android:drawable/toast_frame">
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginVertical="15dp"
+        android:layout_weight="1"
+        android:textAppearance="@android:style/TextAppearance.Small"
+        tools:targetApi="o" />
+
+</LinearLayout>
