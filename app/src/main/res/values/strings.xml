@@ -19,7 +19,7 @@
   ~  Last modified 23.09.19 06:31 by heiko
   -->
 
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <string name="app_name">Webvirus</string>
     <string name="title">Heikos Schrott- &amp; Rentnerfilme</string>
     <string name="version">✋ Die Zombieboxversion ✋</string>
@@ -34,7 +34,7 @@
     <string name="fetch_abstract">"Hole Kurzbeschreibung von OMDB …"</string>
     <string name="no_abstract">Aufgrund fehlender Intelligenz kann Webvirus keine Kurzbeschreibung für Dich erfinden.</string>
     <string name="searchboxhint">Suchbegriff(e) oder /regulärer Ausdruck/</string>
-    <string name="notfound" tools:ignore="UnusedResources"><font color="red" tools:keep="@font/"><b>Du kannst nur nach Schrott- oder Rentnerfilmen suchen. Somit habe ich Deinen hippen Film nicht gefunden.</b></font></string>
+    <string name="notfound"><b>Du kannst nur nach Schrott- oder Rentnerfilmen suchen. Somit habe ich Deinen hippen Film nicht gefunden.</b></string>
     <string name="loading">Lade hirnlose Schrott- oder Rentnerfilme …</string>
     <string name="loaded">%1$d hirnlose Schrott- oder Rentnerfilme geladen.</string>
     <string name="initial_status">Es sind keine hirnlose Schrott- oder Rentnerfilme geladen.</string>
@@ -48,5 +48,13 @@
     <string name="bksuggests">hirnlose Rentnerfilmvorschläge von Burkhard und Kellers Baum</string>
     <string name="rexsuggests">hirnlose Rentnerfilmvorschläge vom unbewiesenen Halteproblem</string>
     <string name="reload">Lade hirnlose Rentnerfilme neu</string>
-    <string name="network_error"><font color="red" tools:keep="@font/">hirnloser Fähler: <b>%1$s</b></font></string>
+    <string name="network_error">hirnloser Fähler: <b>%1$s</b></string>
+    <string name="notification_default_name">Allgemeine Logik</string>
+    <string name="notification_default_desc">Es wird nur die Logik der Allgemeinheit benötigt</string>
+    <string name="notification_high_name">Promotion in Informatik</string>
+    <string name="notification_high_desc">Es wird mindestens ein Doktorgrad in Informatik benötigt</string>
+    <string name="notification_min_name">Hip</string>
+    <string name="notification_min_desc">Hippe Zombieboxbenutzer verstehen dies</string>
+    <string name="notification_low_name">Altmodisch</string>
+    <string name="notification_low_desc">Altmodische Smartphonenutzer mögen dies</string>
 </resources>
