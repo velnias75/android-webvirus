@@ -21,6 +21,7 @@
 
 package de.rangun.webvirus.model;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonArrayRequest;
@@ -85,7 +86,9 @@ public final class MovieFactory {
         }
 
     }, error -> {
-        if (cb != null) cb.error("" + error.networkResponse.statusCode);
+        if (cb != null && error != null && error.networkResponse != null) {
+            cb.error("" + error.networkResponse.statusCode);
+        }
     });
 
     private MovieFactory() {}
@@ -109,6 +112,9 @@ public final class MovieFactory {
 
         jsonArrayRequest.setTag(TAG);
         jsonArrayRequest.setShouldCache(false);
+        jsonArrayRequest.setRetryPolicy(new DefaultRetryPolicy(
+                DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 48,
+                5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         q.add(jsonArrayRequest);
     }
 }

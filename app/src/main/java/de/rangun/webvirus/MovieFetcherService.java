@@ -128,6 +128,7 @@ public class MovieFetcherService extends Service implements MovieFactory.OnMovie
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
+        createNotificationChannel();
         return binder;
     }
 
@@ -188,7 +189,8 @@ public class MovieFetcherService extends Service implements MovieFactory.OnMovie
 
         if(movies.size() > lastMovieCount) {
 
-            notify(getString(R.string.new_movies), NOTIFICATION.NEW);
+            notify(getString(R.string.new_movies, movies.size() - lastMovieCount),
+                    NOTIFICATION.NEW);
 
             lastMovieCount = movies.size();
 
@@ -197,6 +199,8 @@ public class MovieFetcherService extends Service implements MovieFactory.OnMovie
             Log.d(TAG, "(after fetch) lastMovieCount=" + lastMovieCount);
 
         } else Log.d(TAG, "(after fetch) lastMovieCount unchanged");
+
+        //sharedPrefs.edit().putInt("lastMovieCount", 3200).apply();
 
         if(listener != null) listener.movies(this.movies);
     }
