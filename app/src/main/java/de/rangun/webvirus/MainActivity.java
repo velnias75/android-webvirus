@@ -21,14 +21,15 @@
 
 package de.rangun.webvirus;
 
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
@@ -39,13 +40,10 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 
-import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 
+import de.rangun.webvirus.MovieFetcherService.NOTIFICATION;
 import de.rangun.webvirus.fragments.MovieDetailsFragment;
 import de.rangun.webvirus.fragments.SearchBarFragment;
 import de.rangun.webvirus.model.IMovie;
@@ -60,114 +58,35 @@ public class MainActivity extends AppCompatActivity implements
         MovieFactory.OnMoviesAvailableListener,
         SearchBarFragment.OnMovieUpdateRequestListener {
 
-    private static final String CHANNEL_DEFAULT = "de.rangun.webvirus.notifications.default";
-    private static final String CHANNEL_HIGH = "de.rangun.webvirus.notifications.high";
-    private static final String CHANNEL_LOW = "de.rangun.webvirus.notifications.low";
-    private static final String CHANNEL_MIN = "de.rangun.webvirus.notifications.min";
-
     private static final String TAG = "MainActivity";
     private static final double LN10 = log(10);
 
-    private enum NOTIFICATION {
+    private final ServiceConnection connection = new ServiceConnection() {
 
-        NONE(-1),
-        ERROR(0, android.R.drawable.stat_notify_error, NotificationCompat.PRIORITY_HIGH,
-                CHANNEL_HIGH),
-        LOADED(1, android.R.drawable.stat_notify_sync, NotificationCompat.PRIORITY_MIN,
-                CHANNEL_MIN, 10000L),
-        NOTFOUND(2, android.R.drawable.stat_notify_error, NotificationCompat.PRIORITY_LOW,
-                CHANNEL_LOW, 5000L);
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
 
-        private final int id;
-        private final int prio;
-        private final int icon;
-        private final String chan;
-        private final Long duration;
+            MovieFetcherService.MovieFetcherBinder binder =
+                    (MovieFetcherService.MovieFetcherBinder)service;
 
-        NOTIFICATION(int id) {
-            this(id, android.R.drawable.stat_notify_sync,
-                    NotificationCompat.PRIORITY_DEFAULT, CHANNEL_DEFAULT, null);
+            mfs = binder.getService();
+            mfs.setOnMoviesAvailableListener(MainActivity.this);
+            mfs.fetchMovies();
+
+            mBound = true;
         }
 
-// --Commented out by Inspection START (28.09.19 03:47):
-//        NOTIFICATION(int id, int icon) {
-//            this(id, icon, NotificationCompat.PRIORITY_DEFAULT, CHANNEL_DEFAULT, null);
-//        }
-// --Commented out by Inspection STOP (28.09.19 03:47)
-
-        NOTIFICATION(int id, int icon, int prio, String chan) {
-            this(id, icon, prio, chan, null);
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            mBound = false;
         }
+    };
 
-        NOTIFICATION(int id, int icon, int prio, String chan, Long duration) {
-            this.id = id;
-            this.prio = prio;
-            this.icon = icon;
-            this.chan = chan;
-            this.duration = duration;
-        }
-
-        int getId() {
-            return id;
-        }
-
-        int getPriority() {
-            return prio;
-        }
-
-        int getIcon() {
-            return icon;
-        }
-
-        String getChannel() {
-            return chan;
-        }
-
-        Long getDuration() {
-            return duration;
-        }
-    }
-
-    private RequestQueue queue = null;
+    private boolean mBound = false;
     private TextView status = null;
-    private MovieBKTree movies = null;
     private StringBuilder preZeros = null;
     private Long currentId = null;
-
-    private void createNotificationChannel() {
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-
-            if(notificationManager != null) {
-
-                final NotificationChannel channel1 = new NotificationChannel(CHANNEL_DEFAULT,
-                        getString(R.string.notification_default_name),
-                        NotificationManager.IMPORTANCE_DEFAULT);
-                channel1.setDescription(getString(R.string.notification_default_desc));
-                notificationManager.createNotificationChannel(channel1);
-
-                final NotificationChannel channel2 = new NotificationChannel(CHANNEL_HIGH,
-                        getString(R.string.notification_high_name),
-                        NotificationManager.IMPORTANCE_HIGH);
-                channel2.setDescription(getString(R.string.notification_high_desc));
-                notificationManager.createNotificationChannel(channel2);
-
-                final NotificationChannel channel3 = new NotificationChannel(CHANNEL_MIN,
-                        getString(R.string.notification_min_name),
-                        NotificationManager.IMPORTANCE_MIN);
-                channel3.setDescription(getString(R.string.notification_min_desc));
-                notificationManager.createNotificationChannel(channel3);
-
-                final NotificationChannel channel4 = new NotificationChannel(CHANNEL_LOW,
-                        getString(R.string.notification_low_name),
-                        NotificationManager.IMPORTANCE_LOW);
-                channel4.setDescription(getString(R.string.notification_low_desc));
-                notificationManager.createNotificationChannel(channel4);
-            }
-        }
-    }
+    private MovieFetcherService mfs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -181,7 +100,15 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         setContentView(R.layout.activity_main);
-        createNotificationChannel();
+    }
+
+    @Override
+    protected void onStart() {
+
+        super.onStart();
+
+        Intent intent = new Intent(this, MovieFetcherService.class);
+        bindService(intent, connection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -194,20 +121,11 @@ public class MainActivity extends AppCompatActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
 
         if (item.getItemId() == R.id.action_reload) {
-            MovieFactory.instance().fetchMovies(queue);
+            if(mBound) mfs.fetchMovies();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onDestroy() {
-
-        queue.stop();
-        movies = null;
-
-        super.onDestroy();
     }
 
     @Override
@@ -226,12 +144,7 @@ public class MainActivity extends AppCompatActivity implements
 
             if (activeNetwork != null && activeNetwork.isConnected()) {
 
-                if (queue == null) queue = Volley.newRequestQueue(this);
-
-                if (movies == null) {
-                    MovieFactory.instance().setOnMoviesAvailableListener(this);
-                    MovieFactory.instance().fetchMovies(queue);
-                }
+                //TODO: move in service
 
             } else {
                 findViewById(R.id.loadingPanel).setVisibility(View.GONE);
@@ -263,9 +176,8 @@ public class MainActivity extends AppCompatActivity implements
 
         super.onStop();
 
-        if (queue != null) {
-            queue.cancelAll(MovieFactory.instance().tag());
-        }
+        unbindService(connection);
+        mBound = false;
     }
 
     @Override
@@ -276,18 +188,29 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onUpdateMovieByTitleOrId(String text, SearchBarFragment sbf) {
 
-        if(movies != null) {
-            updateMovie(movies.findByTitleOrId(text));
-        } else {
-            sbf.hideSoftKeyboard();
+        if(mBound) {
+
+            final MovieBKTree movies = mfs.getMovies();
+
+            if (movies != null) {
+                updateMovie(movies.findByTitleOrId(text));
+            } else {
+                sbf.hideSoftKeyboard();
+            }
         }
     }
 
     private void updateMovie(long id) {
-        try {
-            updateMovie(movies.getByMovieId(id));
-        } catch (IndexOutOfBoundsException ex) {
-            Log.d(TAG, "Exc: " + ex.getMessage());
+
+        if(mBound) {
+
+            final MovieBKTree movies = mfs.getMovies();
+
+            try {
+                updateMovie(movies.getByMovieId(id));
+            } catch (IndexOutOfBoundsException ex) {
+                Log.d(TAG, "Exc: " + ex.getMessage());
+            }
         }
     }
 
@@ -305,16 +228,23 @@ public class MainActivity extends AppCompatActivity implements
 
         if(m == null) {
             if(mdf != null) mdf.setVisibility(View.GONE);
-            error(getString(R.string.notfound), NOTIFICATION.NOTFOUND);
+            error(getString(R.string.notfound),
+                    NOTIFICATION.NOTFOUND);
             return;
         } else {
+
             if(mdf != null) mdf.setVisibility(View.VISIBLE);
-            setStatus(getString(R.string.loaded, movies.size()));
+
+            if(mBound) {
+                final MovieBKTree movies = mfs.getMovies();
+                setStatus(getString(R.string.loaded, movies.size()));
+            }
         }
 
         currentId = m.id();
 
-        if(mdf != null) mdf.setContents(m, queue, preZeros.toString());
+        if(mdf != null && mBound) mdf.setContents(m, mfs.getQueue(), preZeros.toString());
+
         if(sbf != null) sbf.setText(m.title());
     }
 
@@ -337,19 +267,20 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void movies(MovieBKTree ml) {
+    public void movies(MovieBKTree m) {
 
-        movies = ml;
+        if(mBound) {
 
-        final SearchBarFragment sbf =
+            final SearchBarFragment sbf =
                 (SearchBarFragment)getSupportFragmentManager().findFragmentById(R.id.searchBar);
 
-        if(sbf != null) {
+            if(sbf != null) {
 
-            final ArrayAdapter<String> adapter = new MovieBKTreeAdapter(this,
-                    R.layout.searchsuggestions, movies);
+                final ArrayAdapter<String> adapter = new MovieBKTreeAdapter(this,
+                        R.layout.searchsuggestions, mfs.getMovies());
 
-            sbf.populateCompleter(adapter);
+                sbf.populateCompleter(adapter);
+            }
         }
     }
 
@@ -387,28 +318,12 @@ public class MainActivity extends AppCompatActivity implements
         status.setText(Html.fromHtml(txt));
 
         if(NOTIFICATION.NONE != notification) {
-
-            final NotificationCompat.Builder builder =
-                    new NotificationCompat.Builder(this,
-                    notification.getChannel()).
-                            setSmallIcon(notification.getIcon())
-                            .setContentText(txt)
-                            .setPriority(notification.getPriority());
-
-            if(notification.getDuration() != null) {
-                builder.setTimeoutAfter(notification.getDuration());
-            }
-
-            final NotificationManagerCompat notificationManager =
-                    NotificationManagerCompat.from(this);
-            notificationManager.notify(notification.getId(), builder.build());
+            if(mBound) mfs.notify(txt, notification);
         }
     }
 
     @Override
-    public void fetchDescription(StringRequest rq) {
-        queue.add(rq);
-    }
+    public void fetchDescription(StringRequest rq) {}
 
     @Override
     public void descriptionAvailable(String dsc) {

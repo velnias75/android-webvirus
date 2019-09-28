@@ -27,7 +27,6 @@ import jregex.Pattern;
 public final class MovieBKTree extends BKTree<IMovie> {
 
     private final static Pattern idSearch = new Pattern("#(\\d+)");
-    private long lastUpdate = 0L;
 
     static boolean isSpecialSearch(String text) {
         return ('#' == text.charAt(0) && MovieBKTree.idSearch.matches(text));
@@ -45,7 +44,6 @@ public final class MovieBKTree extends BKTree<IMovie> {
     @Override
     void add(IMovie item) {
         super.add(item);
-        lastUpdate = System.currentTimeMillis() / 1000L;
     }
 
     public IMovie getByMovieId(long id) {

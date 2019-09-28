@@ -49,6 +49,7 @@
     <string name="rexsuggests">hirnlose Rentnerfilmvorschläge vom unbewiesenen Halteproblem</string>
     <string name="reload">Lade hirnlose Rentnerfilme neu</string>
     <string name="network_error">hirnloser Fähler: <b>%1$s</b></string>
+    <string name="new_movies">Neue hirnlose Schrott- bzw. Rentnerfilme sind verfügbar 😭</string>
     <string name="notification_default_name">Allgemeine Logik</string>
     <string name="notification_default_desc">Es wird nur die Logik der Allgemeinheit benötigt</string>
     <string name="notification_high_name">Promotion in Informatik</string>
