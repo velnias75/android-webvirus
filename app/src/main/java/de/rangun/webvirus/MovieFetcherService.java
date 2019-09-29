@@ -21,14 +21,20 @@
 
 package de.rangun.webvirus;
 
+import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -45,7 +51,7 @@ import de.rangun.webvirus.model.MovieFactory;
 
 public class MovieFetcherService extends Service implements MovieFactory.OnMoviesAvailableListener {
 
-    private static final String TAG = "CheckMoviesService";
+    private static final String TAG = "MovieFetcherService";
 
     private static final String CHANNEL_DEFAULT = "de.rangun.webvirus.notifications.default";
     private static final String CHANNEL_HIGH = "de.rangun.webvirus.notifications.high";
@@ -148,7 +154,29 @@ public class MovieFetcherService extends Service implements MovieFactory.OnMovie
         getQueue();
         fetchMovies();
 
+        startPeriodicFetch(intent);
+
         return START_REDELIVER_INTENT;
+    }
+
+    private void startPeriodicFetch(Intent intent) {
+
+        final AlarmManager alarmMgr =
+                (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+
+        if(alarmMgr != null) {
+            final PendingIntent alarmIntent = PendingIntent.getService(this, 0,
+                    intent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+            Log.d(TAG, "periodically fetching movies");
+
+            final long interval = AlarmManager.INTERVAL_HALF_DAY; //(1000 * 3600) * 6;
+
+            alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
+                    SystemClock.elapsedRealtime() + interval, interval, alarmIntent);
+        } else {
+            Log.d(TAG, "NOT periodically fetching movies");
+        }
     }
 
     public RequestQueue getQueue() {
@@ -161,10 +189,24 @@ public class MovieFetcherService extends Service implements MovieFactory.OnMovie
     }
 
     public void fetchMovies() {
+
         Log.d(TAG, "fetchMovies");
 
+        ConnectivityManager cm =
+                (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+
         MovieFactory.instance().setOnMoviesAvailableListener(this);
-        MovieFactory.instance().fetchMovies(getQueue());
+
+        if(cm != null) {
+
+            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+
+            if (activeNetwork != null && activeNetwork.isConnected()) {
+                MovieFactory.instance().fetchMovies(getQueue());
+            } else {
+                error(getString(R.string.not_connected));
+            }
+        }
     }
 
     public MovieBKTree getMovies() {
@@ -201,7 +243,8 @@ public class MovieFetcherService extends Service implements MovieFactory.OnMovie
 
         } else Log.d(TAG, "(after fetch) lastMovieCount unchanged");
 
-        //sharedPrefs.edit().putInt("lastMovieCount", 3200).apply();
+        /*sharedPrefs.edit().putInt("lastMovieCount", new Random().nextInt(3201) + 1).
+                apply();*/
 
         if(listener != null) listener.movies(this.movies);
     }

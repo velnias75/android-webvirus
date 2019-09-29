@@ -26,8 +26,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Color;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.text.Html;
@@ -127,25 +125,6 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onResume() {
-
-        super.onResume();
-
-        ConnectivityManager cm =
-                (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        if(cm != null) {
-
-            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-
-            if (!(activeNetwork != null && activeNetwork.isConnected())) {
-                findViewById(R.id.loadingPanel).setVisibility(View.GONE);
-                setStatus(R.string.not_connected);
-            }
-        }
     }
 
     @Override
@@ -313,7 +292,7 @@ public class MainActivity extends AppCompatActivity implements
         View layout = inflater.inflate(R.layout.custom_toast,
                 findViewById(R.id.custom_toast_container));
 
-        TextView text = (TextView) layout.findViewById(R.id.text);
+        TextView text = layout.findViewById(R.id.text);
         text.setText(Html.fromHtml(txt));
         text.setTextColor(color);
 

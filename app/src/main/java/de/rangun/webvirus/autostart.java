@@ -34,7 +34,7 @@ public class autostart extends BroadcastReceiver {
 
         if(Intent.ACTION_BOOT_COMPLETED.equals(rqIntent.getAction())) {
 
-            Intent intent = new Intent(context, MovieFetcherService.class);
+            final Intent intent = new Intent(context, MovieFetcherService.class);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 context.startForegroundService(intent);
@@ -42,7 +42,7 @@ public class autostart extends BroadcastReceiver {
                 context.startService(intent);
             }
 
-            Log.d("Autostart", "started");
+            Log.d("autostart", "started");
         }
     }
 }
