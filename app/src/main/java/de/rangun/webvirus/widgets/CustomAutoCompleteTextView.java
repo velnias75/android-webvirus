@@ -28,22 +28,28 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatAutoCompleteTextView;
 
 public final class CustomAutoCompleteTextView extends AppCompatAutoCompleteTextView {
 
+    @Nullable
     private Drawable drawableRight;
+    @Nullable
     private Drawable drawableLeft;
+    @Nullable
     private Drawable drawableTop;
+    @Nullable
     private Drawable drawableBottom;
 
     private DrawableClickListener clickListener;
 
-    public CustomAutoCompleteTextView (Context context, AttributeSet attrs) {
+    public CustomAutoCompleteTextView (@NonNull Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public CustomAutoCompleteTextView(Context context, AttributeSet attrs, int defStyle) {
+    public CustomAutoCompleteTextView(@NonNull Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 
@@ -58,8 +64,8 @@ public final class CustomAutoCompleteTextView extends AppCompatAutoCompleteTextV
     }
 
     @Override
-    public void setCompoundDrawables(Drawable left, Drawable top,
-                                     Drawable right, Drawable bottom) {
+    public void setCompoundDrawables(@Nullable Drawable left, @Nullable Drawable top,
+                                     @Nullable Drawable right, @Nullable Drawable bottom) {
         if (left != null) {
             drawableLeft = left;
         }
@@ -76,7 +82,7 @@ public final class CustomAutoCompleteTextView extends AppCompatAutoCompleteTextV
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
+    public boolean onTouchEvent(@NonNull MotionEvent event) {
         Rect bounds;
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             int actionX = (int) event.getX();

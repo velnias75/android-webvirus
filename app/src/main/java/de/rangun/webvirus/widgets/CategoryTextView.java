@@ -24,13 +24,14 @@ package de.rangun.webvirus.widgets;
 import android.content.Context;
 import android.util.AttributeSet;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
 
 import de.rangun.webvirus.R;
 
 public final class CategoryTextView extends AppCompatTextView {
 
-    public CategoryTextView(Context ctx, AttributeSet atts) {
+    public CategoryTextView(@NonNull Context ctx, AttributeSet atts) {
         super(ctx, atts);
     }
 
@@ -48,6 +49,7 @@ public final class CategoryTextView extends AppCompatTextView {
         super.setTextColor(color(cat));
     }
 
+    @NonNull
     private String catText(int cat) {
         switch (cat) {
             case 1:

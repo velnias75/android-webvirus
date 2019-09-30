@@ -38,6 +38,7 @@ import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -45,6 +46,8 @@ import androidx.core.app.NotificationManagerCompat;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+
+import java.util.Objects;
 
 import de.rangun.webvirus.model.MovieBKTree;
 import de.rangun.webvirus.model.MovieFactory;
@@ -58,6 +61,7 @@ public class MovieFetcherService extends Service implements MovieFactory.IMovies
     private static final String CHANNEL_LOW = "de.rangun.webvirus.notifications.low";
     private static final String CHANNEL_MIN = "de.rangun.webvirus.notifications.min";
 
+    @Nullable
     private RequestQueue queue = null;
     private final IBinder binder = new MovieFetcherBinder();
     private MovieFactory.IMoviesAvailableListener listener;
@@ -126,6 +130,7 @@ public class MovieFetcherService extends Service implements MovieFactory.IMovies
     }
 
     public class MovieFetcherBinder extends Binder {
+        @NonNull
         MovieFetcherService getService() {
             return MovieFetcherService.this;
         }
@@ -144,7 +149,7 @@ public class MovieFetcherService extends Service implements MovieFactory.IMovies
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
+    public int onStartCommand(@NonNull Intent intent, int flags, int startId) {
 
         Log.d(TAG, "onStartCommand");
 
@@ -158,7 +163,7 @@ public class MovieFetcherService extends Service implements MovieFactory.IMovies
         return START_REDELIVER_INTENT;
     }
 
-    private void startPeriodicFetch(Intent intent) {
+    private void startPeriodicFetch(@NonNull Intent intent) {
 
         final AlarmManager alarmMgr =
                 (AlarmManager)getSystemService(Context.ALARM_SERVICE);
@@ -178,6 +183,7 @@ public class MovieFetcherService extends Service implements MovieFactory.IMovies
         }
     }
 
+    @Nullable
     public RequestQueue getQueue() {
         if (queue == null) queue = Volley.newRequestQueue(this);
         return queue;
@@ -194,14 +200,14 @@ public class MovieFetcherService extends Service implements MovieFactory.IMovies
         ConnectivityManager cm =
                 (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        MovieFactory.instance().setOnMoviesAvailableListener(this);
+        Objects.requireNonNull(MovieFactory.instance()).setOnMoviesAvailableListener(this);
 
         if(cm != null) {
 
             NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
 
             if (activeNetwork != null && activeNetwork.isConnected()) {
-                MovieFactory.instance().fetchMovies(getQueue(), silent);
+                Objects.requireNonNull(MovieFactory.instance()).fetchMovies(Objects.requireNonNull(getQueue()), silent);
             } else if(!silent) {
                 error(getString(R.string.not_connected));
             }
@@ -217,7 +223,7 @@ public class MovieFetcherService extends Service implements MovieFactory.IMovies
     }
 
     @Override
-    public void movies(MovieBKTree movies, boolean silent) {
+    public void movies(@NonNull MovieBKTree movies, boolean silent) {
 
         final SharedPreferences sharedPrefs =
                 PreferenceManager.getDefaultSharedPreferences(this);
@@ -250,8 +256,8 @@ public class MovieFetcherService extends Service implements MovieFactory.IMovies
     }
 
     @Override
-    public void fetchDescription(StringRequest rq) {
-        getQueue().add(rq);
+    public void fetchDescription(@NonNull StringRequest rq) {
+        Objects.requireNonNull(getQueue()).add(rq);
 
         if(listener != null) listener.fetchDescription(rq);
     }
@@ -261,7 +267,7 @@ public class MovieFetcherService extends Service implements MovieFactory.IMovies
         if(listener != null) listener.descriptionAvailable(dsc);
     }
 
-    public void notify(String txt, NOTIFICATION notification) {
+    public void notify(String txt, @NonNull NOTIFICATION notification) {
 
         final NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(this,

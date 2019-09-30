@@ -22,12 +22,14 @@
 package de.rangun.webvirus.model;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static java.lang.Math.min;
 
@@ -36,11 +38,10 @@ class BKTree<T> implements Iterable<T> {
     private final class _node<N> {
 
         private final T item;
+        @Nullable
         private Map<Integer, _node<N>> children = null;
 
-        _node(T item) {
-            this.item = item;
-        }
+        _node(T item) { this.item = item; }
 
         T item() {
             return item;
@@ -53,10 +54,12 @@ class BKTree<T> implements Iterable<T> {
             children.put(key, new _node<>(item));
         }
 
+        @Nullable
         _node<N> get(int key) {
-            return children.get(key);
+            return Objects.requireNonNull(children).get(key);
         }
 
+        @NonNull
         List<Integer> keys() {
             return children == null ? new ArrayList<>() : new ArrayList<>(children.keySet());
         }
@@ -66,12 +69,13 @@ class BKTree<T> implements Iterable<T> {
         }
     }
 
+    @Nullable
     private _node<T> _root = null;
     private int size = 0;
 
     BKTree() {}
 
-    BKTree(Iterable<T> t) {
+    BKTree(@NonNull Iterable<T> t) {
         addAll(t);
     }
 
@@ -80,10 +84,10 @@ class BKTree<T> implements Iterable<T> {
     }
 
     final T getRootItem() {
-        return _root.item();
+        return Objects.requireNonNull(_root).item();
     }
 
-    void add(T item) {
+    void add(@NonNull T item) {
 
         if(_root == null) {
             _root = new _node<>(item);
@@ -103,25 +107,27 @@ class BKTree<T> implements Iterable<T> {
 
             curNode = curNode.get(dist);
 
-            dist = levenshteinDistance(curNode.item().toString().toLowerCase(), it);
+            dist = levenshteinDistance(Objects.requireNonNull(curNode).item().toString().toLowerCase(), it);
         }
 
         curNode.addChild(dist, item);
+
         ++size;
     }
 
-    private void addAll(Iterable<T> m) {
+    private void addAll(@NonNull Iterable<T> m) {
         for(T im: m) add(im);
     }
 
-    final List<T> search(String word, int d) {
+    @NonNull
+    final List<T> search(@NonNull String word, int d) {
         ArrayList<T> rtn = new ArrayList<>(size);
-        recursiveSearch(_root, rtn, word.toLowerCase(), d);
+        recursiveSearch(Objects.requireNonNull(_root), rtn, word.toLowerCase(), d);
         rtn.trimToSize();
         return rtn;
     }
 
-    private void recursiveSearch(_node<T> node, List<T> rtn, String word, int d) {
+    private void recursiveSearch(@NonNull _node<T> node, @NonNull List<T> rtn, @NonNull String word, int d) {
 
         final int curDist = levenshteinDistance(node.item().toString().toLowerCase(), word);
         final int minDist = curDist - d;
@@ -131,12 +137,12 @@ class BKTree<T> implements Iterable<T> {
 
         for(int key: node.keys()) {
             if(key >= minDist && key <= maxDist) {
-                recursiveSearch(node.get(key), rtn, word, d);
+                recursiveSearch(Objects.requireNonNull(node.get(key)), rtn, word, d);
             }
         }
     }
 
-    private static int levenshteinDistance(String first, String second) {
+    private static int levenshteinDistance(@NonNull String first, @NonNull String second) {
 
         if(first.length() == 0) return second.length();
         if(second.length() == 0) return first.length();
@@ -164,6 +170,7 @@ class BKTree<T> implements Iterable<T> {
         return d[lenFirst][lenSecond];
     }
 
+    @NonNull
     ArrayList<T> asList() {
         final ArrayList<T> l = new ArrayList<>(size);
         for(T t: this) l.add(t);
@@ -176,17 +183,18 @@ class BKTree<T> implements Iterable<T> {
 
         final class _iterator implements Iterator<T> {
 
+            @NonNull
             final Iterator<T> iter;
             final ArrayList<T> items = new ArrayList<>(size);
 
             private _iterator() {
-                items.add(_root.item());
+                items.add(Objects.requireNonNull(_root).item());
                 nextNode(_root.children);
                 items.trimToSize();
                 iter = items.iterator();
             }
 
-            private void nextNode(Map<Integer, _node<T>> children) {
+            private void nextNode(@Nullable Map<Integer, _node<T>> children) {
 
                 if(children != null) {
                     for(_node<T> n: children.values()) {

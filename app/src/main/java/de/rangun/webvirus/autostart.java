@@ -27,10 +27,12 @@ import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 public class autostart extends BroadcastReceiver {
 
     @Override
-    public void onReceive(Context context, Intent rqIntent) {
+    public void onReceive(@NonNull Context context, @NonNull Intent rqIntent) {
 
         if(Intent.ACTION_BOOT_COMPLETED.equals(rqIntent.getAction())) {
 

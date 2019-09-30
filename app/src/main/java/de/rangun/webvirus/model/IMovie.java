@@ -23,31 +23,40 @@ package de.rangun.webvirus.model;
 
 import android.content.Context;
 
+import androidx.annotation.Nullable;
+
 import java.util.List;
 
 public interface IMovie extends Comparable<IMovie> {
 
     long id();
 
+    @Nullable
     String title();
 
     long duration();
 
+    @Nullable
     String durationString();
 
+    @Nullable
     List<String> languages();
 
+    @Nullable
     String disc();
 
     int category();
 
+    @Nullable
     String filename(Context ctx);
 
     boolean omu();
 
     boolean top250();
 
+    @Nullable
     Long oid();
 
+    @Nullable
     String description(Context ctx);
 }

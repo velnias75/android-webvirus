@@ -21,81 +21,114 @@
 
 package de.rangun.webvirus.model;
 
-import android.content.Context;
-
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 abstract class AbstractMovie implements IMovie {
 
-    private final MovieProxy.MovieParameters m;
+    private final long id;
+    private String title;
+    @Nullable
+    private String dur_str;
+    private final long dur_sec;
+    @Nullable
+    private List<String> languages;
+    @Nullable
+    private String disc;
+    private final int category;
+    private final boolean omu;
+    private final boolean top250;
+    @Nullable
+    private Long oid;
+
+    private AbstractMovie(long id, @Nullable String title, @Nullable String dur_str, long dur_sec,
+                          @Nullable List<String> languages, @Nullable String disc, int category,
+                          boolean omu, boolean top250, @Nullable Long oid) {
+
+        this.id = id;
+        this.title = title != null ? title : "(null)";
+        this.dur_str = dur_str;
+        this.dur_sec = dur_sec;
+        this.languages = languages;
+        this.disc = disc;
+        this.category = category;
+        this.omu = omu;
+        this.top250 = top250;
+        this.oid = oid;
+    }
+
+    AbstractMovie(long id, String title, String dur_str, long dur_sec, @NonNull String languages,
+                  String disc, int category, boolean omu, boolean top250, Long oid) {
+        this(id, title, dur_str, dur_sec, Arrays.asList(languages.split(", ")), disc,
+                category, omu, top250, oid);
+    }
 
     AbstractMovie(String title) {
-        m = new MovieProxy.MovieParameters(0, title, null,0L,
-                "", null, -1, null, false,
-                false, null);
+        this(0L, title, null, 0L, new ArrayList<>(0),
+                null, -1, false, false, null);
     }
 
-    AbstractMovie(MovieProxy.MovieParameters m) {
-        this.m = m;
+    AbstractMovie(@NonNull IMovie m) {
+        this(m.id(), m.title(), m.durationString(), m.duration(), m.languages(), m.disc(),
+                m.category(), m.omu(), m.top250(), m.oid());
     }
 
-    @Override
-    public long id() {
-        return m.getId();
+    void clear() {
+
+        this.title = null;
+        this.dur_str = null;
+        this.languages = null;
+        this.disc = null;
+        this.oid = null;
     }
 
+    @Nullable
     @Override
-    public Long oid() {
-        return m.getOid();
-    }
+    public Long oid() { return oid; }
 
     @Override
-    public String title() {
-        return m.getTitle();
-    }
+    public String title() { return title; }
+
+    @Nullable
+    @Override
+    public String durationString() { return dur_str; }
+
+    @Nullable
+    @Override
+    public List<String> languages() { return languages; }
+
+    @Nullable
+    @Override
+    public String disc() { return disc; }
 
     @Override
-    public long duration() { return m.getDur_sec(); }
+    public long id() { return id; }
 
     @Override
-    public String durationString() {
-        return m.getDur_str();
-    }
+    public long duration() { return dur_sec; }
 
     @Override
-    public List<String> languages() {
-        throw new IllegalStateException("languages() not implemented yet");
-    }
+    public int category() { return category; }
 
     @Override
-    public String disc() {
-        return m.getDisc();
-    }
+    public boolean omu() { return omu; }
 
     @Override
-    public int category() { return m.getCategory(); }
+    public boolean top250() { return top250; }
 
     @Override
-    public String filename(Context ctx) { return m.getFilename(ctx); }
-
-    @Override
-    public boolean omu() { return m.isOmu(); }
-
-    @Override
-    public boolean top250() {
-        return m.isTop250();
-    }
-
-    @Override
-    public int compareTo(IMovie o) {
-        return title().compareTo(o.title());
+    public int compareTo(@NonNull IMovie o) {
+        return title.compareTo(Objects.requireNonNull(o.title()));
     }
 
     @NonNull
     @Override
     public String toString() {
-        return title();
+        return this.title;
     }
 }

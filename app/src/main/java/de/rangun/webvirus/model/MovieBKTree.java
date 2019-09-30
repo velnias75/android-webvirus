@@ -21,6 +21,9 @@
 
 package de.rangun.webvirus.model;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import jregex.Matcher;
 import jregex.Pattern;
 
@@ -28,10 +31,11 @@ public final class MovieBKTree extends BKTree<IMovie> {
 
     private final static Pattern idSearch = new Pattern("#(\\d+)");
 
-    static boolean isSpecialSearch(String text) {
+    static boolean isSpecialSearch(@NonNull String text) {
         return ('#' == text.charAt(0) && MovieBKTree.idSearch.matches(text));
     }
 
+    @Nullable
     static Long extractId(String text) {
 
         final Matcher idMatcher = MovieBKTree.idSearch.matcher(text);
@@ -43,19 +47,20 @@ public final class MovieBKTree extends BKTree<IMovie> {
 
     MovieBKTree() {}
 
-    public MovieBKTree(Iterable<IMovie> m) {
+    public MovieBKTree(@NonNull Iterable<IMovie> m) {
         super(m);
     }
 
-    @Override
-    void add(IMovie item) {
+    void add(@NonNull IMovie item) {
         super.add(item);
     }
 
+    @Nullable
     public IMovie getByMovieId(long id) {
         return getByMovieId(id, true);
     }
 
+    @Nullable
     private IMovie getByMovieId(long id, boolean returnRoot) {
 
         for(IMovie m: this) {
@@ -67,7 +72,8 @@ public final class MovieBKTree extends BKTree<IMovie> {
         return returnRoot ? getRootItem() : null;
     }
 
-    public IMovie findByTitleOrId(String text) {
+    @Nullable
+    public IMovie findByTitleOrId(@NonNull String text) {
 
         if(!isSpecialSearch(text)) {
 

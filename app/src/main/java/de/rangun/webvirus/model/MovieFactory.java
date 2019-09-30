@@ -21,6 +21,9 @@
 
 package de.rangun.webvirus.model;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -29,6 +32,8 @@ import com.android.volley.toolbox.StringRequest;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Objects;
 
 public final class MovieFactory {
 
@@ -42,14 +47,17 @@ public final class MovieFactory {
     }
 
     private static final String TAG = "MovieFactory";
+    @Nullable
     private static MovieFactory _instance = null;
     private boolean silent = false;
 
     private final String URL = "https://rangun.de/db/movies-json.php";
     //private final String URL = "http://192.168.1.156/~heiko/db/movies-json.php";
 
+    @Nullable
     private IMoviesAvailableListener cb = null;
 
+    @Nullable
     private final JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET,
             URL, null, response -> {
 
@@ -62,8 +70,8 @@ public final class MovieFactory {
                 try {
 
                     final JSONObject item = response.getJSONObject(i);
-                    final IMovie m = new MovieProxy(cb, new MovieProxy.
-                            MovieParameters(item.getLong("id"),
+                    movies.add(new MovieProxy(cb,
+                            item.getLong("id"),
                             item.getString("title"),
                             item.getString("duration"),
                             item.getLong("dur_sec"),
@@ -75,8 +83,6 @@ public final class MovieFactory {
                             item.getBoolean("top250"),
                             item.isNull("oid") ? null : item.getLong("oid")));
 
-                    movies.add(m);
-
                 } catch (JSONException ex) {
                     cb.error(ex.getMessage());
                 }
@@ -84,7 +90,6 @@ public final class MovieFactory {
 
             cb.movies(movies, silent);
             cb.loaded(movies.size(), silent);
-
         }
 
     }, error -> {
@@ -100,21 +105,17 @@ public final class MovieFactory {
         return _instance;
     }
 
-    public String tag() {
-        return TAG;
-    }
-
     public void setOnMoviesAvailableListener(IMoviesAvailableListener cb) {
         this.cb = cb;
     }
 
-    public void fetchMovies(RequestQueue q, boolean silent) {
+    public void fetchMovies(@NonNull RequestQueue q, boolean silent) {
 
         this.silent = silent;
 
         if(cb != null) cb.loading(this.silent);
 
-        jsonArrayRequest.setTag(TAG);
+        Objects.requireNonNull(jsonArrayRequest).setTag(TAG);
         jsonArrayRequest.setShouldCache(false);
         jsonArrayRequest.setRetryPolicy(new DefaultRetryPolicy(
                 DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 48,

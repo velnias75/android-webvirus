@@ -23,14 +23,23 @@ package de.rangun.webvirus.model;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+
 class DummyMovie extends AbstractMovie {
+
+    private static final String DUMMY = "";
 
     DummyMovie(String title) {
         super(title);
     }
 
+    @NonNull
+    @Override
+    public String filename(Context ctx) { return DUMMY; }
+
+    @NonNull
     @Override
     public String description(Context ctx) {
-        return "dummy";
+        return DUMMY;
     }
 }

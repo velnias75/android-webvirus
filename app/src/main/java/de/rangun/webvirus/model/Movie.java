@@ -23,6 +23,9 @@ package de.rangun.webvirus.model;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
 
@@ -30,15 +33,20 @@ import de.rangun.webvirus.R;
 
 final class Movie extends AbstractMovie {
 
+    @NonNull
     private final StringRequest rq;
+    @NonNull
     private final MovieFactory.IMoviesAvailableListener cb;
+    private final String fn;
+    @Nullable
     private String dsc = null;
 
-    Movie(MovieProxy.MovieParameters m, MovieFactory.IMoviesAvailableListener cb) {
+    Movie(@NonNull MovieProxy m, String filename, @NonNull MovieFactory.IMoviesAvailableListener cb) {
 
         super(m);
 
         this.cb = cb;
+        this.fn = filename;
 
         rq = new StringRequest(Request.Method.GET,
                 "https://rangun.de/db/omdb.php?cover-oid=" + oid() + "&abstract=true",
@@ -50,8 +58,12 @@ final class Movie extends AbstractMovie {
     }
 
     @Override
-    public String description(Context ctx) {
+    public String filename(Context ctx) { return fn; }
+
+    @Override
+    public String description(@NonNull Context ctx) {
         if(dsc == null) {
+
             if(oid() != null) {
                 cb.fetchDescription(rq);
                 return ctx.getResources().getString(R.string.fetch_abstract);

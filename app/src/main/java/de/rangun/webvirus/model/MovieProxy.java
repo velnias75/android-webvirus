@@ -24,158 +24,75 @@ package de.rangun.webvirus.model;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
-import java.util.Arrays;
 import java.util.List;
 
 import de.rangun.webvirus.R;
 
-final class MovieProxy implements IMovie {
-
-    static class MovieParameters {
-
-        private final long id;
-        private final String title;
-        private final String dur_str;
-        private final long dur_sec;
-        private final List<String> languages;
-        private final String disc;
-        private final int category;
-        private final String filename;
-        private final boolean omu;
-        private final boolean top250;
-        private final Long oid;
-
-        MovieParameters(long id, String title, String dur_str, long dur_sec,
-                        String languages, String disc, int category, String filename, boolean omu,
-                        boolean top250, Long oid) {
-
-            this.id = id;
-            this.title = title;
-            this.dur_str = dur_str;
-            this.dur_sec = dur_sec;
-            this.languages = Arrays.asList(languages.split(", "));
-            this.disc = disc;
-            this.category = category;
-            this.filename = filename;
-            this.omu = omu;
-            this.top250 = top250;
-            this.oid = oid;
-        }
-
-        long getId() {
-            return id;
-        }
-
-        String getTitle() {
-            return title;
-        }
-
-        String getDur_str() {
-            return dur_str;
-        }
-
-        List<String> getLanguages() { return languages; }
-
-        long getDur_sec() { return dur_sec; }
-
-        String getDisc() {
-            return disc;
-        }
-
-        int getCategory() { return category; }
-
-        String getFilename(Context ctx) {
-            return filename != null ? filename : ctx.getResources().getString(R.string.no_filename);
-        }
-
-        boolean isOmu() { return omu; }
-
-        boolean isTop250() {
-            return top250;
-        }
-
-        Long getOid() {
-            return oid;
-        }
-    }
+final class MovieProxy extends AbstractMovie {
 
     private final MovieFactory.IMoviesAvailableListener cb;
-    private final MovieParameters mp;
+
+    @Nullable
     private IMovie movie = null;
+    @Nullable
+    private String filename;
 
-    MovieProxy(MovieFactory.IMoviesAvailableListener cb, MovieParameters mp) {
-        this.mp = mp;
+    MovieProxy(MovieFactory.IMoviesAvailableListener cb, long id, String title, String dur_str,
+               long dur_sec, @NonNull String languages, String disc, int category, @Nullable String filename,
+               boolean omu, boolean top250, Long oid) {
+
+        super(id, title, dur_str, dur_sec, languages, disc, category, omu, top250, oid);
+
         this.cb = cb;
+        this.filename = filename;
     }
 
     @Override
-    public long id() {
-        return mp.getId();
+    void clear() {
+        super.clear();
+        filename = null;
     }
 
     @Override
-    public Long oid() {
-        return mp.getOid();
-    }
+    public Long oid() { return movie == null ? super.oid() : movie.oid(); }
 
     @Override
-    public String title() {
-        return mp.getTitle();
-    }
-
-    @Override
-    public long duration() { return mp.getDur_sec(); }
+    public String title() { return movie == null ? super.title() : movie.title(); }
 
     @Override
     public String durationString() {
-        return mp.getDur_str();
+        return movie == null ? super.durationString() : movie.durationString();
     }
 
     @Override
-    public List<String> languages() {
-        return mp.getLanguages();
-    }
+    public List<String> languages() { return movie == null ? super.languages() : movie.languages(); }
 
     @Override
-    public String disc() {
-        return mp.getDisc();
-    }
+    public String disc() { return movie == null ? super.disc() : movie.disc(); }
 
+    @Nullable
     @Override
-    public int category() { return mp.getCategory(); }
-
-    @Override
-    public String filename(Context ctx) { return mp.getFilename(ctx); }
-
-    @Override
-    public boolean omu() {
-        return mp.isOmu();
-    }
-
-    @Override
-    public boolean top250() {
-        return mp.isTop250();
-    }
-
-    @Override
-    public String description(Context ctx) {
+    public String filename(@NonNull Context ctx) {
 
         if(movie == null) {
-            movie = new Movie(mp, cb);
+
+            if(filename == null) filename = ctx.getResources().getString(R.string.no_filename);
+            return filename;
+
+        } else return movie.filename(ctx);
+    }
+
+    @Nullable
+    @Override
+    public String description(@NonNull Context ctx) {
+
+        if(movie == null) {
+            movie = new Movie(this, filename(ctx), cb);
+            clear();
         }
 
         return movie.description(ctx);
-    }
-
-    @Override
-    public int compareTo(IMovie o) {
-        return title().compareTo(o.title());
-    }
-
-    @NonNull
-    @Override
-    public String toString() {
-        return title();
     }
 }

@@ -41,9 +41,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.toolbox.StringRequest;
+
+import java.util.Objects;
 
 import de.rangun.webvirus.MovieFetcherService.NOTIFICATION;
 import de.rangun.webvirus.fragments.MovieDetailsFragment;
@@ -85,13 +88,16 @@ public class MainActivity extends AppCompatActivity implements
     };
 
     private boolean mBound = false;
+    @Nullable
     private StringBuilder preZeros = null;
+    @Nullable
     private Long currentId = null;
     private MovieFetcherService mfs;
+    @Nullable
     private MovieBKTree movies = null;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
 
@@ -120,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         if (item.getItemId() == R.id.action_reload) {
             if(mBound) mfs.fetchMovies(false);
@@ -156,9 +162,11 @@ public class MainActivity extends AppCompatActivity implements
         unbindService(connection);
         mBound = false;
 
-        final SharedPreferences sharedPrefs =
-                PreferenceManager.getDefaultSharedPreferences(this);
-        sharedPrefs.edit().putLong("lastMovieIdSeen", currentId).apply();
+        if(currentId != null) {
+            final SharedPreferences sharedPrefs =
+                    PreferenceManager.getDefaultSharedPreferences(this);
+            sharedPrefs.edit().putLong("lastMovieIdSeen", currentId).apply();
+        }
     }
 
     @Override
@@ -167,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onUpdateMovieByTitleOrId(String text, SearchBarFragment sbf) {
+    public void onUpdateMovieByTitleOrId(@NonNull String text, @NonNull SearchBarFragment sbf) {
 
         if(mBound) {
 
@@ -184,14 +192,14 @@ public class MainActivity extends AppCompatActivity implements
         if(mBound) {
 
             try {
-                updateMovie(movies.getByMovieId(id));
+                updateMovie(Objects.requireNonNull(movies).getByMovieId(id));
             } catch (IndexOutOfBoundsException ex) {
                 Log.d(TAG, "Exc: " + ex.getMessage());
             }
         }
     }
 
-    private void updateMovie(IMovie m) {
+    private void updateMovie(@Nullable IMovie m) {
 
         final SearchBarFragment sbf =
                 (SearchBarFragment) getSupportFragmentManager().
@@ -214,9 +222,9 @@ public class MainActivity extends AppCompatActivity implements
 
         currentId = m.id();
 
-        if(mdf != null && mBound) mdf.setContents(m, mfs.getQueue(), preZeros.toString());
+        if(mdf != null && mBound) mdf.setContents(m, mfs.getQueue(), Objects.requireNonNull(preZeros).toString());
 
-        if(sbf != null) sbf.setText(m.title());
+        if(sbf != null) sbf.setText(Objects.requireNonNull(m.title()));
     }
 
     @Override
@@ -240,11 +248,11 @@ public class MainActivity extends AppCompatActivity implements
         updateMovie(currentId != null ? currentId :
                 sharedPrefs.getLong("lastMovieIdSeen", 1L));
 
-        if(mBound && !silent) setStatus(getString(R.string.loaded, movies.size()));
+        if(mBound && !silent) setStatus(getString(R.string.loaded, Objects.requireNonNull(movies).size()));
     }
 
     @Override
-    public void movies(MovieBKTree m, boolean silent) {
+    public void movies(@NonNull MovieBKTree m, boolean silent) {
 
         if(mBound) {
 
@@ -269,7 +277,7 @@ public class MainActivity extends AppCompatActivity implements
         error(getString(R.string.network_error, msg), NOTIFICATION.ERROR);
     }
 
-    private void error(String msg, NOTIFICATION notification) {
+    private void error(String msg, @NonNull NOTIFICATION notification) {
         setStatus(msg, Color.RED, notification);
     }
 
@@ -281,7 +289,7 @@ public class MainActivity extends AppCompatActivity implements
         setStatus(txt, Color.GRAY, NOTIFICATION.NONE);
     }
 
-    private void setStatus(String txt, NOTIFICATION notification) {
+    private void setStatus(String txt, @NonNull NOTIFICATION notification) {
         setStatus(txt, Color.GRAY, notification);
     }
 
@@ -291,7 +299,7 @@ public class MainActivity extends AppCompatActivity implements
 //    }
 // --Commented out by Inspection STOP (28.09.19 03:48)
 
-    private void setStatus(String txt, int color, NOTIFICATION notification) {
+    private void setStatus(String txt, int color, @NonNull NOTIFICATION notification) {
 
         LayoutInflater inflater = getLayoutInflater();
         View layout = inflater.inflate(R.layout.custom_toast,

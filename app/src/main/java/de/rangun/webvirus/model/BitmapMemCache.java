@@ -24,6 +24,8 @@ package de.rangun.webvirus.model;
 import android.graphics.Bitmap;
 import android.util.LruCache;
 
+import androidx.annotation.NonNull;
+
 import com.android.volley.toolbox.ImageLoader;
 
  public final class BitmapMemCache extends LruCache<String, Bitmap>
@@ -38,7 +40,7 @@ import com.android.volley.toolbox.ImageLoader;
     }
 
     @Override
-    protected int sizeOf(String key, Bitmap bitmap) {
+    protected int sizeOf(String key, @NonNull Bitmap bitmap) {
         return (bitmap.getByteCount() >> 10);
     }
 

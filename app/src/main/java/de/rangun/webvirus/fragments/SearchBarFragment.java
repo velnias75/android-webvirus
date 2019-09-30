@@ -37,6 +37,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import java.util.Objects;
+
 import de.rangun.webvirus.R;
 import de.rangun.webvirus.widgets.CustomAutoCompleteTextView;
 import de.rangun.webvirus.widgets.DrawableClickListener;
@@ -80,7 +82,7 @@ public final class SearchBarFragment extends Fragment {
                 textView.setText(null);
                 textView.requestFocus();
 
-                final InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(
+                final InputMethodManager imm = (InputMethodManager) Objects.requireNonNull(getActivity()).getSystemService(
                         Context.INPUT_METHOD_SERVICE);
                 if(imm != null) imm.showSoftInput(textView, 0);
             }
@@ -126,16 +128,16 @@ public final class SearchBarFragment extends Fragment {
 
     public final void populateCompleter(ArrayAdapter<String> adapter) {
 
-        final Spinner spinner = getView().findViewById(R.id.searchTermSpinner);
+        final Spinner spinner = Objects.requireNonNull(getView()).findViewById(R.id.searchTermSpinner);
         final CustomAutoCompleteTextView textView = getView().findViewById(R.id.searchTerm);
 
         spinner.setAdapter(adapter);
         textView.setAdapter(adapter);
     }
 
-    public final void setText(String title) {
+    public final void setText(@NonNull String title) {
 
-        final CustomAutoCompleteTextView srt = getView().findViewById(R.id.searchTerm);
+        final CustomAutoCompleteTextView srt = Objects.requireNonNull(getView()).findViewById(R.id.searchTerm);
 
         srt.setText(title);
         srt.setSelection(title.length());
@@ -144,8 +146,8 @@ public final class SearchBarFragment extends Fragment {
 
     public final void hideSoftKeyboard() {
 
-        final CustomAutoCompleteTextView srt = getView().findViewById(R.id.searchTerm);
-        final InputMethodManager imm = (InputMethodManager)getContext().getSystemService(
+        final CustomAutoCompleteTextView srt = Objects.requireNonNull(getView()).findViewById(R.id.searchTerm);
+        final InputMethodManager imm = (InputMethodManager) Objects.requireNonNull(getContext()).getSystemService(
                 Context.INPUT_METHOD_SERVICE);
 
         if(imm != null) imm.hideSoftInputFromWindow(srt.getWindowToken(), 0);

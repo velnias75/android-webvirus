@@ -40,6 +40,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -57,6 +58,7 @@ public final class MovieBKTreeAdapter extends ArrayAdapter<String> {
 
     private final MovieBKTree movies;
     private List<IMovie> filtered;
+    @Nullable
     private Integer separatorPos = null;
 
     public MovieBKTreeAdapter(@NonNull Context context, @LayoutRes int resource,
@@ -104,6 +106,7 @@ public final class MovieBKTreeAdapter extends ArrayAdapter<String> {
         return filtered != null ? filtered.size() : 0;
     }
 
+    @NonNull
     @Override
     public String getItem(int position) {
         return filtered.get(position).toString();
@@ -120,8 +123,9 @@ public final class MovieBKTreeAdapter extends ArrayAdapter<String> {
 
         return new Filter() {
 
+            @NonNull
             @Override
-            protected FilterResults performFiltering(CharSequence constraint) {
+            protected FilterResults performFiltering(@Nullable CharSequence constraint) {
 
                 final FilterResults fr = new FilterResults();
 
@@ -156,7 +160,7 @@ public final class MovieBKTreeAdapter extends ArrayAdapter<String> {
 
                         for (IMovie s : movies) {
                             if((isSpecialSearch && lid != null && lid.equals(s.id()))
-                                    || s.title().toLowerCase().contains(lowerConstraint)) {
+                                    || Objects.requireNonNull(s.title()).toLowerCase().contains(lowerConstraint)) {
                                 best.add(s);
                             }
                         }
@@ -175,7 +179,7 @@ public final class MovieBKTreeAdapter extends ArrayAdapter<String> {
                         final Set<IMovie> aux = new TreeSet<>();
 
                         for (IMovie s : movies) {
-                            Matcher rxMatcher = rexConstraint.matcher(s.title().toLowerCase());
+                            Matcher rxMatcher = rexConstraint.matcher(Objects.requireNonNull(s.title()).toLowerCase());
                             if(rxMatcher.matches()) aux.add(s);
                         }
 
@@ -210,7 +214,7 @@ public final class MovieBKTreeAdapter extends ArrayAdapter<String> {
             }
 
             @Override
-            protected void publishResults(CharSequence constraint, FilterResults results) {
+            protected void publishResults(CharSequence constraint, @NonNull FilterResults results) {
                 //noinspection unchecked
                 filtered = (List<IMovie>)results.values;
                 notifyDataSetChanged();

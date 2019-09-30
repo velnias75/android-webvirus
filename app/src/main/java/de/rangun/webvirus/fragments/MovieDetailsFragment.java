@@ -35,6 +35,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 
+import java.util.Objects;
+
 import de.rangun.webvirus.R;
 import de.rangun.webvirus.model.BitmapMemCache;
 import de.rangun.webvirus.model.IMovie;
@@ -57,12 +59,12 @@ public final class MovieDetailsFragment extends Fragment {
     }
 
     public final void setVisibility(int visibility) {
-        getView().setVisibility(visibility);
+        Objects.requireNonNull(getView()).setVisibility(visibility);
     }
 
-    public final void setContents(IMovie m, RequestQueue queue, String preZeros) {
+    public final void setContents(@NonNull IMovie m, RequestQueue queue, @NonNull String preZeros) {
 
-        final View top250 = getView().findViewById(R.id.top250);
+        final View top250 = Objects.requireNonNull(getView()).findViewById(R.id.top250);
         final TextView mid = getView().findViewById(R.id.m_id);
         final CategoryTextView tit = getView().findViewById(R.id.title);
         final TextView dus = getView().findViewById(R.id.m_duration);
@@ -77,7 +79,7 @@ public final class MovieDetailsFragment extends Fragment {
 
         StringBuilder sb = new StringBuilder();
 
-        for(String l: m.languages()) {
+        for(String l: Objects.requireNonNull(m.languages())) {
             sb.append(l);
             sb.append(", ");
         }
