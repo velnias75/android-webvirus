@@ -100,11 +100,11 @@ final class MovieProxy implements IMovie {
         }
     }
 
-    private final MovieFactory.OnMoviesAvailableListener cb;
+    private final MovieFactory.IMoviesAvailableListener cb;
     private final MovieParameters mp;
     private IMovie movie = null;
 
-    MovieProxy(MovieFactory.OnMoviesAvailableListener cb, MovieParameters mp) {
+    MovieProxy(MovieFactory.IMoviesAvailableListener cb, MovieParameters mp) {
         this.mp = mp;
         this.cb = cb;
     }

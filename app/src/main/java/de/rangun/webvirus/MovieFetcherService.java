@@ -49,7 +49,7 @@ import com.android.volley.toolbox.Volley;
 import de.rangun.webvirus.model.MovieBKTree;
 import de.rangun.webvirus.model.MovieFactory;
 
-public class MovieFetcherService extends Service implements MovieFactory.OnMoviesAvailableListener {
+public class MovieFetcherService extends Service implements MovieFactory.IMoviesAvailableListener {
 
     private static final String TAG = "MovieFetcherService";
 
@@ -59,9 +59,8 @@ public class MovieFetcherService extends Service implements MovieFactory.OnMovie
     private static final String CHANNEL_MIN = "de.rangun.webvirus.notifications.min";
 
     private RequestQueue queue = null;
-    private MovieBKTree movies = null;
     private final IBinder binder = new MovieFetcherBinder();
-    private MovieFactory.OnMoviesAvailableListener listener;
+    private MovieFactory.IMoviesAvailableListener listener;
 
     enum NOTIFICATION {
 
@@ -152,7 +151,7 @@ public class MovieFetcherService extends Service implements MovieFactory.OnMovie
         createNotificationChannel();
 
         getQueue();
-        fetchMovies();
+        fetchMovies(true);
 
         startPeriodicFetch(intent);
 
@@ -184,11 +183,11 @@ public class MovieFetcherService extends Service implements MovieFactory.OnMovie
         return queue;
     }
 
-    public void setOnMoviesAvailableListener(MovieFactory.OnMoviesAvailableListener l) {
+    public void setOnMoviesAvailableListener(MovieFactory.IMoviesAvailableListener l) {
         listener = l;
     }
 
-    public void fetchMovies() {
+    public void fetchMovies(boolean silent) {
 
         Log.d(TAG, "fetchMovies");
 
@@ -202,27 +201,23 @@ public class MovieFetcherService extends Service implements MovieFactory.OnMovie
             NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
 
             if (activeNetwork != null && activeNetwork.isConnected()) {
-                MovieFactory.instance().fetchMovies(getQueue());
-            } else {
+                MovieFactory.instance().fetchMovies(getQueue(), silent);
+            } else if(!silent) {
                 error(getString(R.string.not_connected));
             }
         }
     }
 
-    public MovieBKTree getMovies() {
-        return movies;
+    @Override
+    public void loading(boolean silent) { if(listener != null) listener.loading(silent); }
+
+    @Override
+    public void loaded(int num, boolean silent) {
+        if(listener != null) listener.loaded(num, silent);
     }
 
     @Override
-    public void loading() { if(listener != null) listener.loading(); }
-
-    @Override
-    public void loaded(int num) { if(listener != null) listener.loaded(num); }
-
-    @Override
-    public void movies(MovieBKTree movies) {
-
-        this.movies = movies;
+    public void movies(MovieBKTree movies, boolean silent) {
 
         final SharedPreferences sharedPrefs =
                 PreferenceManager.getDefaultSharedPreferences(this);
@@ -246,7 +241,7 @@ public class MovieFetcherService extends Service implements MovieFactory.OnMovie
         /*sharedPrefs.edit().putInt("lastMovieCount", new Random().nextInt(3201) + 1).
                 apply();*/
 
-        if(listener != null) listener.movies(this.movies);
+        if(listener != null) listener.movies(movies, silent);
     }
 
     @Override

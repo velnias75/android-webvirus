@@ -32,10 +32,10 @@ import org.json.JSONObject;
 
 public final class MovieFactory {
 
-    public interface OnMoviesAvailableListener {
-        void loading();
-        void loaded(int num);
-        void movies(MovieBKTree movies);
+    public interface IMoviesAvailableListener {
+        void loading(boolean silent);
+        void loaded(int num, boolean silent);
+        void movies(MovieBKTree movies, boolean silent);
         void error(String localizedMessage);
         void fetchDescription(StringRequest rq);
         void descriptionAvailable(String dsc);
@@ -43,11 +43,12 @@ public final class MovieFactory {
 
     private static final String TAG = "MovieFactory";
     private static MovieFactory _instance = null;
+    private boolean silent = false;
 
     private final String URL = "https://rangun.de/db/movies-json.php";
     //private final String URL = "http://192.168.1.156/~heiko/db/movies-json.php";
 
-    private OnMoviesAvailableListener cb = null;
+    private IMoviesAvailableListener cb = null;
 
     private final JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET,
             URL, null, response -> {
@@ -81,8 +82,9 @@ public final class MovieFactory {
                 }
             }
 
-            cb.movies(movies);
-            cb.loaded(movies.size());
+            cb.movies(movies, silent);
+            cb.loaded(movies.size(), silent);
+
         }
 
     }, error -> {
@@ -102,13 +104,15 @@ public final class MovieFactory {
         return TAG;
     }
 
-    public void setOnMoviesAvailableListener(OnMoviesAvailableListener cb) {
+    public void setOnMoviesAvailableListener(IMoviesAvailableListener cb) {
         this.cb = cb;
     }
 
-    public void fetchMovies(RequestQueue q) {
+    public void fetchMovies(RequestQueue q, boolean silent) {
 
-        if(cb != null) cb.loading();
+        this.silent = silent;
+
+        if(cb != null) cb.loading(this.silent);
 
         jsonArrayRequest.setTag(TAG);
         jsonArrayRequest.setShouldCache(false);

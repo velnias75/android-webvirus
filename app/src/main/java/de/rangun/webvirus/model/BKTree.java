@@ -71,6 +71,10 @@ class BKTree<T> implements Iterable<T> {
 
     BKTree() {}
 
+    BKTree(Iterable<T> t) {
+        addAll(t);
+    }
+
     public final int size() {
         return size;
     }
@@ -104,6 +108,10 @@ class BKTree<T> implements Iterable<T> {
 
         curNode.addChild(dist, item);
         ++size;
+    }
+
+    private void addAll(Iterable<T> m) {
+        for(T im: m) add(im);
     }
 
     final List<T> search(String word, int d) {

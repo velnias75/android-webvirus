@@ -31,10 +31,10 @@ import de.rangun.webvirus.R;
 final class Movie extends AbstractMovie {
 
     private final StringRequest rq;
-    private final MovieFactory.OnMoviesAvailableListener cb;
+    private final MovieFactory.IMoviesAvailableListener cb;
     private String dsc = null;
 
-    Movie(MovieProxy.MovieParameters m, MovieFactory.OnMoviesAvailableListener cb) {
+    Movie(MovieProxy.MovieParameters m, MovieFactory.IMoviesAvailableListener cb) {
 
         super(m);
 

@@ -25,9 +25,11 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -55,7 +57,7 @@ import static java.lang.Math.ceil;
 import static java.lang.Math.log;
 
 public class MainActivity extends AppCompatActivity implements
-        MovieFactory.OnMoviesAvailableListener,
+        MovieFactory.IMoviesAvailableListener,
         SearchBarFragment.OnMovieUpdateRequestListener {
 
     private static final String TAG = "MainActivity";
@@ -71,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements
 
             mfs = binder.getService();
             mfs.setOnMoviesAvailableListener(MainActivity.this);
-            mfs.fetchMovies();
+            mfs.fetchMovies(false);
 
             mBound = true;
         }
@@ -86,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements
     private StringBuilder preZeros = null;
     private Long currentId = null;
     private MovieFetcherService mfs;
+    private MovieBKTree movies = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
 
         if (item.getItemId() == R.id.action_reload) {
-            if(mBound) mfs.fetchMovies();
+            if(mBound) mfs.fetchMovies(false);
             return true;
         }
 
@@ -152,6 +155,10 @@ public class MainActivity extends AppCompatActivity implements
 
         unbindService(connection);
         mBound = false;
+
+        final SharedPreferences sharedPrefs =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPrefs.edit().putLong("lastMovieIdSeen", currentId).apply();
     }
 
     @Override
@@ -164,8 +171,6 @@ public class MainActivity extends AppCompatActivity implements
 
         if(mBound) {
 
-            final MovieBKTree movies = mfs.getMovies();
-
             if (movies != null) {
                 updateMovie(movies.findByTitleOrId(text));
             } else {
@@ -177,8 +182,6 @@ public class MainActivity extends AppCompatActivity implements
     private void updateMovie(long id) {
 
         if(mBound) {
-
-            final MovieBKTree movies = mfs.getMovies();
 
             try {
                 updateMovie(movies.getByMovieId(id));
@@ -201,19 +204,13 @@ public class MainActivity extends AppCompatActivity implements
         if(sbf != null) sbf.hideSoftKeyboard();
 
         if(m == null) {
+
             if(mdf != null) mdf.setVisibility(View.GONE);
+
             error(getString(R.string.notfound),
                     NOTIFICATION.NOTFOUND);
             return;
-        } else {
-
-            if(mdf != null) mdf.setVisibility(View.VISIBLE);
-
-            if(mBound) {
-                final MovieBKTree movies = mfs.getMovies();
-                setStatus(getString(R.string.loaded, movies.size()));
-            }
-        }
+        } else if(mdf != null) mdf.setVisibility(View.VISIBLE);
 
         currentId = m.id();
 
@@ -223,12 +220,12 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void loading() {
-        setStatus(R.string.loading);
+    public void loading(boolean silent) {
+        if(!silent) setStatus(R.string.loading);
     }
 
     @Override
-    public void loaded(int num) {
+    public void loaded(int num, boolean silent) {
 
         setStatus(getString(R.string.loaded, num), NOTIFICATION.LOADED);
 
@@ -236,14 +233,22 @@ public class MainActivity extends AppCompatActivity implements
 
         for (int i = 0; i < ceil(log(num) / LN10); ++i) preZeros.append('0');
 
+        final SharedPreferences sharedPrefs =
+                PreferenceManager.getDefaultSharedPreferences(this);
+
         findViewById(R.id.loadingPanel).setVisibility(View.GONE);
-        updateMovie(currentId != null ? currentId : 1L);
+        updateMovie(currentId != null ? currentId :
+                sharedPrefs.getLong("lastMovieIdSeen", 1L));
+
+        if(mBound && !silent) setStatus(getString(R.string.loaded, movies.size()));
     }
 
     @Override
-    public void movies(MovieBKTree m) {
+    public void movies(MovieBKTree m, boolean silent) {
 
         if(mBound) {
+
+            movies = new MovieBKTree(m);
 
             final SearchBarFragment sbf =
                 (SearchBarFragment)getSupportFragmentManager().findFragmentById(R.id.searchBar);
@@ -251,7 +256,7 @@ public class MainActivity extends AppCompatActivity implements
             if(sbf != null) {
 
                 final ArrayAdapter<String> adapter = new MovieBKTreeAdapter(this,
-                        R.layout.searchsuggestions, mfs.getMovies());
+                        R.layout.searchsuggestions, movies);
 
                 sbf.populateCompleter(adapter);
             }

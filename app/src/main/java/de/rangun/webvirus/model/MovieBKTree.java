@@ -41,6 +41,12 @@ public final class MovieBKTree extends BKTree<IMovie> {
         return null;
     }
 
+    MovieBKTree() {}
+
+    public MovieBKTree(Iterable<IMovie> m) {
+        super(m);
+    }
+
     @Override
     void add(IMovie item) {
         super.add(item);
