@@ -82,8 +82,10 @@ public class MainActivity extends AppCompatActivity implements
         public Fragment getItem(int position) {
 
             if(position == 0) {
+                mdf = new MovieDetailsFragment();
                 return mdf;
             } else if(position == 1) {
+                mlf = new MovieListFragment();
                 return mlf;
             }
 
@@ -144,9 +146,6 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         setContentView(R.layout.activity_main);
-
-        this.mdf = new MovieDetailsFragment();
-        this.mlf = new MovieListFragment();
 
         pager = findViewById(R.id.pager);
         pagerAdaper = new MoviePagerAdapter(getSupportFragmentManager(),
