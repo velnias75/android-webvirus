@@ -252,11 +252,13 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void movies(@NonNull MovieBKTree m, boolean silent) {
+    public void movies(@NonNull MovieBKTree m, Long lid, boolean silent) {
 
         if(mBound) {
 
             movies = new MovieBKTree(m);
+
+            Log.d(TAG, "latest Cover id=" + lid);
 
             final SearchBarFragment sbf =
                 (SearchBarFragment)getSupportFragmentManager().findFragmentById(R.id.searchBar);

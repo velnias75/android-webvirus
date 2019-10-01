@@ -37,7 +37,7 @@ final class MovieProxy extends AbstractMovie {
     @Nullable
     private IMovie movie = null;
     @Nullable
-    private String filename;
+    private final String filename;
 
     MovieProxy(MovieFactory.IMoviesAvailableListener cb, long id, String title, String dur_str,
                long dur_sec, @NonNull String languages, String disc, int category, @Nullable String filename,
@@ -47,12 +47,6 @@ final class MovieProxy extends AbstractMovie {
 
         this.cb = cb;
         this.filename = filename;
-    }
-
-    @Override
-    void clear() {
-        super.clear();
-        filename = null;
     }
 
     @Override
@@ -75,23 +69,15 @@ final class MovieProxy extends AbstractMovie {
     @Nullable
     @Override
     public String filename(@NonNull Context ctx) {
-
-        if(movie == null) {
-
-            if(filename == null) filename = ctx.getResources().getString(R.string.no_filename);
-            return filename;
-
-        } else return movie.filename(ctx);
+        return movie == null ? (filename != null ? filename :
+                ctx.getResources().getString(R.string.no_filename)) : movie.filename(ctx);
     }
 
     @Nullable
     @Override
     public String description(@NonNull Context ctx) {
 
-        if(movie == null) {
-            movie = new Movie(this, filename(ctx), cb);
-            clear();
-        }
+        if(movie == null) movie = new Movie(this, filename(ctx), cb);
 
         return movie.description(ctx);
     }

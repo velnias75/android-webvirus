@@ -127,7 +127,8 @@ class BKTree<T> implements Iterable<T> {
         return rtn;
     }
 
-    private void recursiveSearch(@NonNull _node<T> node, @NonNull List<T> rtn, @NonNull String word, int d) {
+    private void recursiveSearch(@NonNull _node<T> node, @NonNull List<T> rtn,
+                                 @NonNull String word, int d) {
 
         final int curDist = levenshteinDistance(node.item().toString().toLowerCase(), word);
         final int minDist = curDist - d;

@@ -33,6 +33,8 @@ import com.android.volley.toolbox.StringRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Objects;
 
 public final class MovieFactory {
@@ -40,8 +42,8 @@ public final class MovieFactory {
     public interface IMoviesAvailableListener {
         void loading(boolean silent);
         void loaded(int num, boolean silent);
-        void movies(MovieBKTree movies, boolean silent);
-        void error(String localizedMessage);
+        void movies(MovieBKTree movies, Long latestCoverId, boolean silent);
+        void error(String message);
         void fetchDescription(StringRequest rq);
         void descriptionAvailable(String dsc);
     }
@@ -61,7 +63,22 @@ public final class MovieFactory {
     private final JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET,
             URL, null, response -> {
 
-        MovieBKTree movies = new MovieBKTree();
+        final class _idCoverMapping implements Comparable<_idCoverMapping> {
+
+            final Long mid;
+            final Long oid;
+
+            _idCoverMapping(Long mid, Long oid) {
+                this.mid = mid;
+                this.oid = oid;
+            }
+
+            @Override
+            public int compareTo(_idCoverMapping o) { return mid.compareTo(o.mid); }
+        }
+
+        MovieBKTree  movies = new MovieBKTree();
+        ArrayList<_idCoverMapping> ids = new ArrayList<>();
 
         if (cb != null) {
 
@@ -70,8 +87,11 @@ public final class MovieFactory {
                 try {
 
                     final JSONObject item = response.getJSONObject(i);
-                    movies.add(new MovieProxy(cb,
-                            item.getLong("id"),
+
+                    final Long mid = item.getLong("id");
+                    final Long oid = item.isNull("oid") ? null : item.getLong("oid");
+
+                    movies.add(new MovieProxy(cb, mid,
                             item.getString("title"),
                             item.getString("duration"),
                             item.getLong("dur_sec"),
@@ -81,15 +101,31 @@ public final class MovieFactory {
                             item.isNull("filename") ? null :item.getString("filename"),
                             item.getBoolean("omu"),
                             item.getBoolean("top250"),
-                            item.isNull("oid") ? null : item.getLong("oid")));
+                            oid));
+
+                    ids.add(new _idCoverMapping(mid, oid));
 
                 } catch (JSONException ex) {
-                    cb.error(ex.getMessage());
+                    cb.error("JSONException: " + ex.getMessage());
                 }
             }
 
-            cb.movies(movies, silent);
+            Collections.sort(ids);
+            Long lid = null;
+
+            for(int i = ids.size() - 1; i >= 0; --i) {
+
+                final _idCoverMapping icm = ids.get(i);
+
+                if(icm.oid != null) {
+                    lid = icm.mid;
+                    break;
+                }
+            }
+
+            cb.movies(movies, lid, silent);
             cb.loaded(movies.size(), silent);
+
         }
 
     }, error -> {

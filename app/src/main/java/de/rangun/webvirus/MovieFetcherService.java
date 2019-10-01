@@ -29,6 +29,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Binder;
@@ -37,6 +38,7 @@ import android.os.IBinder;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -44,6 +46,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
@@ -96,8 +99,7 @@ public class MovieFetcherService extends Service implements MovieFactory.IMovies
 // --Commented out by Inspection STOP (28.09.19 03:47)
 
         NOTIFICATION(int id, int icon, int prio, String chan) {
-            this(id, icon, prio, chan,
-                    null);
+            this(id, icon, prio, chan, null);
         }
 
         NOTIFICATION(int id, int icon, int prio, String chan, Long duration) {
@@ -207,7 +209,8 @@ public class MovieFetcherService extends Service implements MovieFactory.IMovies
             NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
 
             if (activeNetwork != null && activeNetwork.isConnected()) {
-                Objects.requireNonNull(MovieFactory.instance()).fetchMovies(Objects.requireNonNull(getQueue()), silent);
+                Objects.requireNonNull(MovieFactory.instance()).
+                        fetchMovies(Objects.requireNonNull(getQueue()), silent);
             } else if(!silent) {
                 error(getString(R.string.not_connected));
             }
@@ -223,7 +226,7 @@ public class MovieFetcherService extends Service implements MovieFactory.IMovies
     }
 
     @Override
-    public void movies(@NonNull MovieBKTree movies, boolean silent) {
+    public void movies(@NonNull MovieBKTree movies, Long latestCoverId, boolean silent) {
 
         final SharedPreferences sharedPrefs =
                 PreferenceManager.getDefaultSharedPreferences(this);
@@ -233,10 +236,27 @@ public class MovieFetcherService extends Service implements MovieFactory.IMovies
 
         if(movies.size() > lastMovieCount) {
 
-            notify(getString(R.string.new_movies, movies.size() - lastMovieCount),
-                    NOTIFICATION.NEW);
+            final Long oid = Objects.requireNonNull(movies.getByMovieId(latestCoverId)).oid();
+            final int lmc = movies.size() - lastMovieCount;
 
             lastMovieCount = movies.size();
+
+            if(oid != null) {
+                Objects.requireNonNull(getQueue()).add(new ImageRequest(
+                        "https://rangun.de/db/omdb.php?cover-oid=" + oid,
+                        bitmap -> notifyInternal(getString(R.string.new_movies,
+                                movies.size() - lmc), NOTIFICATION.NEW,
+                                bitmap, silent),
+                        getResources().getDimensionPixelSize(android.R.dimen.
+                                notification_large_icon_width),
+                        getResources().getDimensionPixelSize(android.R.dimen.
+                                notification_large_icon_height),
+                        ImageView.ScaleType.FIT_START, Bitmap.Config.RGB_565,
+                        error -> notifyInternal(getString(R.string.new_movies,
+                                movies.size() - lmc), NOTIFICATION.NEW,
+                                null, silent)));
+            } else notifyInternal(getString(R.string.new_movies,
+                    movies.size() - lmc), NOTIFICATION.NEW, null, silent);
 
             sharedPrefs.edit().putInt("lastMovieCount", lastMovieCount).apply();
 
@@ -245,9 +265,9 @@ public class MovieFetcherService extends Service implements MovieFactory.IMovies
         } else Log.d(TAG, "(after fetch) lastMovieCount unchanged");
 
         /*sharedPrefs.edit().putInt("lastMovieCount", new Random().nextInt(3201) + 1).
-                apply();*/
+                apply(); */
 
-        if(listener != null) listener.movies(movies, silent);
+        if(listener != null) listener.movies(movies, latestCoverId, silent);
     }
 
     @Override
@@ -258,7 +278,6 @@ public class MovieFetcherService extends Service implements MovieFactory.IMovies
     @Override
     public void fetchDescription(@NonNull StringRequest rq) {
         Objects.requireNonNull(getQueue()).add(rq);
-
         if(listener != null) listener.fetchDescription(rq);
     }
 
@@ -268,20 +287,37 @@ public class MovieFetcherService extends Service implements MovieFactory.IMovies
     }
 
     public void notify(String txt, @NonNull NOTIFICATION notification) {
+        notifyInternal(txt, notification, null, false);
+    }
+
+    private void notifyInternal(String txt, @NonNull NOTIFICATION notification, Bitmap bm,
+                                boolean tap) {
+
+        final Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        final PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+                intent, 0);
 
         final NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(this,
-                        notification.getChannel()).
-                        setSmallIcon(notification.getIcon())
+                        notification.getChannel())
+                        .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                        .setSmallIcon(notification.getIcon())
                         .setContentTitle(txt)
-                        .setPriority(notification.getPriority());
+                        .setPriority(notification.getPriority())
+                        .setAutoCancel(true);
 
         if(notification.getDuration() != null) {
             builder.setTimeoutAfter(notification.getDuration());
         }
 
+        if(tap) builder.setContentIntent(pendingIntent);
+
+        if(bm != null) builder.setLargeIcon(bm);
+
         final NotificationManagerCompat notificationManager =
                 NotificationManagerCompat.from(this);
+
         notificationManager.notify(notification.getId(), builder.build());
     }
 

@@ -32,24 +32,23 @@ import java.util.Objects;
 abstract class AbstractMovie implements IMovie {
 
     private final long id;
-    private String title;
+    private final String title;
     @Nullable
-    private String dur_str;
+    private final String dur_str;
     private final long dur_sec;
     @Nullable
-    private List<String> languages;
+    private final List<String> languages;
     @Nullable
-    private String disc;
+    private final String disc;
     private final int category;
     private final boolean omu;
     private final boolean top250;
     @Nullable
-    private Long oid;
+    private final Long oid;
 
     private AbstractMovie(long id, @Nullable String title, @Nullable String dur_str, long dur_sec,
                           @Nullable List<String> languages, @Nullable String disc, int category,
                           boolean omu, boolean top250, @Nullable Long oid) {
-
         this.id = id;
         this.title = title != null ? title : "(null)";
         this.dur_str = dur_str;
@@ -76,15 +75,6 @@ abstract class AbstractMovie implements IMovie {
     AbstractMovie(@NonNull IMovie m) {
         this(m.id(), m.title(), m.durationString(), m.duration(), m.languages(), m.disc(),
                 m.category(), m.omu(), m.top250(), m.oid());
-    }
-
-    void clear() {
-
-        this.title = null;
-        this.dur_str = null;
-        this.languages = null;
-        this.disc = null;
-        this.oid = null;
     }
 
     @Nullable
@@ -128,7 +118,5 @@ abstract class AbstractMovie implements IMovie {
 
     @NonNull
     @Override
-    public String toString() {
-        return this.title;
-    }
+    public String toString() { return this.title; }
 }
