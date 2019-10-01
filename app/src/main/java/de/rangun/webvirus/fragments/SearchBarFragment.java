@@ -45,9 +45,9 @@ import de.rangun.webvirus.widgets.DrawableClickListener;
 
 public final class SearchBarFragment extends Fragment {
 
-    private OnMovieUpdateRequestListener listener;
+    private IMovieUpdateRequestListener listener;
 
-    public interface OnMovieUpdateRequestListener {
+    public interface IMovieUpdateRequestListener {
         void onUpdateMovieByTitleOrId(String text, SearchBarFragment sbf);
     }
 
@@ -57,10 +57,10 @@ public final class SearchBarFragment extends Fragment {
         super.onAttach(context);
 
         try {
-            listener = (OnMovieUpdateRequestListener)context;
+            listener = (IMovieUpdateRequestListener)context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString() +
-                    " must implement OnArticleSelectedListener");
+                    " must implement IArticleSelectedListener");
         }
 
     }
@@ -128,7 +128,8 @@ public final class SearchBarFragment extends Fragment {
 
     public final void populateCompleter(ArrayAdapter<String> adapter) {
 
-        final Spinner spinner = Objects.requireNonNull(getView()).findViewById(R.id.searchTermSpinner);
+        final Spinner spinner =
+                Objects.requireNonNull(getView()).findViewById(R.id.searchTermSpinner);
         final CustomAutoCompleteTextView textView = getView().findViewById(R.id.searchTerm);
 
         spinner.setAdapter(adapter);
@@ -137,7 +138,8 @@ public final class SearchBarFragment extends Fragment {
 
     public final void setText(@NonNull String title) {
 
-        final CustomAutoCompleteTextView srt = Objects.requireNonNull(getView()).findViewById(R.id.searchTerm);
+        final CustomAutoCompleteTextView srt =
+                Objects.requireNonNull(getView()).findViewById(R.id.searchTerm);
 
         srt.setText(title);
         srt.setSelection(title.length());
@@ -146,8 +148,10 @@ public final class SearchBarFragment extends Fragment {
 
     public final void hideSoftKeyboard() {
 
-        final CustomAutoCompleteTextView srt = Objects.requireNonNull(getView()).findViewById(R.id.searchTerm);
-        final InputMethodManager imm = (InputMethodManager) Objects.requireNonNull(getContext()).getSystemService(
+        final CustomAutoCompleteTextView srt =
+                Objects.requireNonNull(getView()).findViewById(R.id.searchTerm);
+        final InputMethodManager imm =
+                (InputMethodManager) Objects.requireNonNull(getContext()).getSystemService(
                 Context.INPUT_METHOD_SERVICE);
 
         if(imm != null) imm.hideSoftInputFromWindow(srt.getWindowToken(), 0);

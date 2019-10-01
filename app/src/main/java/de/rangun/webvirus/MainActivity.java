@@ -29,7 +29,6 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -43,6 +42,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 
 import com.android.volley.toolbox.StringRequest;
 
@@ -61,7 +61,7 @@ import static java.lang.Math.log;
 
 public class MainActivity extends AppCompatActivity implements
         MovieFactory.IMoviesAvailableListener,
-        SearchBarFragment.OnMovieUpdateRequestListener {
+        SearchBarFragment.IMovieUpdateRequestListener {
 
     private static final String TAG = "MainActivity";
     private static final double LN10 = log(10);
@@ -202,8 +202,7 @@ public class MainActivity extends AppCompatActivity implements
     private void updateMovie(@Nullable IMovie m) {
 
         final SearchBarFragment sbf =
-                (SearchBarFragment) getSupportFragmentManager().
-                        findFragmentById(R.id.searchBar);
+                (SearchBarFragment) getSupportFragmentManager().findFragmentById(R.id.searchBar);
 
         final MovieDetailsFragment mdf =
                 (MovieDetailsFragment) getSupportFragmentManager().

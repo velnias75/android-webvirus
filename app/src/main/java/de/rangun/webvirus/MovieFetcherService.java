@@ -36,7 +36,6 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.SystemClock;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -44,6 +43,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.preference.PreferenceManager;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageRequest;
@@ -195,6 +195,7 @@ public class MovieFetcherService extends Service implements MovieFactory.IMovies
         listener = l;
     }
 
+    @SuppressWarnings("deprecation")
     public void fetchMovies(boolean silent) {
 
         Log.d(TAG, "fetchMovies");
