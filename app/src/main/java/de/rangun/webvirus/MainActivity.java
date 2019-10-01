@@ -42,7 +42,12 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.preference.PreferenceManager;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 import com.android.volley.toolbox.StringRequest;
 
@@ -50,6 +55,7 @@ import java.util.Objects;
 
 import de.rangun.webvirus.MovieFetcherService.NOTIFICATION;
 import de.rangun.webvirus.fragments.MovieDetailsFragment;
+import de.rangun.webvirus.fragments.MovieListFragment;
 import de.rangun.webvirus.fragments.SearchBarFragment;
 import de.rangun.webvirus.model.IMovie;
 import de.rangun.webvirus.model.MovieBKTree;
@@ -65,6 +71,30 @@ public class MainActivity extends AppCompatActivity implements
 
     private static final String TAG = "MainActivity";
     private static final double LN10 = log(10);
+
+    private class MoviePagerAdapter extends FragmentPagerAdapter {
+
+        MoviePagerAdapter(@NonNull FragmentManager fm, int behaviour) {
+            super(fm, behaviour);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+
+            if(position == 0) {
+                return mdf;
+            } else if(position == 1) {
+                return mlf;
+            }
+
+            return null;
+        }
+
+        @Override
+        public int getCount() {
+            return 2;
+        }
+    }
 
     private final ServiceConnection connection = new ServiceConnection() {
 
@@ -96,6 +126,12 @@ public class MainActivity extends AppCompatActivity implements
     @Nullable
     private MovieBKTree movies = null;
 
+    private MovieDetailsFragment mdf;
+    private MovieListFragment mlf;
+
+    private ViewPager pager;
+    private PagerAdapter pagerAdaper;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
 
@@ -108,6 +144,14 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         setContentView(R.layout.activity_main);
+
+        this.mdf = new MovieDetailsFragment();
+        this.mlf = new MovieListFragment();
+
+        pager = findViewById(R.id.pager);
+        pagerAdaper = new MoviePagerAdapter(getSupportFragmentManager(),
+                FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+        pager.setAdapter(pagerAdaper);
     }
 
     @Override
@@ -171,7 +215,11 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onBackPressed() {
-        moveTaskToBack(true);
+        if(pager.getCurrentItem() == 0) {
+            moveTaskToBack(true);
+        } else {
+            pager.setCurrentItem(pager.getCurrentItem() - 1);
+        }
     }
 
     @Override
@@ -204,9 +252,9 @@ public class MainActivity extends AppCompatActivity implements
         final SearchBarFragment sbf =
                 (SearchBarFragment) getSupportFragmentManager().findFragmentById(R.id.searchBar);
 
-        final MovieDetailsFragment mdf =
-                (MovieDetailsFragment) getSupportFragmentManager().
-                        findFragmentById(R.id.moviedetailsfragment);
+        //final MovieDetailsFragment mdf = null;
+                /*(MovieDetailsFragment) getSupportFragmentManager().
+                        findFragmentById(R.id.moviedetailsfragment); */
 
         if(sbf != null) sbf.hideSoftKeyboard();
 
@@ -238,7 +286,7 @@ public class MainActivity extends AppCompatActivity implements
 
         preZeros = new StringBuilder();
 
-        for (int i = 0; i < ceil(log(num) / LN10); ++i) preZeros.append('0');
+        for(int i = 0; i < ceil(log(num) / LN10); ++i) preZeros.append('0');
 
         final SharedPreferences sharedPrefs =
                 PreferenceManager.getDefaultSharedPreferences(this);

@@ -117,7 +117,21 @@
 
     </RelativeLayout>
 
-    <fragment
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/pager"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/copyright"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/searchBar"/>
+
+    <!-- <fragment
         android:id="@+id/moviedetailsfragment"
         android:name="de.rangun.webvirus.fragments.MovieDetailsFragment"
         android:layout_width="0dp"
@@ -132,7 +146,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/searchBar"
         tools:layout="@layout/moviedetailsfragment"
-        tools:visibility="visible" />
+        tools:visibility="visible" /> -->
 
     <TextView
         android:id="@+id/copyright"
