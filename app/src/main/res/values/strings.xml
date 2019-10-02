@@ -57,4 +57,7 @@
     <string name="notification_min_desc">Hippe Zombieboxbenutzer verstehen dies</string>
     <string name="notification_low_name">Altmodisch</string>
     <string name="notification_low_desc">Altmodische Smartphonenutzer mögen dies</string>
+    <string name="tab_details">hirnlose Details</string>
+    <string name="tab_list">intelligenzfreie Rentnerfilmliste</string>
+    <string name="tab_new">neue Schrott- bzw. Rentnerfilme</string>
 </resources>

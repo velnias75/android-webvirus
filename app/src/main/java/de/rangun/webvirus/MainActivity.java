@@ -50,6 +50,7 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.android.volley.toolbox.StringRequest;
+import com.google.android.material.tabs.TabLayout;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -107,6 +108,19 @@ public class MainActivity extends AppCompatActivity implements
         void setHasNewMovies(boolean b) {
             pages = b ? 3 : 2;
             notifyDataSetChanged();
+        }
+
+        @Nullable
+        @Override
+        public CharSequence getPageTitle(int position) {
+
+            if(position == 0) {
+                return getString(R.string.tab_details);
+            } else if(position == 1) {
+                return getString(R.string.tab_list);
+            } else {
+                return getString(R.string.tab_new);
+            }
         }
     }
 
@@ -173,6 +187,9 @@ public class MainActivity extends AppCompatActivity implements
                 if(sbf != null) sbf.setShowDropdown(position == 0);
             }
         });
+
+        TabLayout tabLayout = findViewById(R.id.tab_layout);
+        tabLayout.setupWithViewPager(pager);
     }
 
     @Override

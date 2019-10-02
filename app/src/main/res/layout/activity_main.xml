@@ -20,7 +20,8 @@
   ~  Last modified 23.09.19 06:31 by heiko
   -->
 
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -129,24 +130,15 @@
         app:layout_constraintBottom_toTopOf="@+id/copyright"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchBar"/>
+        app:layout_constraintTop_toBottomOf="@+id/searchBar">
 
-    <!-- <fragment
-        android:id="@+id/moviedetailsfragment"
-        android:name="de.rangun.webvirus.fragments.MovieDetailsFragment"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/copyright"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchBar"
-        tools:layout="@layout/moviedetailsfragment"
-        tools:visibility="visible" /> -->
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabIndicatorColor="#BBBBBB" />
+
+    </androidx.viewpager.widget.ViewPager>
 
     <TextView
         android:id="@+id/copyright"

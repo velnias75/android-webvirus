@@ -26,6 +26,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/transparent"
+    android:paddingTop="8dp"
     android:visibility="gone"
     tools:visibility="visible">
 
@@ -57,21 +58,6 @@
         app:layout_constraintHorizontal_weight="2"
         app:layout_constraintStart_toEndOf="@+id/cover"
         app:layout_constraintTop_toTopOf="@id/cover" />
-
-    <de.rangun.webvirus.widgets.CategoryTextView
-        android:id="@+id/title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:gravity="start"
-        android:maxLines="2"
-        android:text="@string/m.title"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textColor="@color/categoryAny"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@id/top250"
-        app:layout_constraintStart_toStartOf="@+id/m.id"
-        app:layout_constraintTop_toBottomOf="@id/m.id" />
 
     <TextView
         android:id="@+id/m.duration"
@@ -115,17 +101,6 @@
         app:layout_constraintEnd_toEndOf="@+id/m.disc"
         app:layout_constraintTop_toTopOf="@+id/languages" />
 
-    <de.rangun.webvirus.widgets.CategoryTextView
-        android:id="@+id/category"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="@string/categoryAny"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="@color/categoryAny"
-        app:layout_constraintEnd_toEndOf="@+id/filename"
-        app:layout_constraintStart_toStartOf="@+id/languages"
-        app:layout_constraintTop_toBottomOf="@+id/languages" />
-
     <TextView
         android:id="@+id/m.abstract"
         android:layout_width="0dp"
@@ -158,5 +133,31 @@
         tools:background="@drawable/nocover"
         tools:layout_height="100dp"
         tools:layout_width="100dp" />
+
+    <de.rangun.webvirus.widgets.CategoryTextView
+        android:id="@+id/title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:gravity="start"
+        android:maxLines="2"
+        android:text="@string/m.title"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="@color/categoryAny"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@id/top250"
+        app:layout_constraintStart_toStartOf="@+id/m.id"
+        app:layout_constraintTop_toBottomOf="@id/m.id" />
+
+    <de.rangun.webvirus.widgets.CategoryTextView
+        android:id="@+id/category"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/categoryAny"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@color/categoryAny"
+        app:layout_constraintEnd_toEndOf="@+id/filename"
+        app:layout_constraintStart_toStartOf="@+id/languages"
+        app:layout_constraintTop_toBottomOf="@+id/languages" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
