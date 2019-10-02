@@ -51,9 +51,15 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.android.volley.toolbox.StringRequest;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 import de.rangun.webvirus.MovieFetcherService.NOTIFICATION;
+import de.rangun.webvirus.fragments.IMovieUpdateRequestListener;
 import de.rangun.webvirus.fragments.MovieDetailsFragment;
 import de.rangun.webvirus.fragments.MovieListFragment;
 import de.rangun.webvirus.fragments.SearchBarFragment;
@@ -67,7 +73,8 @@ import static java.lang.Math.log;
 
 public class MainActivity extends AppCompatActivity implements
         MovieFactory.IMoviesAvailableListener,
-        SearchBarFragment.IMovieUpdateRequestListener {
+        IMovieUpdateRequestListener,
+        MovieBKTreeAdapter.IFilterResultListener {
 
     private static final String TAG = "MainActivity";
     private static final double LN10 = log(10);
@@ -79,23 +86,20 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         @Override
+        @NotNull
         public Fragment getItem(int position) {
 
             if(position == 0) {
                 mdf = new MovieDetailsFragment();
                 return mdf;
-            } else if(position == 1) {
+            } else {
                 mlf = new MovieListFragment();
                 return mlf;
             }
-
-            return null;
         }
 
         @Override
-        public int getCount() {
-            return 2;
-        }
+        public int getCount() { return 2; }
     }
 
     private final ServiceConnection connection = new ServiceConnection() {
@@ -121,8 +125,6 @@ public class MainActivity extends AppCompatActivity implements
 
     private boolean mBound = false;
     @Nullable
-    private StringBuilder preZeros = null;
-    @Nullable
     private Long currentId = null;
     private MovieFetcherService mfs;
     @Nullable
@@ -132,7 +134,6 @@ public class MainActivity extends AppCompatActivity implements
     private MovieListFragment mlf;
 
     private ViewPager pager;
-    private PagerAdapter pagerAdaper;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -148,9 +149,18 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
 
         pager = findViewById(R.id.pager);
-        pagerAdaper = new MoviePagerAdapter(getSupportFragmentManager(),
+        PagerAdapter pagerAdaper = new MoviePagerAdapter(getSupportFragmentManager(),
                 FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         pager.setAdapter(pagerAdaper);
+        pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                final SearchBarFragment sbf =
+                        (SearchBarFragment) getSupportFragmentManager().
+                                findFragmentById(R.id.searchBar);
+                if(sbf != null) sbf.setShowDropdown(position != 1);
+            }
+        });
     }
 
     @Override
@@ -222,15 +232,20 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onUpdateMovieByTitleOrId(@NonNull String text, @NonNull SearchBarFragment sbf) {
+    public void onUpdateMovieByTitleOrId(@NonNull String text, @NonNull Fragment f) {
 
         if(mBound) {
 
+            IMovie m = null;
+
             if (movies != null) {
-                updateMovie(movies.findByTitleOrId(text));
-            } else {
-                sbf.hideSoftKeyboard();
+                m = movies.findByTitleOrId(text);
+                updateMovie(m);
+            } else if(f instanceof SearchBarFragment) {
+                ((SearchBarFragment)f).hideSoftKeyboard();
             }
+
+            if(m != null) pager.setCurrentItem(0);
         }
     }
 
@@ -251,10 +266,6 @@ public class MainActivity extends AppCompatActivity implements
         final SearchBarFragment sbf =
                 (SearchBarFragment) getSupportFragmentManager().findFragmentById(R.id.searchBar);
 
-        //final MovieDetailsFragment mdf = null;
-                /*(MovieDetailsFragment) getSupportFragmentManager().
-                        findFragmentById(R.id.moviedetailsfragment); */
-
         if(sbf != null) sbf.hideSoftKeyboard();
 
         if(m == null) {
@@ -268,7 +279,7 @@ public class MainActivity extends AppCompatActivity implements
 
         currentId = m.id();
 
-        if(mdf != null && mBound) mdf.setContents(m, mfs.getQueue(), Objects.requireNonNull(preZeros).toString());
+        if(mdf != null && mBound) mdf.setContents(m, mfs.getQueue(), Objects.requireNonNull(movies).size());
 
         if(sbf != null) sbf.setText(Objects.requireNonNull(m.title()));
     }
@@ -283,10 +294,6 @@ public class MainActivity extends AppCompatActivity implements
 
         setStatus(getString(R.string.loaded, num), NOTIFICATION.LOADED);
 
-        preZeros = new StringBuilder();
-
-        for(int i = 0; i < ceil(log(num) / LN10); ++i) preZeros.append('0');
-
         final SharedPreferences sharedPrefs =
                 PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -295,6 +302,18 @@ public class MainActivity extends AppCompatActivity implements
                 sharedPrefs.getLong("lastMovieIdSeen", 1L));
 
         if(mBound && !silent) setStatus(getString(R.string.loaded, Objects.requireNonNull(movies).size()));
+    }
+
+    public static String makeIdString(long num, int base) {
+
+        final StringBuilder preZeros = new StringBuilder();
+        final int count = (int)ceil(log(base) / LN10);
+
+        for(int i = 0; i < count; ++i) preZeros.append('0');
+
+        preZeros.append(num);
+
+        return "#" + preZeros.toString().substring(preZeros.length() - count);
     }
 
     @Override
@@ -312,11 +331,33 @@ public class MainActivity extends AppCompatActivity implements
             if(sbf != null) {
 
                 final ArrayAdapter<String> adapter = new MovieBKTreeAdapter(this,
-                        R.layout.searchsuggestions, movies);
+                        movies, this);
 
                 sbf.populateCompleter(adapter);
             }
         }
+    }
+
+    @Override
+    public void onFilterResultAvailable(List<IMovie> result) {
+        if(mlf != null) mlf.setListAdapter(new MovieListFragment.Adapter(this,
+                    filteredOrAllMovies(result), Objects.requireNonNull(movies).size()));
+    }
+
+    private List<IMovie> filteredOrAllMovies(List<IMovie> input) {
+
+        final ArrayList<IMovie> r = new ArrayList<>(Objects.requireNonNull(movies).size());
+
+        if(!input.isEmpty()) {
+            for(IMovie m: input) if(!m.isDummy()) r.add(m);
+        } else {
+            for(IMovie m: movies) r.add(m);
+            Collections.sort(r);
+        }
+
+        r.trimToSize();
+
+        return r;
     }
 
     @Override

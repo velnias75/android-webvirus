@@ -31,7 +31,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
 
-import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -53,21 +52,28 @@ import jregex.REFlags;
 
 public final class MovieBKTreeAdapter extends ArrayAdapter<String> {
 
+    public interface IFilterResultListener {
+        void onFilterResultAvailable(List<IMovie> result);
+    }
+
     private final static Pattern rexSearch = new Pattern("/([^/]+)/",
             REFlags.IGNORE_CASE|REFlags.UNICODE);
 
+    private final IFilterResultListener listener;
     private final MovieBKTree movies;
+
     private List<IMovie> filtered;
     @Nullable
     private Integer separatorPos = null;
 
-    public MovieBKTreeAdapter(@NonNull Context context, @LayoutRes int resource,
-                              MovieBKTree movies) {
+    public MovieBKTreeAdapter(@NonNull Context context, MovieBKTree movies,
+                              IFilterResultListener listener) {
 
-        super(context, resource);
+        super(context, R.layout.searchsuggestions);
 
         this.movies = movies;
         filtered = this.movies.asList();
+        this.listener = listener;
     }
 
     @Override
@@ -160,7 +166,8 @@ public final class MovieBKTreeAdapter extends ArrayAdapter<String> {
 
                         for (IMovie s : movies) {
                             if((isSpecialSearch && lid != null && lid.equals(s.id()))
-                                    || Objects.requireNonNull(s.title()).toLowerCase().contains(lowerConstraint)) {
+                                    || Objects.requireNonNull(s.title()).toLowerCase().
+                                    contains(lowerConstraint)) {
                                 best.add(s);
                             }
                         }
@@ -215,9 +222,16 @@ public final class MovieBKTreeAdapter extends ArrayAdapter<String> {
 
             @Override
             protected void publishResults(CharSequence constraint, @NonNull FilterResults results) {
+
                 //noinspection unchecked
                 filtered = (List<IMovie>)results.values;
+
                 notifyDataSetChanged();
+
+                if(listener != null) {
+                    listener.onFilterResultAvailable(filtered != null ? filtered :
+                            new ArrayList<>());
+                }
             }
         };
     }

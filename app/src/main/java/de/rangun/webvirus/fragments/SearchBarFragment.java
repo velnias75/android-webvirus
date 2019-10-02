@@ -35,6 +35,7 @@ import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 import java.util.Objects;
@@ -47,10 +48,6 @@ public final class SearchBarFragment extends Fragment {
 
     private IMovieUpdateRequestListener listener;
 
-    public interface IMovieUpdateRequestListener {
-        void onUpdateMovieByTitleOrId(String text, SearchBarFragment sbf);
-    }
-
     @Override
     public void onAttach(@NonNull Context context) {
 
@@ -60,7 +57,7 @@ public final class SearchBarFragment extends Fragment {
             listener = (IMovieUpdateRequestListener)context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString() +
-                    " must implement IArticleSelectedListener");
+                    " must implement IMovieUpdateRequestListener");
         }
 
     }
@@ -82,7 +79,8 @@ public final class SearchBarFragment extends Fragment {
                 textView.setText(null);
                 textView.requestFocus();
 
-                final InputMethodManager imm = (InputMethodManager) Objects.requireNonNull(getActivity()).getSystemService(
+                final InputMethodManager imm = (InputMethodManager) Objects.
+                        requireNonNull(getActivity()).getSystemService(
                         Context.INPUT_METHOD_SERVICE);
                 if(imm != null) imm.showSoftInput(textView, 0);
             }
@@ -155,5 +153,12 @@ public final class SearchBarFragment extends Fragment {
                 Context.INPUT_METHOD_SERVICE);
 
         if(imm != null) imm.hideSoftInputFromWindow(srt.getWindowToken(), 0);
+    }
+
+    public final void setShowDropdown(boolean b) {
+        final CustomAutoCompleteTextView textView = Objects.requireNonNull(getView()).
+                findViewById(R.id.searchTerm);
+        if(textView != null) textView.setDropDownHeight(b ?
+                ConstraintLayout.LayoutParams.WRAP_CONTENT : 0);
     }
 }

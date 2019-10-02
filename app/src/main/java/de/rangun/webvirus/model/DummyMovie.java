@@ -33,6 +33,9 @@ class DummyMovie extends AbstractMovie {
         super(title);
     }
 
+    @Override
+    public boolean isDummy() { return true; }
+
     @NonNull
     @Override
     public String filename(Context ctx) { return DUMMY; }

@@ -32,7 +32,7 @@ public final class MovieBKTree extends BKTree<IMovie> {
     private final static Pattern idSearch = new Pattern("#(\\d+)");
 
     static boolean isSpecialSearch(@NonNull String text) {
-        return ('#' == text.charAt(0) && MovieBKTree.idSearch.matches(text));
+        return !text.isEmpty() && ('#' == text.charAt(0) && MovieBKTree.idSearch.matches(text));
     }
 
     @Nullable

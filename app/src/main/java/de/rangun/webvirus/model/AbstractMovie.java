@@ -112,6 +112,9 @@ abstract class AbstractMovie implements IMovie {
     public boolean top250() { return top250; }
 
     @Override
+    public boolean isDummy() { return false; }
+
+    @Override
     public int compareTo(@NonNull IMovie o) {
         return title.compareTo(Objects.requireNonNull(o.title()));
     }

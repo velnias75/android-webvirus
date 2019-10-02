@@ -16,49 +16,13 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with android-webvirus.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  Last modified 23.09.19 06:31 by heiko
+ *  Last modified 02.10.19 03:55 by heiko
  */
 
-package de.rangun.webvirus.model;
+package de.rangun.webvirus.fragments;
 
-import android.content.Context;
+import androidx.fragment.app.Fragment;
 
-import androidx.annotation.Nullable;
-
-import java.util.List;
-
-public interface IMovie extends Comparable<IMovie> {
-
-    long id();
-
-    @Nullable
-    String title();
-
-    long duration();
-
-    @Nullable
-    String durationString();
-
-    @Nullable
-    List<String> languages();
-
-    @Nullable
-    String disc();
-
-    int category();
-
-    @Nullable
-    String filename(Context ctx);
-
-    boolean omu();
-
-    boolean top250();
-
-    @Nullable
-    Long oid();
-
-    @Nullable
-    String description(Context ctx);
-
-    boolean isDummy();
+public interface IMovieUpdateRequestListener {
+    void onUpdateMovieByTitleOrId(String text, Fragment f);
 }

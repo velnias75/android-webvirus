@@ -37,6 +37,7 @@ import com.android.volley.toolbox.NetworkImageView;
 
 import java.util.Objects;
 
+import de.rangun.webvirus.MainActivity;
 import de.rangun.webvirus.R;
 import de.rangun.webvirus.model.BitmapMemCache;
 import de.rangun.webvirus.model.IMovie;
@@ -62,7 +63,7 @@ public final class MovieDetailsFragment extends Fragment {
         Objects.requireNonNull(getView()).setVisibility(visibility);
     }
 
-    public final void setContents(@NonNull IMovie m, RequestQueue queue, @NonNull String preZeros) {
+    public final void setContents(@NonNull IMovie m, RequestQueue queue, int movieCount) {
 
         final View top250 = Objects.requireNonNull(getView()).findViewById(R.id.top250);
         final TextView mid = getView().findViewById(R.id.m_id);
@@ -75,8 +76,6 @@ public final class MovieDetailsFragment extends Fragment {
         final TextView abs = getView().findViewById(R.id.m_abstract);
         final NetworkImageView cov = getView().findViewById(R.id.cover);
 
-        final String idNum = preZeros + m.id();
-
         StringBuilder sb = new StringBuilder();
 
         for(String l: Objects.requireNonNull(m.languages())) {
@@ -85,7 +84,7 @@ public final class MovieDetailsFragment extends Fragment {
         }
 
         top250.setVisibility(m.top250() ? View.VISIBLE : View.INVISIBLE);
-        mid.setText(idNum.substring(idNum.length() - preZeros.length()));
+        mid.setText(MainActivity.makeIdString(m.id(), movieCount));
         tit.setText(m.title(), m.category());
         dus.setText(m.durationString());
         dis.setText(m.disc());
