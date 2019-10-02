@@ -17,7 +17,7 @@
   ~  You should have received a copy of the GNU Lesser General Public License
   ~  along with android-webvirus.  If not, see <http://www.gnu.org/licenses/>.
   ~
-  ~  Last modified 24.09.19 07:47 by heiko
+  ~  Last modified 02.10.19 13:48 by heiko
   -->
 
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"

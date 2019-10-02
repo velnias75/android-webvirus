@@ -16,7 +16,7 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with android-webvirus.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  Last modified 27.09.19 05:03 by heiko
+ *  Last modified 02.10.19 02:53 by heiko
  */
 
 package de.rangun.webvirus.model;
