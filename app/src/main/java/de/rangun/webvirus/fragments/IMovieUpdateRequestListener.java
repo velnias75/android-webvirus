@@ -28,4 +28,5 @@ import de.rangun.webvirus.model.IMovie;
 public interface IMovieUpdateRequestListener {
     void onUpdateMovieByTitleOrId(String text, Fragment f);
     void onUpdateMovie(IMovie m, Fragment f);
+    void onRequestNewMoviesUpdate(MovieListFragment f);
 }

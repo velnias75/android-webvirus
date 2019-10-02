@@ -21,6 +21,7 @@
 
 package de.rangun.webvirus.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,6 +46,25 @@ import de.rangun.webvirus.widgets.CategoryTextView;
 
 public final class MovieDetailsFragment extends Fragment {
 
+    private IResumeListener listener;
+
+    public interface IResumeListener {
+        void updateRequested(MovieDetailsFragment f);
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+
+        super.onAttach(context);
+
+        try {
+            listener = (IResumeListener)context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() +
+                    " must implement IResumeListener");
+        }
+    }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
@@ -59,8 +79,17 @@ public final class MovieDetailsFragment extends Fragment {
         return fragmentLayout;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        listener.updateRequested(this);
+    }
+
     public final void setVisibility(int visibility) {
-        Objects.requireNonNull(getView()).setVisibility(visibility);
+
+        View v = getView();
+
+        if(v != null) v.setVisibility(visibility);
     }
 
     public final void setContents(@NonNull IMovie m, RequestQueue queue, int movieCount) {

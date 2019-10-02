@@ -74,16 +74,17 @@ import static java.lang.Math.log;
 public class MainActivity extends AppCompatActivity implements
         MovieFactory.IMoviesAvailableListener,
         IMovieUpdateRequestListener,
-        MovieBKTreeAdapter.IFilterResultListener {
+        MovieBKTreeAdapter.IFilterResultListener,
+        MovieDetailsFragment.IResumeListener {
 
     private static final String TAG = "MainActivity";
     private static final double LN10 = log(10);
 
     private class MoviePagerAdapter extends FragmentPagerAdapter {
 
-        MoviePagerAdapter(@NonNull FragmentManager fm, int behaviour) {
-            super(fm, behaviour);
-        }
+        private int pages = 2;
+
+        MoviePagerAdapter(@NonNull FragmentManager fm, int behaviour) { super(fm, behaviour); }
 
         @Override
         @NotNull
@@ -92,14 +93,21 @@ public class MainActivity extends AppCompatActivity implements
             if(position == 0) {
                 mdf = new MovieDetailsFragment();
                 return mdf;
-            } else {
-                mlf = new MovieListFragment();
+            } else if(position == 1) {
+                mlf = new MovieListFragment(false);
                 return mlf;
+            } else {
+                return new MovieListFragment(true);
             }
         }
 
         @Override
-        public int getCount() { return 2; }
+        public int getCount() { return pages; }
+
+        void setHasNewMovies(boolean b) {
+            pages = b ? 3 : 2;
+            notifyDataSetChanged();
+        }
     }
 
     private final ServiceConnection connection = new ServiceConnection() {
@@ -124,9 +132,12 @@ public class MainActivity extends AppCompatActivity implements
     };
 
     private boolean mBound = false;
+    private ArrayList<IMovie> newMoviesList;
+
     @Nullable
     private Long currentId = null;
     private MovieFetcherService mfs;
+
     @Nullable
     private MovieBKTree movies = null;
 
@@ -158,7 +169,8 @@ public class MainActivity extends AppCompatActivity implements
                 final SearchBarFragment sbf =
                         (SearchBarFragment) getSupportFragmentManager().
                                 findFragmentById(R.id.searchBar);
-                if(sbf != null) sbf.setShowDropdown(position != 1);
+
+                if(sbf != null) sbf.setShowDropdown(position == 0);
             }
         });
     }
@@ -237,17 +249,16 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onUpdateMovie(IMovie m, Fragment f) {
+    public void onUpdateMovie(IMovie m, @NonNull Fragment f) {
 
         if(mBound) {
 
             if (movies != null) {
-                updateMovie(m);
+                //if(m != null) pager.setCurrentItem(0);
+                updateMovie(m, f instanceof MovieDetailsFragment ? (MovieDetailsFragment)f : mdf);
             } else if(f instanceof SearchBarFragment) {
                 ((SearchBarFragment)f).hideSoftKeyboard();
             }
-
-            if(m != null) pager.setCurrentItem(0);
         }
     }
 
@@ -256,19 +267,21 @@ public class MainActivity extends AppCompatActivity implements
         if(mBound) {
 
             try {
-                updateMovie(Objects.requireNonNull(movies).getByMovieId(id));
+                updateMovie(Objects.requireNonNull(movies).getByMovieId(id), mdf);
             } catch (IndexOutOfBoundsException ex) {
                 Log.d(TAG, "Exc: " + ex.getMessage());
             }
         }
     }
 
-    private void updateMovie(@Nullable IMovie m) {
+    private void updateMovie(@Nullable IMovie m, MovieDetailsFragment mdf) {
 
         final SearchBarFragment sbf =
                 (SearchBarFragment) getSupportFragmentManager().findFragmentById(R.id.searchBar);
 
         if(sbf != null) sbf.hideSoftKeyboard();
+
+        pager.setCurrentItem(0);
 
         if(m == null) {
 
@@ -277,13 +290,20 @@ public class MainActivity extends AppCompatActivity implements
             error(getString(R.string.notfound),
                     NOTIFICATION.NOTFOUND);
             return;
+
         } else if(mdf != null) mdf.setVisibility(View.VISIBLE);
 
         currentId = m.id();
 
-        if(mdf != null && mBound) mdf.setContents(m, mfs.getQueue(), Objects.requireNonNull(movies).size());
+        if(mdf != null && mBound) mdf.setContents(m, mfs.getQueue(),
+                Objects.requireNonNull(movies).size());
 
         if(sbf != null) sbf.setText(Objects.requireNonNull(m.title()));
+    }
+
+    @Override
+    public void updateRequested(MovieDetailsFragment f) {
+        if(currentId != null && movies != null) updateMovie(movies.getByMovieId(currentId), f);
     }
 
     @Override
@@ -300,6 +320,7 @@ public class MainActivity extends AppCompatActivity implements
                 PreferenceManager.getDefaultSharedPreferences(this);
 
         findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+
         updateMovie(currentId != null ? currentId :
                 sharedPrefs.getLong("lastMovieIdSeen", 1L));
 
@@ -341,9 +362,35 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void newMoviesAvailable(int num) {
+
+        if(num > 0 && movies != null) {
+
+            ((MoviePagerAdapter) Objects.requireNonNull(pager.getAdapter())).setHasNewMovies(true);
+
+            newMoviesList = new ArrayList<>(movies.size());
+
+            for(IMovie m : movies) if (m.isNewMovie()) newMoviesList.add(m);
+
+            newMoviesList.trimToSize();
+            Collections.sort(newMoviesList);
+        }
+    }
+
+    @Override
+    public void onRequestNewMoviesUpdate(MovieListFragment f) {
+
+        List<IMovie> nml = newMoviesList != null ? newMoviesList : new ArrayList<>();
+
+        f.setListAdapter(new MovieListFragment.Adapter(this, nml, Objects.requireNonNull(movies).size(),
+                true));
+    }
+
+    @Override
     public void onFilterResultAvailable(List<IMovie> result) {
         if(mlf != null) mlf.setListAdapter(new MovieListFragment.Adapter(this,
-                    filteredOrAllMovies(result), Objects.requireNonNull(movies).size()));
+                    filteredOrAllMovies(result), Objects.requireNonNull(movies).size(),
+                false));
     }
 
     private List<IMovie> filteredOrAllMovies(List<IMovie> input) {

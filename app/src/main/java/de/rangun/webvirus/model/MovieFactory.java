@@ -46,6 +46,7 @@ public final class MovieFactory {
         void error(String message);
         void fetchDescription(StringRequest rq);
         void descriptionAvailable(String dsc);
+        void newMoviesAvailable(int num);
     }
 
     private static final String TAG = "MovieFactory";

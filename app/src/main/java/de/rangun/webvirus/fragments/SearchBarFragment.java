@@ -59,7 +59,6 @@ public final class SearchBarFragment extends Fragment {
             throw new ClassCastException(context.toString() +
                     " must implement IMovieUpdateRequestListener");
         }
-
     }
 
     @Override

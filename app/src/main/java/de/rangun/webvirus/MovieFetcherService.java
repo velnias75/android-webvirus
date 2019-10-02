@@ -52,6 +52,7 @@ import com.android.volley.toolbox.Volley;
 
 import java.util.Objects;
 
+import de.rangun.webvirus.model.IMovie;
 import de.rangun.webvirus.model.MovieBKTree;
 import de.rangun.webvirus.model.MovieFactory;
 
@@ -232,6 +233,8 @@ public class MovieFetcherService extends Service implements MovieFactory.IMovies
         final SharedPreferences sharedPrefs =
                 PreferenceManager.getDefaultSharedPreferences(this);
 
+        int nm = 0;
+
         int lastMovieCount = sharedPrefs.getInt("lastMovieCount", 0);
         Log.d(TAG, "(before fetch) lastMovieCount=" + lastMovieCount);
 
@@ -240,13 +243,17 @@ public class MovieFetcherService extends Service implements MovieFactory.IMovies
             final Long oid = Objects.requireNonNull(movies.getByMovieId(latestCoverId)).oid();
             final int lmc = movies.size() - lastMovieCount;
 
+            nm = lmc;
+
+            for(IMovie m: movies) m.setNewMovie(m.id() > lastMovieCount);
+
             lastMovieCount = movies.size();
 
             if(oid != null) {
                 Objects.requireNonNull(getQueue()).add(new ImageRequest(
                         "https://rangun.de/db/omdb.php?cover-oid=" + oid,
                         bitmap -> notifyInternal(getString(R.string.new_movies,
-                                movies.size() - lmc), NOTIFICATION.NEW,
+                                lmc), NOTIFICATION.NEW,
                                 bitmap, silent),
                         getResources().getDimensionPixelSize(android.R.dimen.
                                 notification_large_icon_width),
@@ -254,10 +261,10 @@ public class MovieFetcherService extends Service implements MovieFactory.IMovies
                                 notification_large_icon_height),
                         ImageView.ScaleType.FIT_START, Bitmap.Config.RGB_565,
                         error -> notifyInternal(getString(R.string.new_movies,
-                                movies.size() - lmc), NOTIFICATION.NEW,
+                                lmc), NOTIFICATION.NEW,
                                 null, silent)));
             } else notifyInternal(getString(R.string.new_movies,
-                    movies.size() - lmc), NOTIFICATION.NEW, null, silent);
+                    lmc), NOTIFICATION.NEW, null, silent);
 
             sharedPrefs.edit().putInt("lastMovieCount", lastMovieCount).apply();
 
@@ -268,8 +275,14 @@ public class MovieFetcherService extends Service implements MovieFactory.IMovies
         /*sharedPrefs.edit().putInt("lastMovieCount", new Random().nextInt(3201) + 1).
                 apply(); */
 
-        if(listener != null) listener.movies(movies, latestCoverId, silent);
+        if(listener != null) {
+            listener.movies(movies, latestCoverId, silent);
+            listener.newMoviesAvailable(nm);
+        }
     }
+
+    @Override
+    public void newMoviesAvailable(int num) {}
 
     @Override
     public void error(String localizedMessage) {

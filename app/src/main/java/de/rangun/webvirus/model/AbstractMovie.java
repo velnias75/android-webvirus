@@ -46,6 +46,8 @@ abstract class AbstractMovie implements IMovie {
     @Nullable
     private final Long oid;
 
+    private boolean newMovie = false;
+
     private AbstractMovie(long id, @Nullable String title, @Nullable String dur_str, long dur_sec,
                           @Nullable List<String> languages, @Nullable String disc, int category,
                           boolean omu, boolean top250, @Nullable Long oid) {
@@ -113,6 +115,14 @@ abstract class AbstractMovie implements IMovie {
 
     @Override
     public boolean isDummy() { return false; }
+
+    @Override
+    public boolean isNewMovie() { return newMovie; }
+
+    @Override
+    public void setNewMovie(boolean newMovie) {
+        this.newMovie = newMovie;
+    }
 
     @Override
     public int compareTo(@NonNull IMovie o) {

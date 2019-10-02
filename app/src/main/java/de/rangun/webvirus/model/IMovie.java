@@ -61,4 +61,8 @@ public interface IMovie extends Comparable<IMovie> {
     String description(Context ctx);
 
     boolean isDummy();
+
+    boolean isNewMovie();
+
+    void setNewMovie(boolean b);
 }
