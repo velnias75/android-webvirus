@@ -106,8 +106,7 @@ public class MovieListFragment extends ListFragment {
     @Override
     public void onListItemClick(@NonNull ListView l, @NonNull View v, int position, long id) {
         if(listener != null) {
-            listener.onUpdateMovieByTitleOrId(((IMovie) Objects.
-                            requireNonNull(getListAdapter()).getItem(position)).title(), this);
+            listener.onUpdateMovie(((IMovie) Objects.requireNonNull(getListAdapter()).getItem(position)), this);
         }
     }
 }

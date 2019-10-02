@@ -233,13 +233,15 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onUpdateMovieByTitleOrId(@NonNull String text, @NonNull Fragment f) {
+        onUpdateMovie(movies != null ? movies.findByTitleOrId(text) : null, f);
+    }
+
+    @Override
+    public void onUpdateMovie(IMovie m, Fragment f) {
 
         if(mBound) {
 
-            IMovie m = null;
-
             if (movies != null) {
-                m = movies.findByTitleOrId(text);
                 updateMovie(m);
             } else if(f instanceof SearchBarFragment) {
                 ((SearchBarFragment)f).hideSoftKeyboard();
