@@ -101,11 +101,14 @@ public final class SearchBarFragment extends Fragment {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             private void setSelectedItem() {
+
                 final Object item = spinner.getSelectedItem();
+
                 if(item != null) {
                     textView.setText(item.toString());
                     textView.setSelection(item.toString().length());
                 }
+
                 textView.dismissDropDown();
             }
 

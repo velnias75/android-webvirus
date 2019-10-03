@@ -35,9 +35,7 @@ import com.android.volley.toolbox.ImageLoader;
         this((int) (Runtime.getRuntime().maxMemory() >> 10) >> 3);
     }
 
-    private BitmapMemCache(int sizeInKiloBytes) {
-        super(sizeInKiloBytes);
-    }
+    public BitmapMemCache(int sizeInKiloBytes) { super(sizeInKiloBytes); }
 
     @Override
     protected int sizeOf(String key, @NonNull Bitmap bitmap) {

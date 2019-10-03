@@ -38,6 +38,7 @@ class BKTree<T> implements Iterable<T> {
     private final class _node<N> {
 
         private final T item;
+
         @Nullable
         private Map<Integer, _node<N>> children = null;
 

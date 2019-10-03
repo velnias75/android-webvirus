@@ -182,9 +182,8 @@ public class MovieFetcherService extends Service implements MovieFactory.IMovies
 
             alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
                     SystemClock.elapsedRealtime() + interval, interval, alarmIntent);
-        } else {
-            Log.d(TAG, "NOT periodically fetching movies");
-        }
+
+        } else Log.d(TAG, "NOT periodically fetching movies");
     }
 
     @Nullable

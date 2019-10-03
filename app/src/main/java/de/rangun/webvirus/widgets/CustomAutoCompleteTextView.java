@@ -22,7 +22,6 @@
 package de.rangun.webvirus.widgets;
 
 import android.content.Context;
-import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
@@ -47,20 +46,6 @@ public final class CustomAutoCompleteTextView extends AppCompatAutoCompleteTextV
 
     public CustomAutoCompleteTextView (@NonNull Context context, AttributeSet attrs) {
         super(context, attrs);
-    }
-
-    public CustomAutoCompleteTextView(@NonNull Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-    }
-
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-
-    }
-
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
     }
 
     @Override

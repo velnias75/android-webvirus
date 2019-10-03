@@ -29,15 +29,12 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.text.Html;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -81,11 +78,16 @@ public class MainActivity extends AppCompatActivity implements
     private static final String TAG = "MainActivity";
     private static final double LN10 = log(10);
 
-    private final class MoviePagerAdapter extends FragmentPagerAdapter {
+    private static final class MoviePagerAdapter extends FragmentPagerAdapter {
 
         private int pages = 2;
 
-        MoviePagerAdapter(@NonNull FragmentManager fm) { super(fm, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT); }
+        private final Context ctx;
+
+        MoviePagerAdapter(@NonNull Context ctx, @NonNull FragmentManager fm) {
+            super(fm, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+            this.ctx = ctx;
+        }
 
         @Override
         @NotNull
@@ -113,11 +115,11 @@ public class MainActivity extends AppCompatActivity implements
         public CharSequence getPageTitle(int position) {
 
             if(position == 0) {
-                return getString(R.string.tab_details);
+                return ctx.getResources().getString(R.string.tab_details);
             } else if(position == 1) {
-                return getString(R.string.tab_list);
+                return ctx.getResources().getString(R.string.tab_list);
             } else {
-                return getString(R.string.tab_new);
+                return ctx.getResources().getString(R.string.tab_new);
             }
         }
     }
@@ -153,6 +155,7 @@ public class MainActivity extends AppCompatActivity implements
     @Nullable
     private MovieBKTree movies = null;
 
+    private Toaster toaster;
     private ViewPager pager;
 
     @Override
@@ -168,9 +171,15 @@ public class MainActivity extends AppCompatActivity implements
 
         setContentView(R.layout.activity_main);
 
+        final TextView tv = findViewById(R.id.copyright);
+        tv.setText(getString(R.string.copyright, BuildConfig.VERSION_NAME));
+
+        toaster = new Toaster(this);
+
         pager = findViewById(R.id.pager);
 
-        final PagerAdapter pagerAdaper = new MoviePagerAdapter(getSupportFragmentManager());
+        final PagerAdapter pagerAdaper =
+                new MoviePagerAdapter(this, getSupportFragmentManager());
 
         pager.setAdapter(pagerAdaper);
         pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
@@ -413,11 +422,11 @@ public class MainActivity extends AppCompatActivity implements
                 findFragmentByTag("android:switcher:" + R.id.pager + ":1");
 
         if(mlf != null) mlf.setListAdapter(new MovieListFragment.Adapter(this,
-                    filteredOrAllMovies(result), Objects.requireNonNull(movies).size(),
+                    filteredOrAllMovies(result, movies), Objects.requireNonNull(movies).size(),
                 false));
     }
 
-    private List<IMovie> filteredOrAllMovies(List<IMovie> input) {
+    private static List<IMovie> filteredOrAllMovies(List<IMovie> input, MovieBKTree movies) {
 
         final ArrayList<IMovie> r = new ArrayList<>(Objects.requireNonNull(movies).size());
 
@@ -462,23 +471,8 @@ public class MainActivity extends AppCompatActivity implements
 // --Commented out by Inspection STOP (28.09.19 03:48)
 
     private void setStatus(String txt, int color, @NonNull NOTIFICATION notification) {
-
-        LayoutInflater inflater = getLayoutInflater();
-        View layout = inflater.inflate(R.layout.custom_toast,
-                findViewById(R.id.custom_toast_container));
-
-        TextView text = layout.findViewById(R.id.text);
-        text.setText(Html.fromHtml(txt));
-        text.setTextColor(color);
-
-        Toast toast = new Toast(getApplicationContext());
-        toast.setDuration(Toast.LENGTH_LONG);
-        toast.setView(layout);
-        toast.show();
-
-        if(NOTIFICATION.NONE != notification) {
-            if(mBound) mfs.notify(txt, notification);
-        }
+        toaster.show(txt, color);
+        if(mBound && NOTIFICATION.NONE != notification) mfs.notify(txt, notification);
     }
 
     @Override

@@ -126,7 +126,7 @@ public final class MovieDetailsFragment extends Fragment {
 
             cov.setImageUrl("https://rangun.de/db/omdb.php?cover-oid=" + m.oid() +
                             (m.top250() ? "&top250=true" : ""),
-                    new ImageLoader(queue, new BitmapMemCache()));
+                    new ImageLoader(queue, new BitmapMemCache(3072)));
         } else {
             cov.setImageUrl(null, null);
         }
