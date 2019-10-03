@@ -57,7 +57,7 @@ android {
     buildToolsVersion "29.0.2"
     defaultConfig {
         applicationId "de.rangun.webvirus"
-        minSdkVersion 15
+        minSdkVersion 18
         targetSdkVersion 29
         versionCode code
         versionName "0.0 (build: " + code + ")"
@@ -69,9 +69,13 @@ android {
         release {
             minifyEnabled true
             shrinkResources true
+            zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.debug
         }
+    }
+    aaptOptions {
+        cruncherEnabled true
     }
     compileOptions {
         sourceCompatibility = 1.8

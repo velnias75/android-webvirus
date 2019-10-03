@@ -28,10 +28,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -69,7 +67,6 @@ public final class SearchBarFragment extends Fragment {
                 false);
 
         final CustomAutoCompleteTextView textView = fragmentLayout.findViewById(R.id.searchTerm);
-        final Spinner spinner = fragmentLayout.findViewById(R.id.searchTermSpinner);
         final Button search = fragmentLayout.findViewById(R.id.search);
 
         textView.setDrawableClickListener(target -> {
@@ -98,41 +95,12 @@ public final class SearchBarFragment extends Fragment {
         search.setOnClickListener(v ->
                 listener.onUpdateMovieByTitleOrId(textView.getText().toString(), this));
 
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-
-            private void setSelectedItem() {
-
-                final Object item = spinner.getSelectedItem();
-
-                if(item != null) {
-                    textView.setText(item.toString());
-                    textView.setSelection(item.toString().length());
-                }
-
-                textView.dismissDropDown();
-            }
-
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                setSelectedItem();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                setSelectedItem();
-            }
-        });
-
         return fragmentLayout;
     }
 
     public final void populateCompleter(ArrayAdapter<String> adapter) {
-
-        final Spinner spinner =
-                Objects.requireNonNull(getView()).findViewById(R.id.searchTermSpinner);
-        final CustomAutoCompleteTextView textView = getView().findViewById(R.id.searchTerm);
-
-        spinner.setAdapter(adapter);
+        final CustomAutoCompleteTextView textView =
+                Objects.requireNonNull(getView()).findViewById(R.id.searchTerm);
         textView.setAdapter(adapter);
     }
 

@@ -35,7 +35,7 @@
         android:layout_height="0dp"
         android:background="@android:drawable/editbox_dropdown_light_frame"
         app:layout_constraintBottom_toBottomOf="@+id/searchTerm"
-        app:layout_constraintEnd_toEndOf="@+id/searchTermSpinner"
+        app:layout_constraintEnd_toEndOf="@+id/searchTerm"
         app:layout_constraintStart_toStartOf="@+id/searchTerm"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -56,34 +56,22 @@
         android:paddingStart="20dp"
         android:paddingLeft="20dp"
         android:paddingEnd="0dp"
-        android:paddingRight="0dp"
+        android:paddingRight="16dp"
         android:singleLine="true"
         app:layout_constraintBottom_toBottomOf="@+id/search"
-        app:layout_constraintEnd_toStartOf="@+id/searchTermSpinner"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintEnd_toStartOf="@+id/search"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/search" />
-
-    <Spinner
-        android:id="@+id/searchTermSpinner"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:spinnerMode="dropdown"
-
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/searchTerm"
-        app:layout_constraintEnd_toStartOf="@+id/search"
-        app:layout_constraintStart_toEndOf="@+id/searchTerm"
-        app:layout_constraintTop_toTopOf="@+id/searchTerm" />
 
     <Button
         android:id="@+id/search"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
         android:text="@android:string/search_go"
         app:layout_constraintBottom_toBottomOf="@id/combo"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/searchTermSpinner"
+        app:layout_constraintStart_toEndOf="@+id/combo"
         app:layout_constraintTop_toTopOf="@id/combo" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
