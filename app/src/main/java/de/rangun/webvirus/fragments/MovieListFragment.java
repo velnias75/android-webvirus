@@ -120,6 +120,7 @@ public class MovieListFragment extends ListFragment {
     @Override
     public void onResume() {
         super.onResume();
+
         if(newMovies) listener.onRequestNewMoviesUpdate(this);
     }
 

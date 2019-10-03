@@ -163,6 +163,8 @@ public class MainActivity extends AppCompatActivity implements
 
         super.onCreate(savedInstanceState);
 
+        final Context ctx = this;
+
         if(savedInstanceState != null) {
             currentId = savedInstanceState.getLong("currentId", -1L);
 
@@ -192,6 +194,17 @@ public class MainActivity extends AppCompatActivity implements
                 if(sbf != null) {
                     sbf.setShowDropdown(position == 0);
                     sbf.setEnabled(position != 2);
+                }
+
+                if(position == 2) {
+
+                    final SharedPreferences sharedPrefs =
+                            PreferenceManager.getDefaultSharedPreferences(ctx);
+
+                    final int lastMovieCount = sharedPrefs.getInt("lastMovieCount",
+                            0);
+
+                    sharedPrefs.edit().putInt("newMoviesSeen", lastMovieCount).apply();
                 }
             }
         });
@@ -255,8 +268,10 @@ public class MainActivity extends AppCompatActivity implements
         mBound = false;
 
         if(currentId != null) {
+
             final SharedPreferences sharedPrefs =
                     PreferenceManager.getDefaultSharedPreferences(this);
+
             sharedPrefs.edit().putLong("lastMovieIdSeen", currentId).apply();
         }
     }

@@ -233,19 +233,18 @@ public class MovieFetcherService extends Service implements MovieFactory.IMovies
         final SharedPreferences sharedPrefs =
                 PreferenceManager.getDefaultSharedPreferences(this);
 
-        int nm = 0;
-
         int lastMovieCount = sharedPrefs.getInt("lastMovieCount", 0);
+        final int newMoviesSeen = sharedPrefs.getInt("newMoviesSeen", lastMovieCount);
+        final int nm = movies.size() - newMoviesSeen;
+
+        for(IMovie m: movies) m.setNewMovie(m.id() > newMoviesSeen);
+
         Log.d(TAG, "(before fetch) lastMovieCount=" + lastMovieCount);
 
         if(movies.size() > lastMovieCount) {
 
             final Long oid = Objects.requireNonNull(movies.getByMovieId(latestCoverId)).oid();
             final int lmc = movies.size() - lastMovieCount;
-
-            nm = lmc;
-
-            for(IMovie m: movies) m.setNewMovie(m.id() > lastMovieCount);
 
             lastMovieCount = movies.size();
 
@@ -273,8 +272,9 @@ public class MovieFetcherService extends Service implements MovieFactory.IMovies
 
         } else Log.d(TAG, "(after fetch) lastMovieCount unchanged");
 
-        /* sharedPrefs.edit().putInt("lastMovieCount", new Random().nextInt(3201) + 1).
-                apply(); */
+        //sharedPrefs.edit().putInt("lastMovieCount", new Random().nextInt(3201) + 1).apply();
+        //sharedPrefs.edit().putInt("lastMovieCount",0).apply();
+        //sharedPrefs.edit().putInt("newMoviesSeen",0).apply();
 
         if(listener != null) {
             listener.movies(movies, latestCoverId, silent);
