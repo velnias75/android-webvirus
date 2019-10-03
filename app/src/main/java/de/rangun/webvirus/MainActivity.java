@@ -81,22 +81,20 @@ public class MainActivity extends AppCompatActivity implements
     private static final String TAG = "MainActivity";
     private static final double LN10 = log(10);
 
-    private class MoviePagerAdapter extends FragmentPagerAdapter {
+    private final class MoviePagerAdapter extends FragmentPagerAdapter {
 
         private int pages = 2;
 
-        MoviePagerAdapter(@NonNull FragmentManager fm, int behaviour) { super(fm, behaviour); }
+        MoviePagerAdapter(@NonNull FragmentManager fm) { super(fm, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT); }
 
         @Override
         @NotNull
         public Fragment getItem(int position) {
 
             if(position == 0) {
-                mdf = new MovieDetailsFragment();
-                return mdf;
+                return new MovieDetailsFragment();
             } else if(position == 1) {
-                mlf = new MovieListFragment(false);
-                return mlf;
+                return new MovieListFragment(false);
             } else {
                 return new MovieListFragment(true);
             }
@@ -105,12 +103,12 @@ public class MainActivity extends AppCompatActivity implements
         @Override
         public int getCount() { return pages; }
 
-        void setHasNewMovies(boolean b) {
-            pages = b ? 3 : 2;
+        void setHasNewMovies() {
+            pages = 3;
             notifyDataSetChanged();
         }
 
-        @Nullable
+        @NonNull
         @Override
         public CharSequence getPageTitle(int position) {
 
@@ -129,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
 
-            MovieFetcherService.MovieFetcherBinder binder =
+            final MovieFetcherService.MovieFetcherBinder binder =
                     (MovieFetcherService.MovieFetcherBinder)service;
 
             mfs = binder.getService();
@@ -155,9 +153,6 @@ public class MainActivity extends AppCompatActivity implements
     @Nullable
     private MovieBKTree movies = null;
 
-    private MovieDetailsFragment mdf;
-    private MovieListFragment mlf;
-
     private ViewPager pager;
 
     @Override
@@ -174,14 +169,14 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
 
         pager = findViewById(R.id.pager);
-        PagerAdapter pagerAdaper = new MoviePagerAdapter(getSupportFragmentManager(),
-                FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+
+        final PagerAdapter pagerAdaper = new MoviePagerAdapter(getSupportFragmentManager());
+
         pager.setAdapter(pagerAdaper);
         pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
-                final SearchBarFragment sbf =
-                        (SearchBarFragment) getSupportFragmentManager().
+                final SearchBarFragment sbf = (SearchBarFragment) getSupportFragmentManager().
                                 findFragmentById(R.id.searchBar);
 
                 if(sbf != null) sbf.setShowDropdown(position == 0);
@@ -197,8 +192,10 @@ public class MainActivity extends AppCompatActivity implements
 
         super.onStart();
 
-        Intent intent = new Intent(this, MovieFetcherService.class);
-        bindService(intent, connection, Context.BIND_AUTO_CREATE);
+        final Intent intent = new Intent(this, MovieFetcherService.class);
+        if(!bindService(intent, connection, Context.BIND_AUTO_CREATE)) {
+            Log.d(TAG, "Couldn't bind to MovieFetcherService");
+        }
     }
 
     @Override
@@ -271,15 +268,15 @@ public class MainActivity extends AppCompatActivity implements
         if(mBound) {
 
             if (movies != null) {
-                //if(m != null) pager.setCurrentItem(0);
-                updateMovie(m, f instanceof MovieDetailsFragment ? (MovieDetailsFragment)f : mdf);
+                updateMovie(m, (MovieDetailsFragment)getSupportFragmentManager().
+                        findFragmentByTag("android:switcher:" + R.id.pager + ":0"));
             } else if(f instanceof SearchBarFragment) {
                 ((SearchBarFragment)f).hideSoftKeyboard();
             }
         }
     }
 
-    private void updateMovie(long id) {
+    private void updateMovie(long id, MovieDetailsFragment mdf) {
 
         if(mBound) {
 
@@ -299,6 +296,7 @@ public class MainActivity extends AppCompatActivity implements
         if(sbf != null) sbf.hideSoftKeyboard();
 
         pager.setCurrentItem(0);
+        findViewById(R.id.loadingPanel).setVisibility(View.GONE);
 
         if(m == null) {
 
@@ -320,28 +318,29 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void updateRequested(MovieDetailsFragment f) {
-        if(currentId != null && movies != null) updateMovie(movies.getByMovieId(currentId), f);
+        if(movies != null) {
+
+            final SharedPreferences sharedPrefs =
+                    PreferenceManager.getDefaultSharedPreferences(this);
+
+            updateMovie(currentId != null ? currentId :
+                    sharedPrefs.getLong("lastMovieIdSeen", 1L), f);
+        }
     }
 
     @Override
     public void loading(boolean silent) {
-        if(!silent) setStatus(R.string.loading);
+        if(!silent) setStatus();
     }
 
     @Override
     public void loaded(int num, boolean silent) {
 
         setStatus(getString(R.string.loaded, num), NOTIFICATION.LOADED);
-
-        final SharedPreferences sharedPrefs =
-                PreferenceManager.getDefaultSharedPreferences(this);
-
-        findViewById(R.id.loadingPanel).setVisibility(View.GONE);
-
-        updateMovie(currentId != null ? currentId :
-                sharedPrefs.getLong("lastMovieIdSeen", 1L));
-
         if(mBound && !silent) setStatus(getString(R.string.loaded, Objects.requireNonNull(movies).size()));
+
+        updateRequested((MovieDetailsFragment)getSupportFragmentManager().
+                findFragmentByTag("android:switcher:" + R.id.pager + ":0"));
     }
 
     public static String makeIdString(long num, int base) {
@@ -383,7 +382,7 @@ public class MainActivity extends AppCompatActivity implements
 
         if(num > 0 && movies != null) {
 
-            ((MoviePagerAdapter) Objects.requireNonNull(pager.getAdapter())).setHasNewMovies(true);
+            ((MoviePagerAdapter) Objects.requireNonNull(pager.getAdapter())).setHasNewMovies();
 
             newMoviesList = new ArrayList<>(movies.size());
 
@@ -399,12 +398,16 @@ public class MainActivity extends AppCompatActivity implements
 
         List<IMovie> nml = newMoviesList != null ? newMoviesList : new ArrayList<>();
 
-        f.setListAdapter(new MovieListFragment.Adapter(this, nml, Objects.requireNonNull(movies).size(),
-                true));
+        f.setListAdapter(new MovieListFragment.Adapter(this, nml,
+                Objects.requireNonNull(movies).size(), true));
     }
 
     @Override
     public void onFilterResultAvailable(List<IMovie> result) {
+
+        final MovieListFragment mlf = (MovieListFragment)getSupportFragmentManager().
+                findFragmentByTag("android:switcher:" + R.id.pager + ":1");
+
         if(mlf != null) mlf.setListAdapter(new MovieListFragment.Adapter(this,
                     filteredOrAllMovies(result), Objects.requireNonNull(movies).size(),
                 false));
@@ -436,8 +439,8 @@ public class MainActivity extends AppCompatActivity implements
         setStatus(msg, Color.RED, notification);
     }
 
-    private void setStatus(int resource) {
-        setStatus(getString(resource), Color.GRAY, NOTIFICATION.NONE);
+    private void setStatus() {
+        setStatus(getString(R.string.loading), Color.GRAY, NOTIFICATION.NONE);
     }
 
     private void setStatus(String txt) {

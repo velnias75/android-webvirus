@@ -72,11 +72,11 @@ public class MovieFetcherService extends Service implements MovieFactory.IMovies
 
     enum NOTIFICATION {
 
-        NONE(-1),
-        NEW(0, android.R.drawable.stat_notify_sync,
-                NotificationCompat.PRIORITY_HIGH, CHANNEL_HIGH),
-        ERROR(1, android.R.drawable.stat_notify_error, NotificationCompat.PRIORITY_HIGH,
-                CHANNEL_HIGH),
+        NONE(),
+        NEW(0, android.R.drawable.stat_notify_sync
+        ),
+        ERROR(1, android.R.drawable.stat_notify_error
+        ),
         LOADED(2, android.R.drawable.stat_notify_sync, NotificationCompat.PRIORITY_MIN,
                 CHANNEL_MIN, 10000L),
         NOTFOUND(3, android.R.drawable.stat_notify_error, NotificationCompat.PRIORITY_LOW,
@@ -88,8 +88,8 @@ public class MovieFetcherService extends Service implements MovieFactory.IMovies
         private final String chan;
         private final Long duration;
 
-        NOTIFICATION(int id) {
-            this(id, android.R.drawable.stat_notify_sync,
+        NOTIFICATION() {
+            this(-1, android.R.drawable.stat_notify_sync,
                     NotificationCompat.PRIORITY_DEFAULT, CHANNEL_DEFAULT, null);
         }
 
@@ -99,8 +99,9 @@ public class MovieFetcherService extends Service implements MovieFactory.IMovies
 //        }
 // --Commented out by Inspection STOP (28.09.19 03:47)
 
-        NOTIFICATION(int id, int icon, int prio, String chan) {
-            this(id, icon, prio, chan, null);
+        NOTIFICATION(int id, int icon) {
+            this(id, icon, NotificationCompat.PRIORITY_HIGH, MovieFetcherService.CHANNEL_HIGH,
+                    null);
         }
 
         NOTIFICATION(int id, int icon, int prio, String chan, Long duration) {
@@ -261,10 +262,11 @@ public class MovieFetcherService extends Service implements MovieFactory.IMovies
                                 notification_large_icon_height),
                         ImageView.ScaleType.FIT_START, Bitmap.Config.RGB_565,
                         error -> notifyInternal(getString(R.string.new_movies,
-                                lmc), NOTIFICATION.NEW,
-                                null, silent)));
+                                lmc),
+                                NOTIFICATION.NEW, null, silent)));
             } else notifyInternal(getString(R.string.new_movies,
-                    lmc), NOTIFICATION.NEW, null, silent);
+                    lmc),
+                    NOTIFICATION.NEW, null, silent);
 
             sharedPrefs.edit().putInt("lastMovieCount", lastMovieCount).apply();
 

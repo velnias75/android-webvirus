@@ -115,10 +115,12 @@ public final class CustomAutoCompleteTextView extends AppCompatAutoCompleteTextV
 
                     if (x <= 0)
                         x = actionX;
+
                     if (y <= 0)
                         y = actionY;
 
                     if (x < y) {
+                        //noinspection SuspiciousNameCombination
                         y = x;
                     }
                 }
