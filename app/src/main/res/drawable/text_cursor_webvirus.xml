@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright 2019 by Heiko Schäfer <heiko@rangun.de>
   ~
@@ -16,16 +17,18 @@
   ~  You should have received a copy of the GNU Lesser General Public License
   ~  along with android-webvirus.  If not, see <http://www.gnu.org/licenses/>.
   ~
-  ~  Last modified 23.09.19 06:33 by heiko
+  ~  Last modified 04.10.19 01:31 by heiko
   -->
 
-<resources>
-
-    <style name="AppTheme"
-        parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">#BBBBBB</item>
-    </style>
-
-</resources>
+<inset
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:inset="2dp">
+    <shape
+        android:tint="#BBBBBB"
+        android:shape="rectangle">
+        <size
+            android:height="2dp"
+            android:width="2dp" />
+        <solid android:color="@android:color/white" />
+    </shape>
+</inset>
