@@ -20,7 +20,9 @@
   ~  Last modified 02.10.19 01:43 by heiko
   -->
 
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="de.rangun.webvirus">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -34,15 +36,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="false"
         android:theme="@style/AppTheme"
-        android:fullBackupContent="@xml/backup_descriptor">
+        android:appCategory="video"
+        android:fullBackupContent="@xml/backup_descriptor"
+        tools:targetApi="o">
 
-        <receiver android:name=".autostart" android:enabled="true" android:exported="true">
+        <receiver
+            android:name=".autostart"
+            android:enabled="true"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
-        <activity android:name=".MainActivity"
+        <activity
+            android:name=".MainActivity"
             android:windowSoftInputMode="stateHidden"
             android:configChanges="orientation|screenSize">
             <intent-filter>
@@ -52,6 +60,7 @@
         </activity>
 
         <service android:enabled="true" android:name=".MovieFetcherService" />
+
     </application>
 
 </manifest>
