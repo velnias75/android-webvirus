@@ -274,7 +274,7 @@ public class MovieFetcherService extends Service implements MovieFactory.IMovies
 
         } else Log.d(TAG, "(after fetch) lastMovieCount unchanged");
 
-        /*sharedPrefs.edit().putInt("lastMovieCount", new Random().nextInt(3201) + 1).
+        /* sharedPrefs.edit().putInt("lastMovieCount", new Random().nextInt(3201) + 1).
                 apply(); */
 
         if(listener != null) {

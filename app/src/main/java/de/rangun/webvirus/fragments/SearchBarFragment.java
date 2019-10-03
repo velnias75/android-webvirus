@@ -133,6 +133,18 @@ public final class SearchBarFragment extends Fragment {
         textView.setAdapter(adapter);
     }
 
+    public final void setEnabled(boolean b) {
+
+        ViewGroup layout = (ViewGroup)getView();
+
+        for(int i = 0; i < Objects.requireNonNull(layout).getChildCount(); ++i) {
+            View child = layout.getChildAt(i);
+            child.setEnabled(b);
+        }
+
+        layout.setEnabled(b);
+    }
+
     public final void setText(@NonNull String title) {
 
         final CustomAutoCompleteTextView srt =

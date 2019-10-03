@@ -176,10 +176,14 @@ public class MainActivity extends AppCompatActivity implements
         pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
+
                 final SearchBarFragment sbf = (SearchBarFragment) getSupportFragmentManager().
                                 findFragmentById(R.id.searchBar);
 
-                if(sbf != null) sbf.setShowDropdown(position == 0);
+                if(sbf != null) {
+                    sbf.setShowDropdown(position == 0);
+                    sbf.setEnabled(position != 2);
+                }
             }
         });
 
@@ -396,7 +400,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onRequestNewMoviesUpdate(MovieListFragment f) {
 
-        List<IMovie> nml = newMoviesList != null ? newMoviesList : new ArrayList<>();
+        final List<IMovie> nml = newMoviesList != null ? newMoviesList : new ArrayList<>();
 
         f.setListAdapter(new MovieListFragment.Adapter(this, nml,
                 Objects.requireNonNull(movies).size(), true));

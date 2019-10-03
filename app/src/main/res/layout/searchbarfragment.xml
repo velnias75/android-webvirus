@@ -23,6 +23,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/searchbarfragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/transparent">
@@ -51,12 +52,12 @@
         android:drawableRight="@android:drawable/ic_menu_close_clear_cancel"
         android:dropDownAnchor="@id/searchTerm"
         android:hint="@string/searchboxhint"
+        android:imeOptions="actionSearch"
         android:paddingStart="20dp"
         android:paddingLeft="20dp"
         android:paddingEnd="0dp"
         android:paddingRight="0dp"
         android:singleLine="true"
-        android:imeOptions="actionSearch"
         app:layout_constraintBottom_toBottomOf="@+id/search"
         app:layout_constraintEnd_toStartOf="@+id/searchTermSpinner"
         app:layout_constraintHorizontal_bias="0.5"

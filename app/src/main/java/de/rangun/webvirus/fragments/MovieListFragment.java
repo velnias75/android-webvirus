@@ -114,8 +114,7 @@ public class MovieListFragment extends ListFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.movielistfragment, container,
-                false);
+        return inflater.inflate(R.layout.movielistfragment, container, false);
     }
 
     @Override
