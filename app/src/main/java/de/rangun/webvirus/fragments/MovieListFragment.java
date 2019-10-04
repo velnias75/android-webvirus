@@ -44,7 +44,7 @@ import de.rangun.webvirus.R;
 import de.rangun.webvirus.model.IMovie;
 import de.rangun.webvirus.widgets.CategoryTextView;
 
-public class MovieListFragment extends ListFragment {
+public final class MovieListFragment extends ListFragment {
 
     private final boolean newMovies;
 

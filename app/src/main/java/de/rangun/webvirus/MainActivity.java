@@ -69,7 +69,7 @@ import de.rangun.webvirus.model.MovieFactory;
 import static java.lang.Math.ceil;
 import static java.lang.Math.log;
 
-public class MainActivity extends AppCompatActivity implements
+public final class MainActivity extends AppCompatActivity implements
         MovieFactory.IMoviesAvailableListener,
         IMovieUpdateRequestListener,
         MovieBKTreeAdapter.IFilterResultListener,

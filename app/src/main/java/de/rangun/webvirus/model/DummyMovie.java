@@ -25,7 +25,7 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
-class DummyMovie extends AbstractMovie {
+final class DummyMovie extends AbstractMovie {
 
     private static final String DUMMY = "";
 

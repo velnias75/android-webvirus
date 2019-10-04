@@ -56,7 +56,7 @@ import de.rangun.webvirus.model.IMovie;
 import de.rangun.webvirus.model.MovieBKTree;
 import de.rangun.webvirus.model.MovieFactory;
 
-public class MovieFetcherService extends Service implements MovieFactory.IMoviesAvailableListener {
+public final class MovieFetcherService extends Service implements MovieFactory.IMoviesAvailableListener {
 
     private static final String TAG = "MovieFetcherService";
 
@@ -140,7 +140,7 @@ public class MovieFetcherService extends Service implements MovieFactory.IMovies
         }
     }
 
-    @Nullable
+    @NonNull
     @Override
     public IBinder onBind(Intent intent) {
         createNotificationChannel();
@@ -186,7 +186,7 @@ public class MovieFetcherService extends Service implements MovieFactory.IMovies
         } else Log.d(TAG, "NOT periodically fetching movies");
     }
 
-    @Nullable
+    @NonNull
     public RequestQueue getQueue() {
         if (queue == null) queue = Volley.newRequestQueue(this);
         return queue;

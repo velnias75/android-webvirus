@@ -29,7 +29,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-public class autostart extends BroadcastReceiver {
+public final class autostart extends BroadcastReceiver {
 
     @Override
     public void onReceive(@NonNull Context context, @NonNull Intent rqIntent) {

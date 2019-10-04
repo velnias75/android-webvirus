@@ -27,12 +27,14 @@ import androidx.annotation.Nullable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.TimeZone;
 
 abstract class AbstractMovie implements IMovie {
 
-    private final static SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
+    private final static SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss",
+            Locale.GERMANY);
 
     private final long id;
     private final String disc;
