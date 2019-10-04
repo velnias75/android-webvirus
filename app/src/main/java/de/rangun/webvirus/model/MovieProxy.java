@@ -32,28 +32,37 @@ import de.rangun.webvirus.R;
 
 final class MovieProxy extends AbstractMovie {
 
+    interface IMovieProxyObserver {
+        void unproxied(IMovie oldProxy, IMovie newInstance);
+    }
+
     private final MovieFactory.IMoviesAvailableListener cb;
+    private final IMovieProxyObserver observer;
 
     @Nullable
     private IMovie movie = null;
+
     @Nullable
     private final String filename;
 
     MovieProxy(MovieFactory.IMoviesAvailableListener cb, long id, String title, long dur_sec,
                @NonNull String languages, String disc, int category, @Nullable String filename,
-               boolean omu, boolean top250, Long oid) throws IllegalArgumentException {
+               boolean omu, boolean top250, Long oid)
+            throws IllegalArgumentException {
 
         super(id, title, dur_sec, languages, disc, category, omu, top250, oid);
 
         this.cb = cb;
         this.filename = filename;
+        observer = cb;
     }
 
     @Override
     public Long oid() { return movie == null ? super.oid() : movie.oid(); }
 
     @Override
-    public String title() { return movie == null ? super.title() : movie.title(); }
+    public String title() {
+        return movie == null ? super.title() : movie.title(); }
 
     @Override
     public String durationString() {
@@ -79,7 +88,10 @@ final class MovieProxy extends AbstractMovie {
     @Override
     public String description(@NonNull Context ctx) {
 
-        if(movie == null) movie = new Movie(this, filename(ctx), cb);
+        if(movie == null) {
+            movie = new Movie(this, filename(ctx), cb);
+            if(observer != null) observer.unproxied(this, movie);
+        }
 
         return movie.description(ctx);
     }

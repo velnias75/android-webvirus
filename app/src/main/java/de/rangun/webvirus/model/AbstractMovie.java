@@ -40,25 +40,23 @@ abstract class AbstractMovie implements IMovie {
 
     private final static BiMap<Integer, String> discMap = HashBiMap.create();
 
-    private final long id;
     private final String title;
-    private final MergedStringList languages;
-    private final int category;
+    private final CanonicalStringList languages;
     private final boolean omu;
-    private final boolean top250;
     private final long dur_sec;
+    private final int discId;
 
-    @NonNull
-    private final Integer discId;
-
+    private final long id;
+    private final boolean top250;
+    private final int category;
     private boolean newMovie = false;
 
     @Nullable
     private final Long oid;
 
     private AbstractMovie(long id, @NonNull String title, long dur_sec,
-                          @NonNull MergedStringList languages, @NonNull String disc, int category,
-                          boolean omu, boolean top250, @Nullable Long oid)
+                          @NonNull CanonicalStringList languages, @NonNull String disc,
+                          int category, boolean omu, boolean top250, @Nullable Long oid)
             throws IllegalArgumentException {
 
         this.id = id;
@@ -77,17 +75,17 @@ abstract class AbstractMovie implements IMovie {
     AbstractMovie(long id, @NonNull String title, long dur_sec, @NonNull String languages,
                   String disc, int category, boolean omu,boolean top250, Long oid)
             throws IllegalArgumentException {
-        this(id, title, dur_sec, new MergedStringList(languages), disc, category, omu,
+        this(id, title, dur_sec, new CanonicalStringList(languages), disc, category, omu,
                 top250, oid);
     }
 
     AbstractMovie(@NonNull String title) throws IllegalArgumentException {
-        this(0L, title, 0L, new MergedStringList(), "", -1,
+        this(0L, title, 0L, new CanonicalStringList(), "", -1,
                 false, false, null);
     }
 
     AbstractMovie(@NonNull IMovie m) throws IllegalArgumentException {
-        this(m.id(), m.title(), m.duration(), new MergedStringList(m.languages()), m.disc(),
+        this(m.id(), m.title(), m.duration(), new CanonicalStringList(m.languages()), m.disc(),
                 m.category(), m.omu(), m.top250(), m.oid());
     }
 
@@ -99,7 +97,7 @@ abstract class AbstractMovie implements IMovie {
     public String title() { return title; }
 
     @Override
-    public String durationString() { return df.format(new Date(dur_sec * 1000)); }
+    public String durationString() { return df.format(new Date(this.dur_sec * 1000)); }
 
     @Override
     public List<String> languages() { return languages.asList(); }
@@ -154,10 +152,10 @@ abstract class AbstractMovie implements IMovie {
 
     @Override
     public int compareTo(@NonNull IMovie o) {
-        return title.compareTo(o.title());
+        return title().compareTo(o.title());
     }
 
     @NonNull
     @Override
-    public String toString() { return this.title; }
+    public String toString() { return title(); }
 }

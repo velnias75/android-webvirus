@@ -56,7 +56,8 @@ import de.rangun.webvirus.model.IMovie;
 import de.rangun.webvirus.model.MovieBKTree;
 import de.rangun.webvirus.model.MovieFactory;
 
-public final class MovieFetcherService extends Service implements MovieFactory.IMoviesAvailableListener {
+public final class MovieFetcherService extends Service
+        implements MovieFactory.IMoviesAvailableListener {
 
     private static final String TAG = "MovieFetcherService";
 
@@ -284,6 +285,11 @@ public final class MovieFetcherService extends Service implements MovieFactory.I
 
     @Override
     public void newMoviesAvailable(int num) {}
+
+    @Override
+    public void unproxied(IMovie oldProxy, IMovie newInstance) {
+        if(listener != null) listener.unproxied(oldProxy, newInstance);
+    }
 
     @Override
     public void error(String localizedMessage) {

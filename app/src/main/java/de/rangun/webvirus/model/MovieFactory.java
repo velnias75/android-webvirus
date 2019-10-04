@@ -39,7 +39,7 @@ import java.util.Objects;
 
 public final class MovieFactory {
 
-    public interface IMoviesAvailableListener {
+    public interface IMoviesAvailableListener extends MovieProxy.IMovieProxyObserver {
         void loading(boolean silent);
         void loaded(int num, boolean silent);
         void movies(MovieBKTree movies, Long latestCoverId, boolean silent);
@@ -98,7 +98,8 @@ public final class MovieFactory {
                             item.getString("languages"),
                             item.getString("disc"),
                             item.getInt("category"),
-                            item.isNull("filename") ? null :item.getString("filename"),
+                            item.isNull("filename") ? null :
+                                    item.getString("filename"),
                             item.getBoolean("omu"),
                             item.getBoolean("top250"),
                             oid));

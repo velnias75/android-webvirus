@@ -37,7 +37,7 @@ class BKTree<T> implements Iterable<T> {
 
     private final class _node<N> {
 
-        private final T item;
+        private T item;
 
         @Nullable
         private Map<Integer, _node<N>> children = null;
@@ -54,6 +54,8 @@ class BKTree<T> implements Iterable<T> {
 
             children.put(key, new _node<>(item));
         }
+
+        void replace(T newItem) { item = newItem; }
 
         @Nullable
         _node<N> get(int key) {
@@ -76,9 +78,11 @@ class BKTree<T> implements Iterable<T> {
 
     BKTree() {}
 
-    BKTree(@NonNull Iterable<T> t) {
-        addAll(t);
-    }
+// --Commented out by Inspection START (04.10.19 11:53):
+//    BKTree(@NonNull Iterable<T> t) {
+//        addAll(t);
+//    }
+// --Commented out by Inspection STOP (04.10.19 11:53)
 
     public final int size() {
         return size;
@@ -116,9 +120,23 @@ class BKTree<T> implements Iterable<T> {
         ++size;
     }
 
-    private void addAll(@NonNull Iterable<T> m) {
-        for(T im: m) add(im);
+    public void replaceItem(T o, T n) { if(_root != null) visitNextNode(_root, o, n); }
+
+    private void visitNextNode(_node<T> node, T o, T n) {
+
+        if(node.item() == o) {
+            node.replace(n);
+            return;
+        }
+
+        if(node.children != null) for(_node<T> c: node.children.values()) visitNextNode(c, o, n);
     }
+
+// --Commented out by Inspection START (04.10.19 13:23):
+//    private void addAll(@NonNull Iterable<T> m) {
+//        for(T im: m) add(im);
+//    }
+// --Commented out by Inspection STOP (04.10.19 13:23)
 
     @NonNull
     final List<T> search(@NonNull String word, int d) {

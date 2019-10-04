@@ -388,7 +388,7 @@ public final class MainActivity extends AppCompatActivity implements
 
         if(mBound) {
 
-            movies = new MovieBKTree(m);
+            movies = m; //new MovieBKTree(m);
 
             Log.d(TAG, "latest Cover id=" + lid);
 
@@ -496,5 +496,10 @@ public final class MainActivity extends AppCompatActivity implements
     @Override
     public void descriptionAvailable(String dsc) {
         ((TextView)findViewById(R.id.m_abstract)).setText(dsc);
+    }
+
+    @Override
+    public void unproxied(IMovie oldProxy, IMovie newInstance) {
+        if(movies != null) movies.replaceItem(oldProxy, newInstance);
     }
 }

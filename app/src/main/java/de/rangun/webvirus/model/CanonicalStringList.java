@@ -28,24 +28,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
-final class MergedStringList {
+final class CanonicalStringList {
 
     @Nullable
     private static ArrayList<String> strings = null;
 
     private final IntArraySet posList = new IntArraySet();
 
-    MergedStringList() {}
+    CanonicalStringList() {}
 
-    MergedStringList(@NonNull String str) {
+    CanonicalStringList(@NonNull String str) {
         this(str.split(", "));
     }
 
-    MergedStringList(@NonNull List<String> l) {
+    CanonicalStringList(@NonNull List<String> l) {
         this(l.toArray(new String[0]));
     }
 
-    private MergedStringList(@NonNull String[] l) {
+    private CanonicalStringList(@NonNull String[] l) {
         for(String s: l) posList.add(add(s));
     }
 
