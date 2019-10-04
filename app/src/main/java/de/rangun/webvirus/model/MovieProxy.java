@@ -39,11 +39,11 @@ final class MovieProxy extends AbstractMovie {
     @Nullable
     private final String filename;
 
-    MovieProxy(MovieFactory.IMoviesAvailableListener cb, long id, String title, String dur_str,
-               long dur_sec, @NonNull String languages, String disc, int category, @Nullable String filename,
+    MovieProxy(MovieFactory.IMoviesAvailableListener cb, long id, String title, long dur_sec,
+               @NonNull String languages, String disc, int category, @Nullable String filename,
                boolean omu, boolean top250, Long oid) {
 
-        super(id, title, dur_str, dur_sec, languages, disc, category, omu, top250, oid);
+        super(id, title, dur_sec, languages, disc, category, omu, top250, oid);
 
         this.cb = cb;
         this.filename = filename;
@@ -61,7 +61,9 @@ final class MovieProxy extends AbstractMovie {
     }
 
     @Override
-    public List<String> languages() { return movie == null ? super.languages() : movie.languages(); }
+    public List<String> languages() {
+        return movie == null ? super.languages() : movie.languages();
+    }
 
     @Override
     public String disc() { return movie == null ? super.disc() : movie.disc(); }

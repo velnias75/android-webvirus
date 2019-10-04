@@ -94,7 +94,6 @@ public final class MovieFactory {
 
                     movies.add(new MovieProxy(cb, mid,
                             item.getString("title"),
-                            item.getString("duration"),
                             item.getLong("dur_sec"),
                             item.getString("languages"),
                             item.getString("disc"),

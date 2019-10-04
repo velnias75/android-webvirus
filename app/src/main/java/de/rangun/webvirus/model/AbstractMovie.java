@@ -24,13 +24,17 @@ package de.rangun.webvirus.model;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.TimeZone;
 
 abstract class AbstractMovie implements IMovie {
 
+    private final static SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
+
     private final long id;
-    private final String dur_str;
     private final String disc;
     private final String title;
     private final LanguageList languages;
@@ -43,12 +47,11 @@ abstract class AbstractMovie implements IMovie {
     @Nullable
     private final Long oid;
 
-    private AbstractMovie(long id, @NonNull String title, @NonNull String dur_str, long dur_sec,
+    private AbstractMovie(long id, @NonNull String title, long dur_sec,
                           @NonNull LanguageList languages, @NonNull String disc, int category,
                           boolean omu, boolean top250, @Nullable Long oid) {
         this.id = id;
         this.title = title;
-        this.dur_str = dur_str;
         this.dur_sec = dur_sec;
         this.languages = languages;
         this.disc = disc;
@@ -56,22 +59,22 @@ abstract class AbstractMovie implements IMovie {
         this.omu = omu;
         this.top250 = top250;
         this.oid = oid;
+
+        df.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
-    AbstractMovie(long id, @NonNull String title, String dur_str, long dur_sec,
-                  @NonNull String languages, String disc, int category, boolean omu,
-                  boolean top250, Long oid) {
-        this(id, title, dur_str, dur_sec, new LanguageList(languages), disc, category, omu, top250,
-                oid);
+    AbstractMovie(long id, @NonNull String title, long dur_sec, @NonNull String languages,
+                  String disc, int category, boolean omu,boolean top250, Long oid) {
+        this(id, title, dur_sec, new LanguageList(languages), disc, category, omu, top250, oid);
     }
 
     AbstractMovie(@NonNull String title) {
-        this(0L, title, "", 0L, new LanguageList(), "", -1,
+        this(0L, title, 0L, new LanguageList(), "", -1,
                 false, false, null);
     }
 
     AbstractMovie(@NonNull IMovie m) {
-        this(m.id(), m.title(), m.durationString(), m.duration(),
+        this(m.id(), m.title(), m.duration(),
                 new LanguageList(Objects.requireNonNull(m.languages())), m.disc(), m.category(),
                 m.omu(), m.top250(), m.oid());
     }
@@ -84,7 +87,7 @@ abstract class AbstractMovie implements IMovie {
     public String title() { return title; }
 
     @Override
-    public String durationString() { return dur_str; }
+    public String durationString() { return df.format(new Date(dur_sec * 1000)); }
 
     @Override
     public List<String> languages() { return languages.asList(); }
