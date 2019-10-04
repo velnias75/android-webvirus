@@ -22,10 +22,13 @@
 package de.rangun.webvirus.fragments;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -104,6 +107,7 @@ public final class MovieDetailsFragment extends Fragment {
         final CategoryTextView cat = getView().findViewById(R.id.category);
         final TextView abs = getView().findViewById(R.id.m_abstract);
         final NetworkImageView cov = getView().findViewById(R.id.cover);
+        final Button but = getView().findViewById(R.id.openInDB);
 
         StringBuilder sb = new StringBuilder();
 
@@ -121,6 +125,9 @@ public final class MovieDetailsFragment extends Fragment {
         fin.setText(m.filename(getContext()));
         cat.setCategoryText(m.category());
         abs.setText(m.description(getContext()));
+
+        but.setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW,
+                Uri.parse("https://rangun.de/db/?filter_ID=" + m.id()))));
 
         if (m.oid() != null) {
 
