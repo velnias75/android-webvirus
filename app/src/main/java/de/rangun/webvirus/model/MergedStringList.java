@@ -28,25 +28,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
-final class LanguageList {
+final class MergedStringList {
 
     @Nullable
-    @SuppressWarnings("SpellCheckingInspection")
-    private static ArrayList<String> lingos = null;
+    private static ArrayList<String> strings = null;
 
     private final IntArraySet posList = new IntArraySet();
 
-    LanguageList() {}
+    MergedStringList() {}
 
-    LanguageList(@NonNull @SuppressWarnings("SpellCheckingInspection") String lingos) {
-        this(lingos.split(", "));
+    MergedStringList(@NonNull String str) {
+        this(str.split(", "));
     }
 
-    LanguageList(@NonNull List<String> l) {
+    MergedStringList(@NonNull List<String> l) {
         this(l.toArray(new String[0]));
     }
 
-    private LanguageList(@NonNull String[] l) {
+    private MergedStringList(@NonNull String[] l) {
         for(String s: l) posList.add(add(s));
     }
 
@@ -55,17 +54,21 @@ final class LanguageList {
 
         final TreeSet<String> r = new TreeSet<>();
 
-        if(lingos != null) for(int i: posList.getAllItems()) r.add(lingos.get(i));
+        if(strings != null) for(int i: posList.getAllItems()) r.add(strings.get(i));
 
         return new ArrayList<>(r);
     }
 
     private int add(String s) {
 
-        if(lingos == null) lingos = new ArrayList<>();
+        if(strings == null) strings = new ArrayList<>();
 
-        if(!lingos.contains(s)) lingos.add(s);
+        if(!strings.contains(s)) strings.add(s.intern());
 
-        return lingos.indexOf(s);
+        return strings.indexOf(s);
     }
+
+    @NonNull
+    @Override
+    public String toString() { return posList.toString(); }
 }

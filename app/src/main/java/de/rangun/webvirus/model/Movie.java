@@ -42,7 +42,7 @@ final class Movie extends AbstractMovie {
     private String dsc = null;
 
     Movie(@NonNull MovieProxy m, String filename,
-          @NonNull MovieFactory.IMoviesAvailableListener cb) {
+          @NonNull MovieFactory.IMoviesAvailableListener cb) throws IllegalArgumentException {
 
         super(m);
 

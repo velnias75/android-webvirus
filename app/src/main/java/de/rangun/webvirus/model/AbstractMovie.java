@@ -24,11 +24,13 @@ package de.rangun.webvirus.model;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.TimeZone;
 
 abstract class AbstractMovie implements IMovie {
@@ -36,49 +38,57 @@ abstract class AbstractMovie implements IMovie {
     private final static SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss",
             Locale.GERMANY);
 
+    private final static BiMap<Integer, String> discMap = HashBiMap.create();
+
     private final long id;
-    private final String disc;
     private final String title;
-    private final LanguageList languages;
+    private final MergedStringList languages;
     private final int category;
     private final boolean omu;
     private final boolean top250;
     private final long dur_sec;
+
+    @NonNull
+    private final Integer discId;
+
     private boolean newMovie = false;
 
     @Nullable
     private final Long oid;
 
     private AbstractMovie(long id, @NonNull String title, long dur_sec,
-                          @NonNull LanguageList languages, @NonNull String disc, int category,
-                          boolean omu, boolean top250, @Nullable Long oid) {
+                          @NonNull MergedStringList languages, @NonNull String disc, int category,
+                          boolean omu, boolean top250, @Nullable Long oid)
+            throws IllegalArgumentException {
+
         this.id = id;
-        this.title = title;
+        this.title = title.intern();
         this.dur_sec = dur_sec;
         this.languages = languages;
-        this.disc = disc;
         this.category = category;
         this.omu = omu;
         this.top250 = top250;
         this.oid = oid;
+        this.discId = getIdForDisc(disc);
 
         df.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
     AbstractMovie(long id, @NonNull String title, long dur_sec, @NonNull String languages,
-                  String disc, int category, boolean omu,boolean top250, Long oid) {
-        this(id, title, dur_sec, new LanguageList(languages), disc, category, omu, top250, oid);
+                  String disc, int category, boolean omu,boolean top250, Long oid)
+            throws IllegalArgumentException {
+        this(id, title, dur_sec, new MergedStringList(languages), disc, category, omu,
+                top250, oid);
     }
 
-    AbstractMovie(@NonNull String title) {
-        this(0L, title, 0L, new LanguageList(), "", -1,
+    AbstractMovie(@NonNull String title) throws IllegalArgumentException {
+        this(0L, title, 0L, new MergedStringList(), "", -1,
                 false, false, null);
     }
 
-    AbstractMovie(@NonNull IMovie m) {
-        this(m.id(), m.title(), m.duration(),
-                new LanguageList(Objects.requireNonNull(m.languages())), m.disc(), m.category(),
-                m.omu(), m.top250(), m.oid());
+    AbstractMovie(@NonNull IMovie m) throws IllegalArgumentException {
+        this(m.id(), m.title(), m.duration(), new MergedStringList(m.languages()), m.disc(),
+                m.category(), m.omu(), m.top250(), m.oid());
     }
 
     @Nullable
@@ -95,7 +105,7 @@ abstract class AbstractMovie implements IMovie {
     public List<String> languages() { return languages.asList(); }
 
     @Override
-    public String disc() { return disc; }
+    public String disc() { return discMap.get(discId); }
 
     @Override
     public long id() { return id; }
@@ -121,6 +131,25 @@ abstract class AbstractMovie implements IMovie {
     @Override
     public void setNewMovie(boolean newMovie) {
         this.newMovie = newMovie;
+    }
+
+    @NonNull
+    private Integer getIdForDisc(String disc) throws IllegalArgumentException {
+
+        final Integer did;
+
+        if(discMap.containsValue(disc)) {
+            did = discMap.inverse().get(disc);
+        } else {
+            did = discMap.size();
+            discMap.put(did, disc.intern());
+        }
+
+        if(did != null) {
+            return did;
+        }
+
+        throw new IllegalArgumentException("\"" + disc + "\" not found in discMap");
     }
 
     @Override

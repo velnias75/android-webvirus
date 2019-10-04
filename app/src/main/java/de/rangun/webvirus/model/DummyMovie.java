@@ -29,9 +29,7 @@ final class DummyMovie extends AbstractMovie {
 
     private static final String DUMMY = "";
 
-    DummyMovie(String title) {
-        super(title);
-    }
+    DummyMovie(String title) throws IllegalArgumentException { super(title); }
 
     @Override
     public boolean isDummy() { return true; }

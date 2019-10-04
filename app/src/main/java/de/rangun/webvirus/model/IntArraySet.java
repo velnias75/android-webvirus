@@ -83,4 +83,8 @@ final class IntArraySet implements Cloneable {
         //noinspection ConstantConditions
         return clone;
     }
+
+    @NonNull
+    @Override
+    public String toString() { return backingMap.toString(); }
 }
