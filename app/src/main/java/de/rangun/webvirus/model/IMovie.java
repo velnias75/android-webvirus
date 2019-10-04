@@ -31,18 +31,14 @@ public interface IMovie extends Comparable<IMovie> {
 
     long id();
 
-    @Nullable
     String title();
 
     long duration();
 
-    @Nullable
     String durationString();
 
-    @Nullable
     List<String> languages();
 
-    @Nullable
     String disc();
 
     int category();

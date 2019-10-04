@@ -22,7 +22,9 @@
 
 <inset
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:inset="2dp">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:inset="2dp"
+    tools:targetApi="lollipop">
     <shape
         android:tint="#BBBBBB"
         android:shape="rectangle">
