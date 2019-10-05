@@ -86,6 +86,7 @@ public final class MovieDetailsFragment extends Fragment {
                 false);
 
         final NetworkImageView cov = fragmentLayout.findViewById(R.id.cover);
+
         cov.setDefaultImageResId(R.drawable.nocover);
         cov.setImageUrl(null, null);
 
@@ -117,7 +118,7 @@ public final class MovieDetailsFragment extends Fragment {
         final CategoryTextView cat = getView().findViewById(R.id.category);
         final TextView abs = getView().findViewById(R.id.m_abstract);
         final NetworkImageView cov = getView().findViewById(R.id.cover);
-        final Button but = getView().findViewById(R.id.openInDB);
+        final Button oib = getView().findViewById(R.id.openInDB);
         final Button cpy = getView().findViewById(R.id.copyURL);
 
         StringBuilder sb = new StringBuilder();
@@ -137,7 +138,7 @@ public final class MovieDetailsFragment extends Fragment {
         cat.setCategoryText(m.category());
         abs.setText(m.description(getContext()));
 
-        but.setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW,
+        oib.setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW,
                 Uri.parse("https://rangun.de/db/?filter_ID=" + m.id()))));
 
         cpy.setOnClickListener(v -> {
@@ -151,11 +152,12 @@ public final class MovieDetailsFragment extends Fragment {
                         "https://rangun.de/db/video/" + m.id()));
 
                 toaster.show(Objects.requireNonNull(getContext()).
-                                getResources().getString(R.string.url_copy_ok), Color.BLACK);
+                                getResources().getString(R.string.url_copy_ok),
+                        Color.BLACK);
 
             } else {
-                toaster.show(Objects.requireNonNull(getContext()).getResources().getString(R.string.url_copy_fail)
-                        , Color.RED);
+                toaster.show(Objects.requireNonNull(getContext()).getResources().getString(R.string.url_copy_fail),
+                        Color.RED);
             }
         });
 

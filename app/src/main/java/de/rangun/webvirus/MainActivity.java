@@ -74,7 +74,8 @@ public final class MainActivity extends AppCompatActivity implements
         MovieFactory.IMoviesAvailableListener,
         IMovieUpdateRequestListener,
         MovieBKTreeAdapter.IFilterResultListener,
-        MovieDetailsFragment.IResumeListener {
+        MovieDetailsFragment.IResumeListener,
+        SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String TAG = "MainActivity";
     private static final double LN10 = log(10);
@@ -179,7 +180,8 @@ public final class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
 
         final TextView tv = findViewById(R.id.copyright);
-        tv.setText(getString(R.string.copyright, BuildConfig.VERSION_NAME));
+        tv.setText(getString(R.string.copyright, BuildConfig.VERSION_NAME,
+                !BuildConfig.DEBUG ? "" : " [Intelligenzmangel (debug)]"));
 
         toaster = new Toaster(this);
 
@@ -223,6 +225,8 @@ public final class MainActivity extends AppCompatActivity implements
 
         TabLayout tabLayout = findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(pager);
+
+        setupSharedPreferences();
 
         handleIntent();
     }
@@ -275,14 +279,23 @@ public final class MainActivity extends AppCompatActivity implements
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.actionbarmenu, menu);
+
+        menu.findItem(R.id.action_settings).setVisible(BuildConfig.DEBUG);
+
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
-        if (item.getItemId() == R.id.action_reload) {
+        final int id = item.getItemId();
+
+        if(id == R.id.action_reload) {
             if(mBound) mfs.fetchMovies(false);
+            return true;
+        } else if(id == R.id.action_settings) {
+            Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+            startActivity(intent);
             return true;
         }
 
@@ -549,5 +562,21 @@ public final class MainActivity extends AppCompatActivity implements
     @Override
     public void unproxied(IMovie oldProxy, IMovie newInstance) {
         if(movies != null) movies.replaceItem(oldProxy, newInstance);
+    }
+
+    private void setupSharedPreferences() {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {}
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        PreferenceManager.getDefaultSharedPreferences(this).
+                unregisterOnSharedPreferenceChangeListener(this);
     }
 }

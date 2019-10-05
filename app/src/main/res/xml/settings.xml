@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright 2019 by Heiko Schäfer <heiko@rangun.de>
+  ~
+  ~  This file is part of android-webvirus.
+  ~
+  ~  android-webvirus is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU Lesser General Public License as
+  ~  published by the Free Software Foundation, either version 3 of
+  ~  the License, or (at your option) any later version.
+  ~
+  ~  android-webvirus is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU Lesser General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU Lesser General Public License
+  ~  along with android-webvirus.  If not, see <http://www.gnu.org/licenses/>.
+  ~
+  ~  Last modified 05.10.19 10:22 by heiko
+  -->
+
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory
+        android:key="debugPrefs"
+        android:summary="Mangels intellgenz werden die Zahlen nicht auf Sinnhaftigkeit geprüft!"
+        android:title="Intelligenzmangel (debug)">
+
+        <de.rangun.webvirus.widgets.LongEditTextPreference
+            android:digits="0123456789"
+            android:inputType="numberDecimal"
+            android:key="lastMovieIdSeen"
+            android:summary="ID des zuletzt angesehenen Schrott- bzw. Rentnerfilms: %s"
+            android:title="lastMovieIdSeen" />
+
+        <de.rangun.webvirus.widgets.IntEditTextPreference
+            android:digits="0123456789"
+            android:inputType="numberDecimal"
+            android:key="lastMovieCount"
+            android:summary="Anzahl der zuletzt geladenen Schrott- bzw. Rentnerfilme: %s"
+            android:title="lastMovieCount" />
+
+        <de.rangun.webvirus.widgets.IntEditTextPreference
+            android:digits="0123456789"
+            android:inputType="numberDecimal"
+            android:key="newMoviesSeen"
+            android:summary="Anzahl der zuletzt betrachteten neuen Schrott- bzw. Rentnerfilme: %s"
+            android:title="newMoviesSeen" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

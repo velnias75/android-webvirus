@@ -23,7 +23,7 @@
     <string name="app_name">Webvirus</string>
     <string name="title">Heikos Schrott- &amp; Rentnerfilme</string>
     <string name="version">✋ Die Zombieboxversion ✋</string>
-    <string name="copyright">© 2019 by Heiko Schäfer – v%1$s</string>
+    <string name="copyright">© 2019 by Heiko Schäfer – v%1$s%2$s</string>
     <string name="loading_teaser">Eine hirnlose App, exakt – ohne jegliche Hirnleistung – ertippt und erklickt, wie der Prof es vorgelesen hatte!</string>
     <string name="loading_text">Beweise das Halteproblem. Bitte warten …</string>
     <string name="m.title">Movie title here</string>
@@ -66,4 +66,6 @@
     <string name="url_copy_ok">Schrott- bzw. Rentnerfilm in die Zwischenablage verfrachtet</string>
     <string name="url_copy_fail">Mangels Intelligenz konnte ich den Schrott- bzw. Rentnerfilm NICHT in die Zwischenablage verfrachten</string>
     <string name="action_title">%1$s – %2$s</string>
+    <string name="settings">hirnlose Einstellungen</string>
+    <string name="settings_title">Informatikdiplombereich</string>
 </resources>
