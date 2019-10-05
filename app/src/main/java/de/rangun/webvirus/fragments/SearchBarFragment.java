@@ -46,6 +46,8 @@ public final class SearchBarFragment extends Fragment {
 
     private IMovieUpdateRequestListener listener;
 
+    private CustomAutoCompleteTextView srt;
+
     @Override
     public void onAttach(@NonNull Context context) {
 
@@ -66,23 +68,27 @@ public final class SearchBarFragment extends Fragment {
         final View fragmentLayout = inflater.inflate(R.layout.searchbarfragment, container,
                 false);
 
-        final CustomAutoCompleteTextView textView = fragmentLayout.findViewById(R.id.searchTerm);
         final Button search = fragmentLayout.findViewById(R.id.search);
 
-        textView.setDrawableClickListener(target -> {
-            if (target == DrawableClickListener.DrawablePosition.RIGHT) {
+        srt = fragmentLayout.findViewById(R.id.searchTerm);
 
-                textView.setText(null);
-                textView.requestFocus();
+        if(srt == null) throw new IllegalStateException("serachTerm field is missing");
+
+        srt.setDrawableClickListener(target -> {
+
+            if(target == DrawableClickListener.DrawablePosition.RIGHT) {
+
+                srt.setText(null);
+                srt.requestFocus();
 
                 final InputMethodManager imm = (InputMethodManager) Objects.
                         requireNonNull(getActivity()).getSystemService(
                         Context.INPUT_METHOD_SERVICE);
-                if(imm != null) imm.showSoftInput(textView, 0);
+                if(imm != null) imm.showSoftInput(srt, 0);
             }
         });
 
-        textView.setOnEditorActionListener((v, actionId, event) -> {
+        srt.setOnEditorActionListener((v, actionId, event) -> {
 
             if(EditorInfo.IME_ACTION_SEARCH == actionId) {
                 listener.onUpdateMovieByTitleOrId(v.getText().toString(), this);
@@ -93,20 +99,16 @@ public final class SearchBarFragment extends Fragment {
         });
 
         search.setOnClickListener(v ->
-                listener.onUpdateMovieByTitleOrId(textView.getText().toString(), this));
+                listener.onUpdateMovieByTitleOrId(srt.getText().toString(), this));
 
         return fragmentLayout;
     }
 
-    public final void populateCompleter(ArrayAdapter<String> adapter) {
-        final CustomAutoCompleteTextView textView =
-                Objects.requireNonNull(getView()).findViewById(R.id.searchTerm);
-        textView.setAdapter(adapter);
-    }
+    public final void populateCompleter(ArrayAdapter<String> adapter) { srt.setAdapter(adapter); }
 
     public final void setEnabled(boolean b) {
 
-        ViewGroup layout = (ViewGroup)getView();
+        final ViewGroup layout = (ViewGroup)getView();
 
         for(int i = 0; i < Objects.requireNonNull(layout).getChildCount(); ++i) {
             View child = layout.getChildAt(i);
@@ -117,30 +119,25 @@ public final class SearchBarFragment extends Fragment {
     }
 
     public final void setText(@NonNull String title) {
-
-        final CustomAutoCompleteTextView srt =
-                Objects.requireNonNull(getView()).findViewById(R.id.searchTerm);
-
         srt.setText(title);
         srt.setSelection(title.length());
         srt.dismissDropDown();
     }
 
+    public final String getText() { return srt.getText().toString(); }
+
+    public final int getThreshold() { return srt.getThreshold(); }
+
     public final void hideSoftKeyboard() {
 
-        final CustomAutoCompleteTextView srt =
-                Objects.requireNonNull(getView()).findViewById(R.id.searchTerm);
         final InputMethodManager imm =
-                (InputMethodManager) Objects.requireNonNull(getContext()).getSystemService(
-                Context.INPUT_METHOD_SERVICE);
+                (InputMethodManager)Objects.requireNonNull(getContext()).
+                        getSystemService(Context.INPUT_METHOD_SERVICE);
 
         if(imm != null) imm.hideSoftInputFromWindow(srt.getWindowToken(), 0);
     }
 
     public final void setShowDropdown(boolean b) {
-        final CustomAutoCompleteTextView textView = Objects.requireNonNull(getView()).
-                findViewById(R.id.searchTerm);
-        if(textView != null) textView.setDropDownHeight(b ?
-                ConstraintLayout.LayoutParams.WRAP_CONTENT : 0);
+        if(srt != null) srt.setDropDownHeight(b ? ConstraintLayout.LayoutParams.WRAP_CONTENT : 0);
     }
 }

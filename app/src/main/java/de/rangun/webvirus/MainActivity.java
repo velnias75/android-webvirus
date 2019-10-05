@@ -407,6 +407,7 @@ public final class MainActivity extends AppCompatActivity implements
 
     @Override
     public void updateRequested(MovieDetailsFragment f) {
+
         if(movies != null) {
 
             final SharedPreferences sharedPrefs =
@@ -494,21 +495,28 @@ public final class MainActivity extends AppCompatActivity implements
     @Override
     public void onFilterResultAvailable(List<IMovie> result) {
 
+        final SearchBarFragment sbf =
+                (SearchBarFragment)getSupportFragmentManager().findFragmentById(R.id.searchBar);
+
         final MovieListFragment mlf = (MovieListFragment)getSupportFragmentManager().
                 findFragmentByTag("android:switcher:" + R.id.pager + ":1");
 
-        if(mlf != null) mlf.setListAdapter(new MovieListFragment.Adapter(this,
-                    filteredOrAllMovies(result, movies), Objects.requireNonNull(movies).size(),
-                false));
+        if(mlf != null && sbf != null) mlf.setListAdapter(new MovieListFragment.
+                Adapter(this, filteredOrAllMovies(result, movies, sbf),
+                Objects.requireNonNull(movies).size(), false));
     }
 
-    private static List<IMovie> filteredOrAllMovies(List<IMovie> input, MovieBKTree movies) {
+    private static List<IMovie> filteredOrAllMovies(List<IMovie> input, MovieBKTree movies,
+                                                    SearchBarFragment sbf) {
 
         final ArrayList<IMovie> r = new ArrayList<>(Objects.requireNonNull(movies).size());
+        final String sTerm = sbf.getText();
 
         if(!input.isEmpty()) {
+
             for(IMovie m: input) if(!m.isDummy()) r.add(m);
-        } else {
+
+        } else if(sTerm.isEmpty() || sTerm.length() <= sbf.getThreshold()) {
             for(IMovie m: movies) r.add(m);
             Collections.sort(r);
         }
