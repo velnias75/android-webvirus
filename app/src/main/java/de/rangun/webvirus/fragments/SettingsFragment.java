@@ -23,8 +23,10 @@ package de.rangun.webvirus.fragments;
 
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.preference.Preference;
-import androidx.preference.PreferenceFragmentCompat;
+
+import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat;
 
 import de.rangun.webvirus.BuildConfig;
 import de.rangun.webvirus.R;
@@ -32,8 +34,7 @@ import de.rangun.webvirus.R;
 public class SettingsFragment extends PreferenceFragmentCompat {
 
     @Override
-    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-
+    public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.settings, rootKey);
 
         final Preference p = getPreferenceScreen().findPreference("debugPrefs");

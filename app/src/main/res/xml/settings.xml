@@ -23,7 +23,7 @@
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <PreferenceCategory
+    <com.takisoft.fix.support.v7.preference.PreferenceCategory
         android:key="debugPrefs"
         android:summary="Mangels intellgenz werden die Zahlen nicht auf Sinnhaftigkeit geprüft!"
         android:title="Intelligenzmangel (debug)">
@@ -49,6 +49,6 @@
             android:summary="Anzahl der zuletzt betrachteten neuen Schrott- bzw. Rentnerfilme: %s"
             android:title="newMoviesSeen" />
 
-    </PreferenceCategory>
+    </com.takisoft.fix.support.v7.preference.PreferenceCategory>
 
 </PreferenceScreen>

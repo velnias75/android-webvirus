@@ -24,7 +24,7 @@ package de.rangun.webvirus.widgets;
 import android.content.Context;
 import android.util.AttributeSet;
 
-import androidx.preference.EditTextPreference;
+import com.takisoft.fix.support.v7.preference.EditTextPreference;
 
 abstract class NumberEditTextPreference extends EditTextPreference {
 

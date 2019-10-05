@@ -274,10 +274,6 @@ public final class MovieFetcherService extends Service
 
         } else Log.d(TAG, "(after fetch) lastMovieCount unchanged");
 
-        //sharedPrefs.edit().putInt("lastMovieCount", new Random().nextInt(3201) + 1).apply();
-        //sharedPrefs.edit().putInt("lastMovieCount", 3280).apply();
-        //sharedPrefs.edit().putInt("newMoviesSeen", 3289).apply();
-
         if(listener != null) {
             listener.movies(movies, latestCoverId, silent);
             listener.newMoviesAvailable(nm);
