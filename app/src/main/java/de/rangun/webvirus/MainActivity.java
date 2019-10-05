@@ -188,6 +188,9 @@ public final class MainActivity extends AppCompatActivity implements
         final PagerAdapter pagerAdaper =
                 new MoviePagerAdapter(this, toaster, getSupportFragmentManager());
 
+        Objects.requireNonNull(getSupportActionBar()).setTitle(getString(R.string.action_title,
+                getString(R.string.app_name), pagerAdaper.getPageTitle(0)));
+
         pager.setAdapter(pagerAdaper);
         pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
@@ -195,6 +198,10 @@ public final class MainActivity extends AppCompatActivity implements
 
                 final SearchBarFragment sbf = (SearchBarFragment) getSupportFragmentManager().
                         findFragmentById(R.id.searchBar);
+
+                Objects.requireNonNull(getSupportActionBar()).
+                        setTitle(getString(R.string.action_title, getString(R.string.app_name),
+                                pagerAdaper.getPageTitle(position)));
 
                 if (sbf != null) {
                     sbf.setShowDropdown(position == 0);
