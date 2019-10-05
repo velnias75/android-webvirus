@@ -61,4 +61,6 @@
     <string name="tab_list">intelligenzfreie Rentnerfilmliste</string>
     <string name="tab_new">neue Schrott- bzw. Rentnerfilme</string>
     <string name="open_in_db">in hippen Browser ansehen</string>
+    <string name="url_copy_ok">Schrott- bzw. Rentnerfilm in die Zwischenablage verfrachtet</string>
+    <string name="url_copy_fail">Mangels Intelligenz konnte ich den Schrott- bzw. Rentnerfilm NICHT in die Zwischenablage verfrachten</string>
 </resources>

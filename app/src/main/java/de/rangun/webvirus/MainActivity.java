@@ -27,6 +27,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
@@ -83,10 +84,14 @@ public final class MainActivity extends AppCompatActivity implements
         private int pages = 2;
 
         private final Context ctx;
+        private final Toaster toaster;
 
-        MoviePagerAdapter(@NonNull Context ctx, @NonNull FragmentManager fm) {
+        MoviePagerAdapter(@NonNull Context ctx, Toaster toaster, @NonNull FragmentManager fm) {
+
             super(fm, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+
             this.ctx = ctx;
+            this.toaster = toaster;
         }
 
         @Override
@@ -94,7 +99,7 @@ public final class MainActivity extends AppCompatActivity implements
         public Fragment getItem(int position) {
 
             if(position == 0) {
-                return new MovieDetailsFragment();
+                return new MovieDetailsFragment(toaster);
             } else if(position == 1) {
                 return new MovieListFragment(false);
             } else {
@@ -165,7 +170,7 @@ public final class MainActivity extends AppCompatActivity implements
 
         final Context ctx = this;
 
-        if(savedInstanceState != null) {
+        if (savedInstanceState != null) {
             currentId = savedInstanceState.getLong("currentId", -1L);
 
             if (currentId == -1L) currentId = null;
@@ -181,7 +186,7 @@ public final class MainActivity extends AppCompatActivity implements
         pager = findViewById(R.id.pager);
 
         final PagerAdapter pagerAdaper =
-                new MoviePagerAdapter(this, getSupportFragmentManager());
+                new MoviePagerAdapter(this, toaster, getSupportFragmentManager());
 
         pager.setAdapter(pagerAdaper);
         pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
@@ -189,14 +194,14 @@ public final class MainActivity extends AppCompatActivity implements
             public void onPageSelected(int position) {
 
                 final SearchBarFragment sbf = (SearchBarFragment) getSupportFragmentManager().
-                                findFragmentById(R.id.searchBar);
+                        findFragmentById(R.id.searchBar);
 
-                if(sbf != null) {
+                if (sbf != null) {
                     sbf.setShowDropdown(position == 0);
                     sbf.setEnabled(position != 2);
                 }
 
-                if(position == 2) {
+                if (position == 2) {
 
                     final SharedPreferences sharedPrefs =
                             PreferenceManager.getDefaultSharedPreferences(ctx);
@@ -211,6 +216,42 @@ public final class MainActivity extends AppCompatActivity implements
 
         TabLayout tabLayout = findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(pager);
+
+        handleIntent();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+
+        super.onNewIntent(intent);
+
+        setIntent(intent);
+        handleIntent();
+    }
+
+    private void handleIntent() {
+
+        final Uri appLinkData = getIntent().getData();
+
+        if(appLinkData != null && "rangun.de".equalsIgnoreCase(appLinkData.getHost())) {
+
+            final String lps = appLinkData.getLastPathSegment();
+
+            if(lps != null) {
+
+                final Long mid = Long.parseLong(lps);
+
+                if(mid > 0L) {
+
+                    currentId = mid;
+
+                    if (movies != null) {
+                        updateMovie(currentId, (MovieDetailsFragment) getSupportFragmentManager().
+                                findFragmentByTag("android:switcher:" + R.id.pager + ":0"));
+                    }
+                }
+            }
+        }
     }
 
     @Override

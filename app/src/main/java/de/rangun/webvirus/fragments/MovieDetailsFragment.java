@@ -21,8 +21,11 @@
 
 package de.rangun.webvirus.fragments;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -43,6 +46,7 @@ import java.util.Objects;
 
 import de.rangun.webvirus.MainActivity;
 import de.rangun.webvirus.R;
+import de.rangun.webvirus.Toaster;
 import de.rangun.webvirus.model.BitmapMemCache;
 import de.rangun.webvirus.model.IMovie;
 import de.rangun.webvirus.widgets.CategoryTextView;
@@ -50,6 +54,12 @@ import de.rangun.webvirus.widgets.CategoryTextView;
 public final class MovieDetailsFragment extends Fragment {
 
     private IResumeListener listener;
+
+    private final Toaster toaster;
+
+    public MovieDetailsFragment(Toaster toaster) {
+        this.toaster = toaster;
+    }
 
     public interface IResumeListener {
         void updateRequested(MovieDetailsFragment f);
@@ -108,6 +118,7 @@ public final class MovieDetailsFragment extends Fragment {
         final TextView abs = getView().findViewById(R.id.m_abstract);
         final NetworkImageView cov = getView().findViewById(R.id.cover);
         final Button but = getView().findViewById(R.id.openInDB);
+        final Button cpy = getView().findViewById(R.id.copyURL);
 
         StringBuilder sb = new StringBuilder();
 
@@ -128,6 +139,25 @@ public final class MovieDetailsFragment extends Fragment {
 
         but.setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW,
                 Uri.parse("https://rangun.de/db/?filter_ID=" + m.id()))));
+
+        cpy.setOnClickListener(v -> {
+
+            ClipboardManager clipboard = (ClipboardManager) Objects.requireNonNull(getActivity()).
+                    getSystemService(Context.CLIPBOARD_SERVICE);
+
+            if(clipboard != null) {
+
+                clipboard.setPrimaryClip(ClipData.newPlainText(m.title(),
+                        "https://rangun.de/db/video/" + m.id()));
+
+                toaster.show(Objects.requireNonNull(getContext()).
+                                getResources().getString(R.string.url_copy_ok), Color.BLACK);
+
+            } else {
+                toaster.show(Objects.requireNonNull(getContext()).getResources().getString(R.string.url_copy_fail)
+                        , Color.RED);
+            }
+        });
 
         if (m.oid() != null) {
 

@@ -28,7 +28,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-final class Toaster {
+public final class Toaster {
 
     private final View layout;
     private final Context ctx;
