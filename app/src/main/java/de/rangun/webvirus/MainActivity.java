@@ -164,6 +164,8 @@ public final class MainActivity extends AppCompatActivity implements
     private Toaster toaster;
     private ViewPager pager;
 
+    private SearchBarFragment sbf;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
 
@@ -183,6 +185,10 @@ public final class MainActivity extends AppCompatActivity implements
         tv.setText(getString(R.string.copyright, BuildConfig.VERSION_NAME,
                 !BuildConfig.DEBUG ? "" : " [Intelligenzmangel (debug)]"));
 
+        sbf = (SearchBarFragment)getSupportFragmentManager().findFragmentById(R.id.searchBar);
+
+        if(sbf == null) throw new IllegalStateException("no SearchBarFragment in layout");
+
         toaster = new Toaster(this);
 
         pager = findViewById(R.id.pager);
@@ -197,9 +203,6 @@ public final class MainActivity extends AppCompatActivity implements
         pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
-
-                final SearchBarFragment sbf = (SearchBarFragment) getSupportFragmentManager().
-                        findFragmentById(R.id.searchBar);
 
                 Objects.requireNonNull(getSupportActionBar()).
                         setTitle(getString(R.string.action_title, getString(R.string.app_name),
@@ -379,9 +382,6 @@ public final class MainActivity extends AppCompatActivity implements
 
     private void updateMovie(@Nullable IMovie m, MovieDetailsFragment mdf) {
 
-        final SearchBarFragment sbf =
-                (SearchBarFragment) getSupportFragmentManager().findFragmentById(R.id.searchBar);
-
         if(sbf != null) sbf.hideSoftKeyboard();
 
         pager.setCurrentItem(0);
@@ -454,9 +454,6 @@ public final class MainActivity extends AppCompatActivity implements
 
             Log.d(TAG, "latest Cover id=" + lid);
 
-            final SearchBarFragment sbf =
-                (SearchBarFragment)getSupportFragmentManager().findFragmentById(R.id.searchBar);
-
             if(sbf != null) {
 
                 final ArrayAdapter<String> adapter = new MovieBKTreeAdapter(this,
@@ -494,9 +491,6 @@ public final class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onFilterResultAvailable(List<IMovie> result) {
-
-        final SearchBarFragment sbf =
-                (SearchBarFragment)getSupportFragmentManager().findFragmentById(R.id.searchBar);
 
         final MovieListFragment mlf = (MovieListFragment)getSupportFragmentManager().
                 findFragmentByTag("android:switcher:" + R.id.pager + ":1");
