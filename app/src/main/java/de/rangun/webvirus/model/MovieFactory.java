@@ -37,6 +37,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Objects;
 
+import de.rangun.webvirus.net.GZipJsonArrayRequest;
+
 public final class MovieFactory {
 
     public interface IMoviesAvailableListener extends MovieProxy.IMovieProxyObserver {
@@ -61,7 +63,7 @@ public final class MovieFactory {
     private IMoviesAvailableListener cb = null;
 
     @Nullable
-    private final JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET,
+    private final JsonArrayRequest jsonArrayRequest = new GZipJsonArrayRequest(Request.Method.GET,
             URL, null, response -> {
 
         final class _idCoverMapping implements Comparable<_idCoverMapping> {
@@ -69,7 +71,7 @@ public final class MovieFactory {
             final Long mid;
             final Long oid;
 
-            _idCoverMapping(Long mid, Long oid) {
+            private _idCoverMapping(Long mid, Long oid) {
                 this.mid = mid;
                 this.oid = oid;
             }
