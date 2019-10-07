@@ -26,13 +26,15 @@ import android.util.AttributeSet;
 
 import com.takisoft.fix.support.v7.preference.EditTextPreference;
 
-abstract class NumberEditTextPreference extends EditTextPreference {
+@SuppressWarnings("WeakerAccess")
+abstract class ValueSubstituteEditTextPreference extends EditTextPreference {
 
-    NumberEditTextPreference(Context context) { super(context); }
+    public ValueSubstituteEditTextPreference(Context context) { super(context); }
 
-    NumberEditTextPreference(Context context, AttributeSet attrs) { super(context, attrs); }
+    public ValueSubstituteEditTextPreference(Context context, AttributeSet attrs) {
+        super(context, attrs); }
 
-    NumberEditTextPreference(Context context, AttributeSet attrs, int defStyle) {
+    public ValueSubstituteEditTextPreference(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 

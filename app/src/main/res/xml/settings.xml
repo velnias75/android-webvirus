@@ -25,8 +25,15 @@
 
     <com.takisoft.fix.support.v7.preference.PreferenceCategory
         android:key="debugPrefs"
-        android:summary="Mangels intellgenz werden die Zahlen nicht auf Sinnhaftigkeit geprüft!"
+        android:summary="Mangels intellgenz werden die Werte nicht auf Sinnhaftigkeit geprüft!"
         android:title="Intelligenzmangel (debug)">
+
+        <!-- <de.rangun.webvirus.widgets.TextEditTextPreference
+            android:inputType="textUri"
+            android:key="fetchURLBase"
+            android:defaultValue="@string/fetchURLBase"
+            android:title="fetchURLBase"
+            android:summary="URL, woher die hirnlosen Schrott- bzw. Rentnerfilme bezogen werden sollen: %s" /> -->
 
         <de.rangun.webvirus.widgets.LongEditTextPreference
             android:digits="0123456789"

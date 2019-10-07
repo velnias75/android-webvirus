@@ -274,7 +274,8 @@ public final class MainActivity extends AppCompatActivity implements
         super.onStart();
 
         final Intent intent = new Intent(this, MovieFetcherService.class);
-        if(!bindService(intent, connection, Context.BIND_AUTO_CREATE)) {
+        if(!bindService(intent, connection,
+                Context.BIND_AUTO_CREATE|Context.BIND_NOT_FOREGROUND)) {
             Log.d(TAG, "Couldn't bind to MovieFetcherService");
         }
     }

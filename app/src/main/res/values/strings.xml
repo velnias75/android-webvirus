@@ -19,8 +19,9 @@
   ~  Last modified 02.10.19 13:52 by heiko
   -->
 
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Webvirus</string>
+    <string name="fetchURLBase" tools:keep="@string/fetchURLBase">https://rangun.de/db/</string>
     <string name="title">Heikos Schrott- &amp; Rentnerfilme</string>
     <string name="version">✋ Die Zombieboxversion ✋</string>
     <string name="copyright">© 2019 by Heiko Schäfer – v%1$s%2$s</string>

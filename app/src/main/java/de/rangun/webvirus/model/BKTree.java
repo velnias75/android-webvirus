@@ -112,7 +112,8 @@ class BKTree<T> implements Iterable<T> {
 
             curNode = curNode.get(dist);
 
-            dist = levenshteinDistance(Objects.requireNonNull(curNode).item().toString().toLowerCase(), it);
+            dist = levenshteinDistance(Objects.requireNonNull(curNode).item().
+                    toString().toLowerCase(), it);
         }
 
         curNode.addChild(dist, item);

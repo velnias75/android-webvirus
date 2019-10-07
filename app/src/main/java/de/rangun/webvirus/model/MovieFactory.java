@@ -80,12 +80,12 @@ public final class MovieFactory {
             public int compareTo(_idCoverMapping o) { return mid.compareTo(o.mid); }
         }
 
-        MovieBKTree  movies = new MovieBKTree();
-        ArrayList<_idCoverMapping> ids = new ArrayList<>();
+        MovieBKTree movies = new MovieBKTree();
+        ArrayList<_idCoverMapping> ids = new ArrayList<>(response.length());
 
-        if (cb != null) {
+        if(cb != null) {
 
-            for (int i = 0; i < response.length(); ++i) {
+            for(int i = 0; i < response.length(); ++i) {
 
                 try {
 
@@ -100,15 +100,15 @@ public final class MovieFactory {
                             item.getString("languages"),
                             item.getString("disc"),
                             item.getInt("category"),
-                            item.isNull("filename") ? null :
-                                    item.getString("filename"),
+                            !item.isNull("filename") ?
+                                    item.getString("filename") : null,
                             item.getBoolean("omu"),
                             item.getBoolean("top250"),
                             oid));
 
                     ids.add(new _idCoverMapping(mid, oid));
 
-                } catch (JSONException ex) {
+                } catch(JSONException ex) {
                     cb.error("JSONException: " + ex.getMessage());
                 }
             }
@@ -128,7 +128,6 @@ public final class MovieFactory {
 
             cb.movies(movies, lid, silent);
             cb.loaded(movies.size(), silent);
-
         }
 
     }, error -> {
@@ -140,7 +139,7 @@ public final class MovieFactory {
     private MovieFactory() {}
 
     public static MovieFactory instance() {
-        if (_instance == null) _instance = new MovieFactory();
+        if(_instance == null) _instance = new MovieFactory();
         return _instance;
     }
 

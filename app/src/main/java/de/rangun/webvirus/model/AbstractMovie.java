@@ -35,6 +35,7 @@ import java.util.TimeZone;
 
 abstract class AbstractMovie implements IMovie {
 
+    private final static TimeZone tz = TimeZone.getTimeZone("UTC");
     private final static SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss",
             Locale.GERMANY);
 
@@ -68,8 +69,6 @@ abstract class AbstractMovie implements IMovie {
         this.top250 = top250;
         this.oid = oid;
         this.discId = getIdForDisc(disc);
-
-        df.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
     AbstractMovie(long id, @NonNull String title, long dur_sec, @NonNull String languages,
@@ -97,7 +96,10 @@ abstract class AbstractMovie implements IMovie {
     public String title() { return title; }
 
     @Override
-    public String durationString() { return df.format(new Date(this.dur_sec * 1000)); }
+    public String durationString() {
+        df.setTimeZone(tz);
+        return df.format(new Date(this.dur_sec * 1000));
+    }
 
     @Override
     public List<String> languages() { return languages.asList(); }

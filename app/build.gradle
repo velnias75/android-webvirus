@@ -68,11 +68,15 @@ android {
     }
     buildTypes {
         release {
+            debuggable false
             minifyEnabled true
             shrinkResources true
             zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.debug
+        }
+        debug {
+            debuggable true
         }
     }
     aaptOptions {
@@ -96,9 +100,9 @@ dependencies {
     api 'com.google.guava:guava:28.1-android'
     releaseImplementation 'org.jetbrains:annotations-java5:17.0.0'
     debugImplementation 'com.squareup.leakcanary:leakcanary-android-process:2.0-beta-3'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2-alpha02'
-    androidTestImplementation 'androidx.test:runner:1.3.0-alpha02'
-    androidTestImplementation 'androidx.test:rules:1.3.0-alpha02'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0-alpha02'
-    androidTestImplementation 'androidx.test.espresso:espresso-intents:3.3.0-alpha02'
+    //androidTestImplementation 'androidx.test.ext:junit:1.1.2-alpha02'
+    //androidTestImplementation 'androidx.test:runner:1.3.0-alpha02'
+    //androidTestImplementation 'androidx.test:rules:1.3.0-alpha02'
+    //androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0-alpha02'
+    //androidTestImplementation 'androidx.test.espresso:espresso-intents:3.3.0-alpha02'
 }

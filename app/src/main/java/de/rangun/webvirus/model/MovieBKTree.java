@@ -53,10 +53,6 @@ public final class MovieBKTree extends BKTree<IMovie> {
 //    }
 // --Commented out by Inspection STOP (04.10.19 11:50)
 
-    void add(@NonNull IMovie item) {
-        super.add(item);
-    }
-
     @Nullable
     public IMovie getByMovieId(long id) {
         return getByMovieId(id, true);

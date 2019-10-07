@@ -24,7 +24,7 @@ package de.rangun.webvirus.widgets;
 import android.content.Context;
 import android.util.AttributeSet;
 
-public class LongEditTextPreference extends NumberEditTextPreference {
+public class LongEditTextPreference extends ValueSubstituteEditTextPreference {
 
     public LongEditTextPreference(Context context) { super(context); }
 
