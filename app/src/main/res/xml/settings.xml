@@ -39,6 +39,7 @@
             android:digits="0123456789"
             android:inputType="numberDecimal"
             android:key="lastMovieIdSeen"
+            android:defaultValue="1"
             android:summary="ID des zuletzt angesehenen Schrott- bzw. Rentnerfilms: %s"
             android:title="lastMovieIdSeen" />
 
@@ -46,6 +47,7 @@
             android:digits="0123456789"
             android:inputType="numberDecimal"
             android:key="lastMovieCount"
+            android:defaultValue="0"
             android:summary="Anzahl der zuletzt geladenen Schrott- bzw. Rentnerfilme: %s"
             android:title="lastMovieCount" />
 
@@ -53,6 +55,7 @@
             android:digits="0123456789"
             android:inputType="numberDecimal"
             android:key="newMoviesSeen"
+            android:defaultValue="0"
             android:summary="Anzahl der zuletzt betrachteten neuen Schrott- bzw. Rentnerfilme: %s"
             android:title="newMoviesSeen" />
 

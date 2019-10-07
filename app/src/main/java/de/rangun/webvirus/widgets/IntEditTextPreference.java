@@ -36,7 +36,8 @@ public class IntEditTextPreference extends ValueSubstituteEditTextPreference {
 
     @Override
     protected String getPersistedString(String defaultReturnValue) {
-        return String.valueOf(getPersistedInt(1));
+        return String.valueOf(getPersistedInt(Integer.valueOf(defaultReturnValue != null ?
+                defaultReturnValue : "0")));
     }
 
     @Override

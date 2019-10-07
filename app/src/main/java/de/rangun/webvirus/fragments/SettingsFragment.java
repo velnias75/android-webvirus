@@ -39,6 +39,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         final Preference p = getPreferenceScreen().findPreference("debugPrefs");
 
-        if(p != null) p.setVisible(BuildConfig.DEBUG);
+        if(p != null) p.setVisible("hirnlos".equals(BuildConfig.FLAVOR));
     }
 }

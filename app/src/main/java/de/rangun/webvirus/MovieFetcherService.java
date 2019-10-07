@@ -236,7 +236,7 @@ public final class MovieFetcherService extends Service
 
         int lastMovieCount = sharedPrefs.getInt("lastMovieCount", 0);
 
-        final int newMoviesSeen = sharedPrefs.getInt("newMoviesSeen", lastMovieCount);
+        final int newMoviesSeen = sharedPrefs.getInt("newMoviesSeen", 0);
         final int nm = movies.size() - newMoviesSeen;
 
         for(IMovie m: movies) m.setNewMovie(m.id() > newMoviesSeen);

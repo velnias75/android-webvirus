@@ -79,6 +79,19 @@ android {
             debuggable true
         }
     }
+    flavorDimensions "version"
+    productFlavors {
+        hirnlos { // developer version
+            dimension "version"
+            applicationIdSuffix ".hirnlos"
+            versionNameSuffix "-hirnlos"
+        }
+        hip { // user version
+            dimension "version"
+            applicationIdSuffix ".hip"
+            versionNameSuffix "-hip"
+        }
+    }
     aaptOptions {
         cruncherEnabled true
     }

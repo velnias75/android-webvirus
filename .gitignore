@@ -15,4 +15,6 @@
 .cxx
 keystore.properties
 app/release/
+app/hip/
+app/hirnlos/
 app/version.properties

@@ -284,7 +284,7 @@ public final class MainActivity extends AppCompatActivity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.actionbarmenu, menu);
 
-        menu.findItem(R.id.action_settings).setVisible(BuildConfig.DEBUG);
+        menu.findItem(R.id.action_settings).setVisible("hirnlos".equals(BuildConfig.FLAVOR));
 
         return true;
     }

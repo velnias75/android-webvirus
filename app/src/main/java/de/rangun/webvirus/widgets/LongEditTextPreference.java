@@ -36,7 +36,8 @@ public class LongEditTextPreference extends ValueSubstituteEditTextPreference {
 
     @Override
     protected String getPersistedString(String defaultReturnValue) {
-        return String.valueOf(getPersistedLong(1));
+        return String.valueOf(getPersistedLong(Long.valueOf(defaultReturnValue != null ?
+                defaultReturnValue : "0")));
     }
 
     @Override
