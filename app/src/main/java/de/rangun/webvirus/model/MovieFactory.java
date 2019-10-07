@@ -27,9 +27,9 @@ import androidx.annotation.Nullable;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -51,90 +51,21 @@ public final class MovieFactory {
         void newMoviesAvailable(int num);
     }
 
+    private final class CallbackTransfer {
+        String error = null;
+        MovieBKTree movies = null;
+        Long lid = null;
+    }
+
     private static final String TAG = "MovieFactory";
     @Nullable
     private static MovieFactory _instance = null;
-    private boolean silent = false;
 
     private final String URL = "https://rangun.de/db/movies-json.php";
     //private final String URL = "http://192.168.1.156/~heiko/db/movies-json.php";
 
     @Nullable
     private IMoviesAvailableListener cb = null;
-
-    @Nullable
-    private final JsonArrayRequest jsonArrayRequest = new GZipJsonArrayRequest(Request.Method.GET,
-            URL, null, response -> {
-
-        final class _idCoverMapping implements Comparable<_idCoverMapping> {
-
-            final Long mid;
-            final Long oid;
-
-            private _idCoverMapping(Long mid, Long oid) {
-                this.mid = mid;
-                this.oid = oid;
-            }
-
-            @Override
-            public int compareTo(_idCoverMapping o) { return mid.compareTo(o.mid); }
-        }
-
-        MovieBKTree movies = new MovieBKTree();
-        ArrayList<_idCoverMapping> ids = new ArrayList<>(response.length());
-
-        if(cb != null) {
-
-            for(int i = 0; i < response.length(); ++i) {
-
-                try {
-
-                    final JSONObject item = response.getJSONObject(i);
-
-                    final Long mid = item.getLong("id");
-                    final Long oid = item.isNull("oid") ? null : item.getLong("oid");
-
-                    movies.add(new MovieProxy(cb, mid,
-                            item.getString("title"),
-                            item.getLong("dur_sec"),
-                            item.getString("languages"),
-                            item.getString("disc"),
-                            item.getInt("category"),
-                            !item.isNull("filename") ?
-                                    item.getString("filename") : null,
-                            item.getBoolean("omu"),
-                            item.getBoolean("top250"),
-                            oid));
-
-                    ids.add(new _idCoverMapping(mid, oid));
-
-                } catch(JSONException ex) {
-                    cb.error("JSONException: " + ex.getMessage());
-                }
-            }
-
-            Collections.sort(ids);
-            Long lid = null;
-
-            for(int i = ids.size() - 1; i >= 0; --i) {
-
-                final _idCoverMapping icm = ids.get(i);
-
-                if(icm.oid != null) {
-                    lid = icm.mid;
-                    break;
-                }
-            }
-
-            cb.movies(movies, lid, silent);
-            cb.loaded(movies.size(), silent);
-        }
-
-    }, error -> {
-        if (cb != null && error != null && error.networkResponse != null) {
-            cb.error("" + error.networkResponse.statusCode);
-        }
-    });
 
     private MovieFactory() {}
 
@@ -147,17 +78,109 @@ public final class MovieFactory {
         this.cb = cb;
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public void fetchMovies(@NonNull RequestQueue q, boolean silent) {
 
-        this.silent = silent;
+        if(cb != null) {
 
-        if(cb != null) cb.loading(this.silent);
+            cb.loading(silent);
 
-        Objects.requireNonNull(jsonArrayRequest).setTag(TAG);
-        jsonArrayRequest.setShouldCache(false);
-        jsonArrayRequest.setRetryPolicy(new DefaultRetryPolicy(
-                DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 48,
-                5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        q.add(jsonArrayRequest);
+            final CallbackTransfer callbackTransfer = new CallbackTransfer();
+
+            //noinspection unused
+            GZipJsonArrayRequest<CallbackTransfer> jsonArrayRequest =
+                    new GZipJsonArrayRequest<CallbackTransfer>(Request.Method.GET, URL,
+                    null, response -> {
+
+                if (callbackTransfer.error == null) {
+                    cb.movies(callbackTransfer.movies, callbackTransfer.lid, silent);
+                    cb.loaded(callbackTransfer.movies.size(), silent);
+                } else {
+                    cb.error(callbackTransfer.error);
+                }
+
+            }, error -> {
+
+                if (cb != null && error != null && error.networkResponse != null) {
+                    cb.error("" + error.networkResponse.statusCode);
+                }
+
+            }, callbackTransfer) {
+
+                @Override
+                protected JSONArray customParse(JSONArray array, CallbackTransfer userParam) {
+
+                    final class _idCoverMapping implements Comparable<_idCoverMapping> {
+
+                        final Long mid;
+                        final Long oid;
+
+                        @SuppressWarnings("unused")
+                        private _idCoverMapping(Long mid, Long oid) {
+                            this.mid = mid;
+                            this.oid = oid;
+                        }
+
+                        @Override
+                        public int compareTo(_idCoverMapping o) {
+                            return mid.compareTo(o.mid);
+                        }
+                    }
+
+                    callbackTransfer.movies = new MovieBKTree();
+                    final ArrayList<_idCoverMapping> ids = new ArrayList<>(array.length());
+
+                    for (int i = 0; i < array.length(); ++i) {
+
+                        try {
+
+                            final JSONObject item = array.getJSONObject(i);
+
+                            final long mid = item.getLong("id");
+                            final Long oid = item.isNull("oid") ? null :
+                                    item.getLong("oid");
+
+                            callbackTransfer.movies.add(new MovieProxy(cb, mid,
+                                    item.getString("title"),
+                                    item.getLong("dur_sec"),
+                                    item.getString("languages"),
+                                    item.getString("disc"),
+                                    item.getInt("category"),
+                                    !item.isNull("filename") ?
+                                            item.getString("filename") : null,
+                                    item.getBoolean("omu"),
+                                    item.getBoolean("top250"),
+                                    oid));
+
+                            ids.add(new _idCoverMapping(mid, oid));
+
+                        } catch (JSONException ex) {
+                            callbackTransfer.error = "JSONException: " + ex.getMessage();
+                        }
+                    }
+
+                    Collections.sort(ids);
+
+                    for (int i = ids.size() - 1; i >= 0; --i) {
+
+                        final _idCoverMapping icm = ids.get(i);
+
+                        if (icm.oid != null) {
+                            callbackTransfer.lid = icm.mid;
+                            break;
+                        }
+                    }
+
+                    return array;
+                }
+            };
+
+            Objects.requireNonNull(jsonArrayRequest).setTag(TAG);
+            jsonArrayRequest.setShouldCache(false);
+            jsonArrayRequest.setRetryPolicy(new DefaultRetryPolicy(
+                    DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 48,
+                    5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            q.add(jsonArrayRequest);
+        }
     }
 }

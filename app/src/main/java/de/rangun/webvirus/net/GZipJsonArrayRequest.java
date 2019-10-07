@@ -44,12 +44,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
-public final class GZipJsonArrayRequest extends JsonArrayRequest {
+public abstract class GZipJsonArrayRequest<T> extends JsonArrayRequest {
+
+    private final T userParam;
 
     public GZipJsonArrayRequest(int method, String url, @Nullable JSONArray jsonRequest,
                                 Response.Listener<JSONArray> listener,
-                                @Nullable Response.ErrorListener errorListener) {
+                                @Nullable Response.ErrorListener errorListener,
+                                T userParam) {
         super(method, url, jsonRequest, listener, errorListener);
+        this.userParam = userParam;
     }
 
     @Override
@@ -63,7 +67,15 @@ public final class GZipJsonArrayRequest extends JsonArrayRequest {
     protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
 
         if(!"gzip".equals(response.headers.get("Content-Encoding"))) {
-            return super.parseNetworkResponse(response);
+
+            final Response<JSONArray> myResponse = super.parseNetworkResponse(response);
+
+            if(myResponse.isSuccess()) {
+                return Response.success(customParse(myResponse.result, userParam),
+                        HttpHeaderParser.parseCacheHeaders(response));
+            } else {
+                return myResponse;
+            }
         }
 
         final StringBuilder output = new StringBuilder();
@@ -90,9 +102,11 @@ public final class GZipJsonArrayRequest extends JsonArrayRequest {
 
         try {
 
-            return Response.success(new JSONArray(new String(output.toString().getBytes(),
-                            HttpHeaderParser.parseCharset(response.headers, PROTOCOL_CHARSET))),
-                    HttpHeaderParser.parseCacheHeaders(response));
+            return Response.
+                    success(customParse(new JSONArray(new String(output.toString().getBytes(),
+                                    HttpHeaderParser.parseCharset(response.headers,
+                                            PROTOCOL_CHARSET))), userParam),
+                            HttpHeaderParser.parseCacheHeaders(response));
 
         } catch(UnsupportedEncodingException ue) {
             return Response.error(new ParseError(ue));
@@ -100,4 +114,7 @@ public final class GZipJsonArrayRequest extends JsonArrayRequest {
             return Response.error(new ParseError(je));
         }
     }
+
+    @SuppressWarnings({"unused", "EmptyMethod"})
+    protected abstract JSONArray customParse(JSONArray array, T userParam);
 }
