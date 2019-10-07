@@ -140,13 +140,13 @@ public final class MainActivity extends AppCompatActivity implements
 
             mfs = binder.getService();
             mfs.setOnMoviesAvailableListener(MainActivity.this);
-            mfs.fetchMovies(false);
+            if(movies == null || movies.size() == 0) mfs.fetchMovies(false);
 
             mBound = true;
         }
 
         @Override
-        public void onServiceDisconnected(ComponentName arg0) {
+        public void onServiceDisconnected(ComponentName name) {
             mBound = false;
         }
     };
@@ -284,6 +284,7 @@ public final class MainActivity extends AppCompatActivity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.actionbarmenu, menu);
 
+        //noinspection ConstantConditions
         menu.findItem(R.id.action_settings).setVisible("hirnlos".equals(BuildConfig.FLAVOR));
 
         return true;

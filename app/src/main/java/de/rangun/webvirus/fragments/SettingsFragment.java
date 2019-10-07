@@ -31,6 +31,7 @@ import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat;
 import de.rangun.webvirus.BuildConfig;
 import de.rangun.webvirus.R;
 
+@SuppressWarnings("ConstantConditions")
 public class SettingsFragment extends PreferenceFragmentCompat {
 
     @Override
