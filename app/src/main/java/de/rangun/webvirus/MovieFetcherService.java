@@ -21,7 +21,7 @@
 
 package de.rangun.webvirus;
 
-import android.app.AlarmManager;
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -35,7 +35,6 @@ import android.net.NetworkInfo;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
-import android.os.SystemClock;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -48,13 +47,14 @@ import androidx.preference.PreferenceManager;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 
 import java.util.Objects;
 
 import de.rangun.webvirus.model.IMovie;
 import de.rangun.webvirus.model.MovieBKTree;
 import de.rangun.webvirus.model.MovieFactory;
+
+import static com.android.volley.toolbox.Volley.newRequestQueue;
 
 public final class MovieFetcherService extends Service
         implements MovieFactory.IMoviesAvailableListener {
@@ -74,10 +74,8 @@ public final class MovieFetcherService extends Service
     enum NOTIFICATION {
 
         NONE(),
-        NEW(0, android.R.drawable.stat_notify_sync
-        ),
-        ERROR(1, android.R.drawable.stat_notify_error
-        ),
+        NEW(0, android.R.drawable.stat_notify_sync),
+        ERROR(1, android.R.drawable.stat_notify_error),
         LOADED(2, android.R.drawable.stat_notify_sync, NotificationCompat.PRIORITY_MIN,
                 CHANNEL_MIN, 10000L),
         NOTFOUND(3, android.R.drawable.stat_notify_error, NotificationCompat.PRIORITY_LOW,
@@ -149,8 +147,24 @@ public final class MovieFetcherService extends Service
     }
 
     @Override
+    public boolean onUnbind(Intent intent) {
+        return true; // to keep volley in an sane state
+    }
+
+    @Override
     public void onDestroy() {
+        destroyQueue();
+    }
+
+    @NonNull
+    public RequestQueue getQueue() {
+        if (queue == null) queue = newRequestQueue(this);
+        return queue;
+    }
+
+    private void destroyQueue() {
         if (queue != null) queue.stop();
+        queue = null;
     }
 
     @Override
@@ -160,37 +174,21 @@ public final class MovieFetcherService extends Service
 
         createNotificationChannel();
 
-        getQueue();
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this,
+                0, notificationIntent, 0);
+
+        startForeground(1, (new NotificationCompat.Builder(this,
+                MovieFetcherService.CHANNEL_LOW))
+                .setContentText(getString(R.string.fetching))
+                .setSmallIcon(android.R.drawable.stat_notify_sync)
+                .setContentIntent(pendingIntent)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .build());
+
         fetchMovies(true);
 
-        startPeriodicFetch(intent);
-
         return START_REDELIVER_INTENT;
-    }
-
-    private void startPeriodicFetch(@NonNull Intent intent) {
-
-        final AlarmManager alarmMgr =
-                (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-
-        if(alarmMgr != null) {
-            final PendingIntent alarmIntent = PendingIntent.getService(this, 0,
-                    intent, PendingIntent.FLAG_CANCEL_CURRENT);
-
-            Log.d(TAG, "periodically fetching movies");
-
-            final long interval = AlarmManager.INTERVAL_HALF_DAY; //(1000 * 3600) * 6;
-
-            alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
-                    SystemClock.elapsedRealtime() + interval, interval, alarmIntent);
-
-        } else Log.d(TAG, "NOT periodically fetching movies");
-    }
-
-    @NonNull
-    public RequestQueue getQueue() {
-        if (queue == null) queue = Volley.newRequestQueue(this);
-        return queue;
     }
 
     public void setOnMoviesAvailableListener(MovieFactory.IMoviesAvailableListener l) {
@@ -200,24 +198,25 @@ public final class MovieFetcherService extends Service
     @SuppressWarnings("deprecation")
     public void fetchMovies(boolean silent) {
 
-        Log.d(TAG, "fetchMovies");
+        Log.d(TAG, "fetchMovies: trying...");
 
         ConnectivityManager cm =
                 (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        Objects.requireNonNull(MovieFactory.instance()).setOnMoviesAvailableListener(this);
 
         if(cm != null) {
 
             NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
 
             if (activeNetwork != null && activeNetwork.isConnected()) {
+                Log.d(TAG, "fetchMovies: ok, now lets go to the MovieFactory");
+                Objects.requireNonNull(MovieFactory.instance()).setOnMoviesAvailableListener(this);
                 Objects.requireNonNull(MovieFactory.instance()).
                         fetchMovies(Objects.requireNonNull(getQueue()), silent);
             } else if(!silent) {
                 error(getString(R.string.not_connected));
-            }
-        }
+            } else Log.d(TAG, "NOT connected yet, hoping for first periodic fetch");
+
+        } else Log.d(TAG, "NO ConnectivityManager!");
     }
 
     @Override
@@ -254,7 +253,8 @@ public final class MovieFetcherService extends Service
                 Objects.requireNonNull(getQueue()).add(new ImageRequest(
                         "https://rangun.de/db/omdb.php?cover-oid=" + oid,
                         bitmap -> notifyInternal(getString(R.string.new_movies,
-                                lmc), NOTIFICATION.NEW,
+                                lmc),
+                                NOTIFICATION.NEW,
                                 bitmap, silent),
                         getResources().getDimensionPixelSize(android.R.dimen.
                                 notification_large_icon_width),
@@ -264,8 +264,7 @@ public final class MovieFetcherService extends Service
                         error -> notifyInternal(getString(R.string.new_movies,
                                 lmc),
                                 NOTIFICATION.NEW, null, silent)));
-            } else notifyInternal(getString(R.string.new_movies,
-                    lmc),
+            } else notifyInternal(getString(R.string.new_movies, lmc),
                     NOTIFICATION.NEW, null, silent);
 
             sharedPrefs.edit().putInt("lastMovieCount", lastMovieCount).apply();
@@ -278,6 +277,8 @@ public final class MovieFetcherService extends Service
             listener.movies(movies, latestCoverId, silent);
             listener.newMoviesAvailable(nm);
         }
+
+        if(silent) stopForeground(true);
     }
 
     @Override
@@ -308,8 +309,8 @@ public final class MovieFetcherService extends Service
         notifyInternal(txt, notification, null, false);
     }
 
-    private void notifyInternal(String txt, @NonNull NOTIFICATION notification, Bitmap bm,
-                                boolean tap) {
+    private Notification notificationBuilder(String txt, @NonNull NOTIFICATION notification,
+                                             Bitmap bm, boolean tap) {
 
         final Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -333,10 +334,17 @@ public final class MovieFetcherService extends Service
 
         if(bm != null) builder.setLargeIcon(bm);
 
+        return builder.build();
+    }
+
+    private void notifyInternal(String txt, @NonNull NOTIFICATION notification, Bitmap bm,
+                                boolean tap) {
+
         final NotificationManagerCompat notificationManager =
                 NotificationManagerCompat.from(this);
 
-        notificationManager.notify(notification.getId(), builder.build());
+        notificationManager.notify(notification.getId(),
+                notificationBuilder(txt, notification, bm, tap));
     }
 
     private void createNotificationChannel() {

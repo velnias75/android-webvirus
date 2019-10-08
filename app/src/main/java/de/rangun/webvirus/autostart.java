@@ -21,10 +21,13 @@
 
 package de.rangun.webvirus;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.os.SystemClock;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -36,6 +39,29 @@ public class autostart extends BroadcastReceiver {
 
         if(Intent.ACTION_BOOT_COMPLETED.equals(rqIntent.getAction())) {
 
+            final AlarmManager alarmMgr =
+                    (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+
+            if(alarmMgr != null) {
+
+                final Intent aIntent = new Intent(context, AlarmReceiver.class);
+                final PendingIntent alarmIntent = PendingIntent.getBroadcast(context,
+                        0, aIntent, 0);
+
+                Log.d("autostart", "now periodically fetching movies");
+
+                final long interval = AlarmManager.INTERVAL_HALF_DAY; //(1000 * 3600) * 6;
+
+                alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                        SystemClock.elapsedRealtime() + interval, interval,
+                        alarmIntent);
+
+            } else {
+                Log.d("autostart", "NOT periodically fetching movies");
+            }
+
+            Log.d("autostart", "initial \"boot completed\" fetch");
+
             final Intent intent = new Intent(context, MovieFetcherService.class);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -43,8 +69,6 @@ public class autostart extends BroadcastReceiver {
             } else {
                 context.startService(intent);
             }
-
-            Log.d("autostart", "started");
         }
     }
 }

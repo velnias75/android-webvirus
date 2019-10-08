@@ -21,6 +21,8 @@
 
 package de.rangun.webvirus.model;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -175,12 +177,15 @@ public final class MovieFactory {
                 }
             };
 
+            Log.d(TAG, "now REALLY fetching movies");
+
             Objects.requireNonNull(jsonArrayRequest).setTag(TAG);
             jsonArrayRequest.setShouldCache(false);
             jsonArrayRequest.setRetryPolicy(new DefaultRetryPolicy(
                     DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 48,
                     5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
             q.add(jsonArrayRequest);
-        }
+
+        } else Log.d(TAG, "NO IMoviesAvailableListener registered");
     }
 }

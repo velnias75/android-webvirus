@@ -22,6 +22,7 @@
 package de.rangun.webvirus.model;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -33,8 +34,6 @@ import de.rangun.webvirus.R;
 
 final class Movie extends AbstractMovie {
 
-    @NonNull
-    private final StringRequest rq;
     @NonNull
     private final MovieFactory.IMoviesAvailableListener cb;
     private final String fn;
@@ -48,13 +47,6 @@ final class Movie extends AbstractMovie {
 
         this.cb = cb;
         this.fn = filename;
-
-        rq = new StringRequest(Request.Method.GET,
-                "https://rangun.de/db/omdb.php?cover-oid=" + oid() + "&abstract=true",
-                response -> {
-                    dsc = response;
-                    cb.descriptionAvailable(dsc);
-                }, error -> {});
     }
 
     @Override
@@ -62,14 +54,24 @@ final class Movie extends AbstractMovie {
 
     @Override
     public String description(@NonNull Context ctx) {
+
         if(dsc == null) {
 
-            if(oid() != null) {
-                cb.fetchDescription(rq);
+            Long oid = oid();
+
+            if(oid != null) {
+
+                cb.fetchDescription(new StringRequest(Request.Method.GET,
+                        "https://rangun.de/db/omdb.php?cover-oid=" + oid + "&abstract=true",
+                        response -> {
+                            dsc = response;
+                            cb.descriptionAvailable(dsc);
+                        }, error -> Log.d("Movie",
+                        "(description): error:" + error.getMessage())));
+
                 return ctx.getResources().getString(R.string.fetch_abstract);
-            } else {
-                dsc = ctx.getResources().getString(R.string.no_abstract);
-            }
+
+            } else dsc = ctx.getResources().getString(R.string.no_abstract);
         }
 
         return dsc;

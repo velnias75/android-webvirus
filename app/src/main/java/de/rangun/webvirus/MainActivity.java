@@ -140,7 +140,10 @@ public final class MainActivity extends AppCompatActivity implements
 
             mfs = binder.getService();
             mfs.setOnMoviesAvailableListener(MainActivity.this);
-            if(movies == null || movies.size() == 0) mfs.fetchMovies(false);
+
+            if(movies == null || movies.size() == 0) {
+                mfs.fetchMovies(false);
+            }
 
             mBound = true;
         }
