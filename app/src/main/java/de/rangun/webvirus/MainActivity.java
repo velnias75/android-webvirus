@@ -179,7 +179,6 @@ public final class MainActivity extends AppCompatActivity implements
 
         if (savedInstanceState != null) {
             currentId = savedInstanceState.getLong("currentId", -1L);
-
             if (currentId == -1L) currentId = null;
         }
 
@@ -192,6 +191,8 @@ public final class MainActivity extends AppCompatActivity implements
         sbf = (SearchBarFragment)getSupportFragmentManager().findFragmentById(R.id.searchBar);
 
         if(sbf == null) throw new IllegalStateException("no SearchBarFragment in layout");
+
+        sbf.setEnabled(false);
 
         toaster = new Toaster(this);
 
@@ -212,10 +213,8 @@ public final class MainActivity extends AppCompatActivity implements
                         setTitle(getString(R.string.action_title, getString(R.string.app_name),
                                 pagerAdaper.getPageTitle(position)));
 
-                if (sbf != null) {
-                    sbf.setShowDropdown(position == 0);
-                    sbf.setEnabled(position != 2);
-                }
+                sbf.setShowDropdown(position == 0);
+                sbf.setEnabled(position != 2);
 
                 if (position == 2) {
 
@@ -432,6 +431,9 @@ public final class MainActivity extends AppCompatActivity implements
     @Override
     public void loaded(int num, boolean silent) {
 
+        pager.setVisibility(View.VISIBLE);
+        sbf.setEnabled(true);
+
         setStatus(getString(R.string.loaded, num), NOTIFICATION.LOADED);
         if(mBound && !silent) setStatus(getString(R.string.loaded, Objects.requireNonNull(movies).size()));
 
@@ -476,6 +478,7 @@ public final class MainActivity extends AppCompatActivity implements
         if(num > 0 && movies != null) {
 
             ((MoviePagerAdapter) Objects.requireNonNull(pager.getAdapter())).setHasNewMovies();
+            ((TabLayout)findViewById(R.id.tab_layout)).setTabMode(TabLayout.MODE_SCROLLABLE);
 
             newMoviesList = new ArrayList<>(movies.size());
 

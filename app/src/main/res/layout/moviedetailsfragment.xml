@@ -45,18 +45,23 @@
             android:background="@android:color/transparent"
             android:paddingTop="8dp">
 
-            <ImageView
-                android:id="@+id/top250"
+            <com.android.volley.toolbox.NetworkImageView
+                android:id="@+id/cover"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:contentDescription="@string/top250.desc"
-                android:foregroundGravity="right"
-                app:layout_constraintBottom_toBottomOf="@+id/m.id"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_weight="2"
-                app:layout_constraintStart_toEndOf="@+id/m.id"
-                app:layout_constraintTop_toTopOf="@id/m.id"
-                app:srcCompat="@drawable/top250" />
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/cover.desc"
+                android:maxWidth="150dp"
+                android:scaleType="fitStart"
+                app:layout_constraintBottom_toTopOf="@id/m.abstract"
+                app:layout_constraintEnd_toStartOf="@+id/m.id"
+                app:layout_constraintHorizontal_chainStyle="spread_inside"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:background="@drawable/nocover"
+                tools:layout_height="150dp"
+                tools:layout_width="150dp" />
 
             <TextView
                 android:id="@+id/m.id"
@@ -72,6 +77,35 @@
                 app:layout_constraintHorizontal_weight="2"
                 app:layout_constraintStart_toEndOf="@+id/cover"
                 app:layout_constraintTop_toTopOf="@id/cover" />
+
+            <ImageView
+                android:id="@+id/top250"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/top250.desc"
+                android:foregroundGravity="right"
+                app:layout_constraintBottom_toBottomOf="@+id/m.id"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_weight="2"
+                app:layout_constraintStart_toEndOf="@+id/m.id"
+                app:layout_constraintTop_toTopOf="@id/m.id"
+                app:srcCompat="@drawable/top250" />
+
+            <de.rangun.webvirus.widgets.CategoryTextView
+                android:id="@+id/title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:gravity="start"
+                android:maxLines="1"
+                android:text="@string/m.title"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textColor="@color/categoryAny"
+                android:textStyle="bold"
+                app:autoSizeTextType="uniform"
+                app:layout_constraintEnd_toEndOf="@id/top250"
+                app:layout_constraintStart_toStartOf="@+id/m.id"
+                app:layout_constraintTop_toBottomOf="@id/m.id" />
 
             <TextView
                 android:id="@+id/m.duration"
@@ -104,7 +138,8 @@
                 android:textColor="@android:color/black"
                 app:layout_constraintEnd_toStartOf="@+id/filename"
                 app:layout_constraintStart_toStartOf="@+id/m.duration"
-                app:layout_constraintTop_toBottomOf="@+id/m.duration" />
+                app:layout_constraintTop_toBottomOf="@+id/m.duration"
+                tools:text="lingos" />
 
             <TextView
                 android:id="@+id/filename"
@@ -115,12 +150,26 @@
                 app:layout_constraintEnd_toEndOf="@+id/m.disc"
                 app:layout_constraintTop_toTopOf="@+id/languages" />
 
+            <de.rangun.webvirus.widgets.CategoryTextView
+                android:id="@+id/category"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:text="@string/categoryAny"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="@color/categoryAny"
+                app:autoSizeMaxTextSize="18sp"
+                app:autoSizeTextType="uniform"
+                app:layout_constraintBottom_toTopOf="@+id/m.abstract"
+                app:layout_constraintEnd_toEndOf="@+id/filename"
+                app:layout_constraintStart_toStartOf="@+id/languages"
+                app:layout_constraintTop_toBottomOf="@+id/languages" />
+
             <TextView
                 android:id="@+id/m.abstract"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
                 android:text="@string/movie_abstract"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
@@ -132,47 +181,6 @@
                 app:layout_constraintStart_toStartOf="@id/cover"
                 app:layout_constraintTop_toBottomOf="@id/cover" />
 
-            <com.android.volley.toolbox.NetworkImageView
-                android:id="@+id/cover"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/cover.desc"
-                android:scaleType="fitStart"
-                app:layout_constraintEnd_toStartOf="@+id/m.id"
-                app:layout_constraintHorizontal_chainStyle="spread_inside"
-                app:layout_constraintHorizontal_weight="1"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:background="@drawable/nocover"
-                tools:layout_height="100dp"
-                tools:layout_width="100dp" />
-
-            <de.rangun.webvirus.widgets.CategoryTextView
-                android:id="@+id/title"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:gravity="start"
-                android:maxLines="2"
-                android:text="@string/m.title"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                android:textColor="@color/categoryAny"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="@id/top250"
-                app:layout_constraintStart_toStartOf="@+id/m.id"
-                app:layout_constraintTop_toBottomOf="@id/m.id" />
-
-            <de.rangun.webvirus.widgets.CategoryTextView
-                android:id="@+id/category"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="@string/categoryAny"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:textColor="@color/categoryAny"
-                app:layout_constraintEnd_toEndOf="@+id/filename"
-                app:layout_constraintStart_toStartOf="@+id/languages"
-                app:layout_constraintTop_toBottomOf="@+id/languages" />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.core.widget.NestedScrollView>
@@ -181,7 +189,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingTop="16dp">
 
         <Button
             android:id="@+id/openInDB"

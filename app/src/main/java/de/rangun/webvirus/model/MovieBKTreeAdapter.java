@@ -97,7 +97,7 @@ public final class MovieBKTreeAdapter extends ArrayAdapter<String> {
         if(separatorPos != null && position == separatorPos) {
             tv.setTextColor(Color.GRAY);
             tv.setGravity(Gravity.CENTER_HORIZONTAL);
-            tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+            tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
         } else {
             tv.setTextColorByCategory(filtered.get(position).category());
             tv.setGravity(Gravity.START);
@@ -108,20 +108,14 @@ public final class MovieBKTreeAdapter extends ArrayAdapter<String> {
     }
 
     @Override
-    public int getCount() {
-        return filtered != null ? filtered.size() : 0;
-    }
+    public int getCount() { return filtered != null ? filtered.size() : 0; }
 
     @NonNull
     @Override
-    public String getItem(int position) {
-        return filtered.get(position).toString();
-    }
+    public String getItem(int position) { return filtered.get(position).toString(); }
 
     @Override
-    public long getItemId(int position) {
-        return position;
-    }
+    public long getItemId(int position) { return position; }
 
     @NonNull
     @Override
