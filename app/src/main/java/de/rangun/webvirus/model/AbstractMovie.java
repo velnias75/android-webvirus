@@ -46,7 +46,7 @@ abstract class AbstractMovie implements IMovie {
     private final boolean omu;
     private final long dur_sec;
     private final int discId;
-
+    private final int pos;
     private final long id;
     private final boolean top250;
     private final int category;
@@ -55,11 +55,12 @@ abstract class AbstractMovie implements IMovie {
     @Nullable
     private final Long oid;
 
-    private AbstractMovie(long id, @NonNull String title, long dur_sec,
+    private AbstractMovie(int pos, long id, @NonNull String title, long dur_sec,
                           @NonNull CanonicalStringList languages, @NonNull String disc,
                           int category, boolean omu, boolean top250, @Nullable Long oid)
             throws IllegalArgumentException {
 
+        this.pos = pos;
         this.id = id;
         this.title = title.intern();
         this.dur_sec = dur_sec;
@@ -71,22 +72,25 @@ abstract class AbstractMovie implements IMovie {
         this.discId = getIdForDisc(disc);
     }
 
-    AbstractMovie(long id, @NonNull String title, long dur_sec, @NonNull String languages,
+    AbstractMovie(int pos, long id, @NonNull String title, long dur_sec, @NonNull String languages,
                   String disc, int category, boolean omu,boolean top250, Long oid)
             throws IllegalArgumentException {
-        this(id, title, dur_sec, new CanonicalStringList(languages), disc, category, omu,
+        this(pos, id, title, dur_sec, new CanonicalStringList(languages), disc, category, omu,
                 top250, oid);
     }
 
     AbstractMovie(@NonNull String title) throws IllegalArgumentException {
-        this(0L, title, 0L, new CanonicalStringList(), "", -1,
+        this(-1, 0L, title, 0L, new CanonicalStringList(), "", -1,
                 false, false, null);
     }
 
     AbstractMovie(@NonNull IMovie m) throws IllegalArgumentException {
-        this(m.id(), m.title(), m.duration(), new CanonicalStringList(m.languages()), m.disc(),
+        this(m.pos(), m.id(), m.title(), m.duration(), new CanonicalStringList(m.languages()), m.disc(),
                 m.category(), m.omu(), m.top250(), m.oid());
     }
+
+    @Override
+    public int pos() { return pos; }
 
     @Nullable
     @Override

@@ -63,7 +63,7 @@ public final class MovieFactory {
     @Nullable
     private static MovieFactory _instance = null;
 
-    private final String URL = "https://rangun.de/db/movies-json.php";
+    private final String URL = "https://rangun.de/db/movies-json.php?order_by=ltitle";
     //private final String URL = "http://192.168.1.156/~heiko/db/movies-json.php";
 
     @Nullable
@@ -142,7 +142,8 @@ public final class MovieFactory {
                             final Long oid = item.isNull("oid") ? null :
                                     item.getLong("oid");
 
-                            callbackTransfer.movies.add(new MovieProxy(cb, mid,
+                            callbackTransfer.movies.add(new MovieProxy(cb,
+                                    i, mid,
                                     item.getString("title"),
                                     item.getLong("dur_sec"),
                                     item.getString("languages"),

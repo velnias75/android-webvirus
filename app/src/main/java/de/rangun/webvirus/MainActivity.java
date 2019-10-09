@@ -66,6 +66,7 @@ import de.rangun.webvirus.model.IMovie;
 import de.rangun.webvirus.model.MovieBKTree;
 import de.rangun.webvirus.model.MovieBKTreeAdapter;
 import de.rangun.webvirus.model.MovieFactory;
+import de.rangun.webvirus.model.MovieOrderComparator;
 
 import static java.lang.Math.ceil;
 import static java.lang.Math.log;
@@ -481,7 +482,8 @@ public final class MainActivity extends AppCompatActivity implements
             for(IMovie m : movies) if (m.isNewMovie()) newMoviesList.add(m);
 
             newMoviesList.trimToSize();
-            Collections.sort(newMoviesList);
+
+            Collections.sort(newMoviesList, new MovieOrderComparator());
         }
     }
 
@@ -517,7 +519,7 @@ public final class MainActivity extends AppCompatActivity implements
 
         } else if(sTerm.isEmpty() || sTerm.length() <= sbf.getThreshold()) {
             for(IMovie m: movies) r.add(m);
-            Collections.sort(r);
+            Collections.sort(r, new MovieOrderComparator());
         }
 
         r.trimToSize();

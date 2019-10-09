@@ -186,7 +186,8 @@ public final class MovieBKTreeAdapter extends ArrayAdapter<String> {
                         final Set<IMovie> aux = new TreeSet<>();
 
                         for (IMovie s : movies) {
-                            Matcher rxMatcher = rexConstraint.matcher(Objects.requireNonNull(s.title()).toLowerCase());
+                            Matcher rxMatcher = rexConstraint.
+                                    matcher(Objects.requireNonNull(s.title()).toLowerCase());
                             if(rxMatcher.matches()) aux.add(s);
                         }
 
