@@ -26,14 +26,20 @@ import android.util.AttributeSet;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.core.content.ContextCompat;
 
 import de.rangun.webvirus.R;
 
 public final class CategoryTextView extends AppCompatTextView {
 
+    private final Context ctx;
+
     public CategoryTextView(@NonNull Context ctx, AttributeSet atts) {
+
         super(ctx, atts);
+        this.ctx = ctx;
     }
+
 
     public final void setCategoryText(int cat) {
         super.setText(catText(cat));
@@ -68,15 +74,15 @@ public final class CategoryTextView extends AppCompatTextView {
     private int color(int cat) {
         switch (cat) {
             case 1:
-                return getResources().getColor(R.color.categoryFeature);
+                return ContextCompat.getColor(ctx, R.color.categoryFeature);
             case 2:
-                return getResources().getColor(R.color.categoryYouth);
+                return ContextCompat.getColor(ctx, R.color.categoryYouth);
             case 3:
-                return getResources().getColor(R.color.categoryDocumentary);
+                return ContextCompat.getColor(ctx, R.color.categoryDocumentary);
             case 4:
-                return getResources().getColor(R.color.categoryConcert);
+                return ContextCompat.getColor(ctx, R.color.categoryConcert);
             default:
-                return getResources().getColor(R.color.categoryAny);
+                return ContextCompat.getColor(ctx, R.color.categoryAny);
         }
     }
 }

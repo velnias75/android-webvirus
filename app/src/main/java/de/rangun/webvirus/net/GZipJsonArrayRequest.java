@@ -108,10 +108,8 @@ public abstract class GZipJsonArrayRequest<T> extends JsonArrayRequest {
                                             PROTOCOL_CHARSET))), userParam),
                             HttpHeaderParser.parseCacheHeaders(response));
 
-        } catch(UnsupportedEncodingException ue) {
+        } catch(UnsupportedEncodingException | JSONException ue) {
             return Response.error(new ParseError(ue));
-        } catch(JSONException je) {
-            return Response.error(new ParseError(je));
         }
     }
 
