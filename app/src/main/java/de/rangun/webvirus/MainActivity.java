@@ -26,6 +26,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -188,6 +189,8 @@ public final class MainActivity extends AppCompatActivity implements
         tv.setText(getString(R.string.copyright, BuildConfig.VERSION_NAME,
                 !BuildConfig.DEBUG ? "" : " [Intelligenzmangel (debug)]"));
 
+        onConfigurationChanged(getResources().getConfiguration());
+
         sbf = (SearchBarFragment)getSupportFragmentManager().findFragmentById(R.id.searchBar);
 
         if(sbf == null) throw new IllegalStateException("no SearchBarFragment in layout");
@@ -201,7 +204,8 @@ public final class MainActivity extends AppCompatActivity implements
         final PagerAdapter pagerAdaper =
                 new MoviePagerAdapter(this, toaster, getSupportFragmentManager());
 
-        Objects.requireNonNull(getSupportActionBar()).setTitle(getString(R.string.action_title,
+        Objects.requireNonNull(getSupportActionBar()).
+                setTitle(getString(R.string.action_title,
                 getString(R.string.app_name), pagerAdaper.getPageTitle(0)));
 
         pager.setAdapter(pagerAdaper);
@@ -343,6 +347,17 @@ public final class MainActivity extends AppCompatActivity implements
 
             sharedPrefs.edit().putLong("lastMovieIdSeen", currentId).apply();
         }
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+
+        super.onConfigurationChanged(newConfig);
+
+        final TextView tv = findViewById(R.id.loadingTeaser);
+
+        tv.setVisibility(Configuration.ORIENTATION_LANDSCAPE == newConfig.orientation ?
+                View.INVISIBLE : View.VISIBLE);
     }
 
     @Override
