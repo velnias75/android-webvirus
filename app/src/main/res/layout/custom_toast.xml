@@ -25,7 +25,7 @@
     android:id="@+id/custom_toast_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:drawable/toast_frame"
+    android:background="@drawable/toast_frame"
     android:orientation="vertical">
 
     <TextView
