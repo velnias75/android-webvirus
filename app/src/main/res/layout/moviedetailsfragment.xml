@@ -140,7 +140,7 @@
                 app:layout_constraintEnd_toStartOf="@+id/filename"
                 app:layout_constraintStart_toStartOf="@+id/m.duration"
                 app:layout_constraintTop_toBottomOf="@+id/m.duration"
-                tools:text="lingos" />
+                tools:text="Lange Liste von Sprachen" />
 
             <TextView
                 android:id="@+id/filename"
@@ -149,7 +149,8 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 android:textColor="@android:color/black"
                 app:layout_constraintEnd_toEndOf="@+id/m.disc"
-                app:layout_constraintTop_toTopOf="@+id/languages" />
+                app:layout_constraintTop_toTopOf="@+id/languages"
+                tools:text="Sehr lange Dateinamen" />
 
             <de.rangun.webvirus.widgets.CategoryTextView
                 android:id="@+id/category"
