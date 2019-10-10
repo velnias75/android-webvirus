@@ -133,22 +133,28 @@
 
             <TextView
                 android:id="@+id/languages"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:singleLine="true"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 android:textColor="@android:color/black"
                 app:layout_constraintEnd_toStartOf="@+id/filename"
+                app:layout_constraintHorizontal_weight="4"
                 app:layout_constraintStart_toStartOf="@+id/m.duration"
                 app:layout_constraintTop_toBottomOf="@+id/m.duration"
                 tools:text="Lange Liste von Sprachen" />
 
             <TextView
                 android:id="@+id/filename"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:gravity="end"
+                android:singleLine="true"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 android:textColor="@android:color/black"
                 app:layout_constraintEnd_toEndOf="@+id/m.disc"
+                app:layout_constraintHorizontal_weight="2"
+                app:layout_constraintStart_toEndOf="@+id/languages"
                 app:layout_constraintTop_toTopOf="@+id/languages"
                 tools:text="Sehr lange Dateinamen" />
 
