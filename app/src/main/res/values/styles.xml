@@ -29,4 +29,11 @@
         <item name="colorAccent">#BBBBBB</item>
     </style>
 
+    <style
+        name="AppTheme.ToxicGreen"
+        parent="AppTheme">
+        <item name="android:backgroundTint">#EEFFEE</item>
+        <item name="android:backgroundTintMode">multiply</item>
+    </style>
+
 </resources>

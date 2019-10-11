@@ -59,6 +59,11 @@
             android:summary="Anzahl der zuletzt betrachteten neuen Schrott- bzw. Rentnerfilme: %s"
             android:title="newMoviesSeen" />
 
+        <SwitchPreferenceCompat
+            android:key="isToxicGreen"
+            android:summary="App in hippen giftgrün einfärben?"
+            android:title="isToxicGreen" />
+
     </com.takisoft.fix.support.v7.preference.PreferenceCategory>
 
 </PreferenceScreen>

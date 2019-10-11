@@ -174,6 +174,13 @@ public final class MainActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
 
+        final SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(this);
+
+        if(sharedPreferences.getBoolean("isToxicGreen", true)){
+            setTheme(R.style.AppTheme_ToxicGreen);
+        }
+
         super.onCreate(savedInstanceState);
 
         final Context ctx = this;
@@ -592,8 +599,10 @@ public final class MainActivity extends AppCompatActivity implements
     }
 
     private void setupSharedPreferences() {
-        SharedPreferences sharedPreferences =
+
+        final SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(this);
+
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
     }
 
