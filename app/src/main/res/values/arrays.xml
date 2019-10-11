@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright 2019 by Heiko Schäfer <heiko@rangun.de>
   ~
@@ -16,14 +17,14 @@
   ~  You should have received a copy of the GNU Lesser General Public License
   ~  along with android-webvirus.  If not, see <http://www.gnu.org/licenses/>.
   ~
-  ~  Last modified 27.09.19 02:04 by heiko
+  ~  Last modified 11.10.19 09:21 by heiko
   -->
 
-<vector
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:height="24dp" android:tint="#FFFFFF"
-    android:viewportHeight="24.0"
-    android:viewportWidth="24.0"
-    android:width="24dp">
-    <path android:fillColor="#FF000000" android:pathData="M12,6v3l4,-4 -4,-4v3c-4.42,0 -8,3.58 -8,8 0,1.57 0.46,3.03 1.24,4.26L6.7,14.8c-0.45,-0.83 -0.7,-1.79 -0.7,-2.8 0,-3.31 2.69,-6 6,-6zM18.76,7.74L17.3,9.2c0.44,0.84 0.7,1.79 0.7,2.8 0,3.31 -2.69,6 -6,6v-3l-4,4 4,4v-3c4.42,0 8,-3.58 8,-8 0,-1.57 -0.46,-3.03 -1.24,-4.26z"/>
-</vector>
+<resources>
+    <string-array name="markers">
+        <item>@drawable/heart</item>
+        <item>@drawable/bone</item>
+        <item>@drawable/human_child</item>
+        <item>@drawable/face_woman</item>
+    </string-array>
+</resources>

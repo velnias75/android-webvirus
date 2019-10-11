@@ -299,7 +299,7 @@ public final class MainActivity extends AppCompatActivity implements
         getMenuInflater().inflate(R.menu.actionbarmenu, menu);
 
         //noinspection ConstantConditions
-        menu.findItem(R.id.action_settings).setVisible("hirnlos".equals(BuildConfig.FLAVOR));
+        menu.findItem(R.id.action_settings).setVisible("a_hirnlos".equals(BuildConfig.FLAVOR));
 
         return true;
     }

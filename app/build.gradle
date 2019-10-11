@@ -81,12 +81,12 @@ android {
     }
     flavorDimensions "version"
     productFlavors {
-        hirnlos { // developer version
+        a_hirnlos { // developer version
             dimension "version"
             applicationIdSuffix ".hirnlos"
             versionNameSuffix "-hirnlos"
         }
-        hip { // user version
+        b_hip { // user version
             dimension "version"
             applicationIdSuffix ".hip"
             versionNameSuffix "-hip"

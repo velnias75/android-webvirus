@@ -32,6 +32,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -87,8 +88,14 @@ public final class MovieDetailsFragment extends Fragment {
 
         final NetworkImageView cov = fragmentLayout.findViewById(R.id.cover);
 
+        final Spinner mrk = fragmentLayout.findViewById(R.id.marker);
+
         cov.setDefaultImageResId(R.drawable.nocover);
         cov.setImageUrl(null, null);
+
+        mrk.setAdapter(new MarkerSpinnerAdapter(Objects.requireNonNull(getContext()), R.layout.marker_spinner_row,
+                inflater));
+        mrk.setSelection(1);
 
         return fragmentLayout;
     }

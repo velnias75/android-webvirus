@@ -20,11 +20,8 @@
   ~  Last modified 04.10.19 01:31 by heiko
   -->
 
-<inset
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:inset="2dp"
-    tools:targetApi="lollipop">
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:inset="2dp">
     <shape
         android:tint="#BBBBBB"
         android:shape="rectangle">
