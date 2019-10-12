@@ -31,6 +31,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -45,21 +46,33 @@ import com.android.volley.toolbox.NetworkImageView;
 
 import java.util.Objects;
 
+import javax.annotation.Nonnull;
+
 import de.rangun.webvirus.MainActivity;
 import de.rangun.webvirus.R;
 import de.rangun.webvirus.Toaster;
 import de.rangun.webvirus.model.BitmapMemCache;
 import de.rangun.webvirus.model.IMovie;
+import de.rangun.webvirus.model.db.AppDatabase;
+import de.rangun.webvirus.model.db.AsyncMarkerUpdateTask;
+import de.rangun.webvirus.model.db.AsyncMovieFetcherTask;
+import de.rangun.webvirus.model.db.Movie;
 import de.rangun.webvirus.widgets.CategoryTextView;
 
-public final class MovieDetailsFragment extends Fragment {
-
-    private IResumeListener listener;
+public final class MovieDetailsFragment extends Fragment
+        implements AsyncMovieFetcherTask.IMovieReceiver {
 
     private final Toaster toaster;
 
-    public MovieDetailsFragment(Toaster toaster) {
+    private IResumeListener listener;
+    private boolean doUpdate = false;
+
+    @Nonnull
+    private final AppDatabase db;
+
+    public MovieDetailsFragment(Toaster toaster, @Nonnull AppDatabase db) {
         this.toaster = toaster;
+        this.db = db;
     }
 
     public interface IResumeListener {
@@ -87,14 +100,14 @@ public final class MovieDetailsFragment extends Fragment {
                 false);
 
         final NetworkImageView cov = fragmentLayout.findViewById(R.id.cover);
-
         final Spinner mrk = fragmentLayout.findViewById(R.id.marker);
 
         cov.setDefaultImageResId(R.drawable.nocover);
         cov.setImageUrl(null, null);
 
-        mrk.setAdapter(new MarkerSpinnerAdapter(Objects.requireNonNull(getContext()), R.layout.marker_spinner_row,
-                inflater));
+        mrk.setAdapter(new MarkerSpinnerAdapter(Objects.requireNonNull(getContext()),
+                R.layout.marker_spinner_row, inflater));
+
         mrk.setSelection(1);
 
         return fragmentLayout;
@@ -115,6 +128,8 @@ public final class MovieDetailsFragment extends Fragment {
 
     public final void setContents(@NonNull IMovie m, RequestQueue queue, int movieCount) {
 
+        (new AsyncMovieFetcherTask<>(this, db, m.id())).execute();
+
         final View top250 = Objects.requireNonNull(getView()).findViewById(R.id.top250);
         final TextView mid = getView().findViewById(R.id.m_id);
         final CategoryTextView tit = getView().findViewById(R.id.title);
@@ -127,6 +142,7 @@ public final class MovieDetailsFragment extends Fragment {
         final NetworkImageView cov = getView().findViewById(R.id.cover);
         final Button oib = getView().findViewById(R.id.openInDB);
         final Button cpy = getView().findViewById(R.id.copyURL);
+        final Spinner mrk = getView().findViewById(R.id.marker);
 
         StringBuilder sb = new StringBuilder();
 
@@ -144,6 +160,21 @@ public final class MovieDetailsFragment extends Fragment {
         fin.setText(m.filename(getContext()));
         cat.setCategoryText(m.category());
         abs.setText(m.description(getContext()));
+
+        mrk.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                if(doUpdate) {
+                    (new AsyncMarkerUpdateTask<>(MovieDetailsFragment.this,
+                            db, m.id(), position)).execute();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
 
         oib.setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW,
                 Uri.parse("https://rangun.de/db/?filter_ID=" + m.id()))));
@@ -175,6 +206,26 @@ public final class MovieDetailsFragment extends Fragment {
                     new ImageLoader(queue, new BitmapMemCache(3072)));
         } else {
             cov.setImageUrl(null, null);
+        }
+    }
+
+    @Override
+    public void onMovieReceived(@Nullable Movie movie) {
+
+        try {
+
+            doUpdate = false;
+
+            final Spinner mrk = Objects.requireNonNull(getView()).findViewById(R.id.marker);
+
+            if (movie == null) {
+                mrk.setSelection(1);
+            } else {
+                mrk.setSelection(movie.marker);
+            }
+
+        } finally {
+            doUpdate = true;
         }
     }
 }

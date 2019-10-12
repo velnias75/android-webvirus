@@ -16,26 +16,41 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with android-webvirus.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  Last modified 11.10.19 16:18 by heiko
+ *  Last modified 12.10.19 02:00 by heiko
  */
 
 package de.rangun.webvirus.model.db;
 
-import androidx.room.ColumnInfo;
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
+import javax.annotation.Nonnull;
 
-@Entity(tableName = "movies")
-public class Movie {
+public final class AsyncMarkerUpdateTask<R extends AsyncAppDatabaseTask.IMovieReceiver>
+        extends AsyncMovieFetcherTask<R> {
 
-    @PrimaryKey
-    public final long id;
+    private final int marker;
 
-    @ColumnInfo(name = "marker")
-    public int marker;
-
-    public Movie(long id, int marker) {
-        this.id = id;
+    public AsyncMarkerUpdateTask(@Nonnull R receiver, @Nonnull AppDatabase db, long id,
+                                 int marker) {
+        super(receiver, db, id);
         this.marker = marker;
+    }
+
+    @Override
+    protected Movie doInBackground(Object... objects) {
+
+        Movie m = super.doInBackground(objects);
+
+        if(m != null) {
+
+            if(m.marker != marker) {
+                m.marker = marker;
+                db.moviesDao().update(m);
+            }
+
+        } else {
+            m = new Movie(id, marker);
+            db.moviesDao().insert(m);
+        }
+
+        return m;
     }
 }

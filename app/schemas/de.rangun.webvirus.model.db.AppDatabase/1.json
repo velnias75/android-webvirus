@@ -2,15 +2,21 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "93e127ee98fd12bef6643063b147fff6",
+    "identityHash": "1dd0dd699fc82aa1cb304db6d7ffc778",
     "entities": [
       {
-        "tableName": "Movie",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "tableName": "movies",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `marker` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "marker",
+            "columnName": "marker",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -28,7 +34,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '93e127ee98fd12bef6643063b147fff6')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1dd0dd699fc82aa1cb304db6d7ffc778')"
     ]
   }
 }

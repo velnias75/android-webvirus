@@ -16,26 +16,45 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with android-webvirus.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  Last modified 11.10.19 16:18 by heiko
+ *  Last modified 12.10.19 01:48 by heiko
  */
 
 package de.rangun.webvirus.model.db;
 
-import androidx.room.ColumnInfo;
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
+import android.os.AsyncTask;
 
-@Entity(tableName = "movies")
-public class Movie {
+import java.lang.ref.WeakReference;
 
-    @PrimaryKey
-    public final long id;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-    @ColumnInfo(name = "marker")
-    public int marker;
+abstract class AsyncAppDatabaseTask<R extends AsyncAppDatabaseTask.IMovieReceiver>
+        extends AsyncTask<Object, Void, Movie> {
 
-    public Movie(long id, int marker) {
+    public interface IMovieReceiver {
+        void onMovieReceived(@Nullable Movie movie);
+    }
+
+    @Nonnull
+    private final WeakReference<R> weakReceiver;
+
+    @Nonnull
+    final AppDatabase db;
+
+    final long id;
+
+    AsyncAppDatabaseTask(@Nonnull R receiver, @Nonnull AppDatabase db, long id) {
+
+        weakReceiver = new WeakReference<>(receiver);
+        this.db = db;
         this.id = id;
-        this.marker = marker;
+    }
+
+    @Override
+    protected void onPostExecute(Movie movie) {
+
+        final R recv = weakReceiver.get();
+
+        if(recv != null) recv.onMovieReceived(movie);
     }
 }

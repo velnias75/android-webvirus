@@ -45,6 +45,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.preference.PreferenceManager;
+import androidx.room.Room;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
@@ -58,6 +59,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import javax.annotation.Nonnull;
+
 import de.rangun.webvirus.MovieFetcherService.NOTIFICATION;
 import de.rangun.webvirus.fragments.IMovieUpdateRequestListener;
 import de.rangun.webvirus.fragments.MovieDetailsFragment;
@@ -68,6 +71,7 @@ import de.rangun.webvirus.model.MovieBKTree;
 import de.rangun.webvirus.model.MovieBKTreeAdapter;
 import de.rangun.webvirus.model.MovieFactory;
 import de.rangun.webvirus.model.MovieOrderComparator;
+import de.rangun.webvirus.model.db.AppDatabase;
 
 import static java.lang.Math.ceil;
 import static java.lang.Math.log;
@@ -89,10 +93,15 @@ public final class MainActivity extends AppCompatActivity implements
         private final Context ctx;
         private final Toaster toaster;
 
-        MoviePagerAdapter(@NonNull Context ctx, Toaster toaster, @NonNull FragmentManager fm) {
+        @Nonnull
+        private final AppDatabase db;
+
+        MoviePagerAdapter(@NonNull Context ctx, Toaster toaster, @Nonnull AppDatabase db,
+                          @NonNull FragmentManager fm) {
 
             super(fm, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
 
+            this.db = db;
             this.ctx = ctx;
             this.toaster = toaster;
         }
@@ -102,7 +111,7 @@ public final class MainActivity extends AppCompatActivity implements
         public Fragment getItem(int position) {
 
             if(position == 0) {
-                return new MovieDetailsFragment(toaster);
+                return new MovieDetailsFragment(toaster, db);
             } else if(position == 1) {
                 return new MovieListFragment(false);
             } else {
@@ -206,10 +215,13 @@ public final class MainActivity extends AppCompatActivity implements
 
         toaster = new Toaster(this);
 
+        final AppDatabase db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class,
+                "movies-db").build();
+
         pager = findViewById(R.id.pager);
 
         final PagerAdapter pagerAdaper =
-                new MoviePagerAdapter(this, toaster, getSupportFragmentManager());
+                new MoviePagerAdapter(this, toaster, db, getSupportFragmentManager());
 
         Objects.requireNonNull(getSupportActionBar()).
                 setTitle(getString(R.string.action_title,
@@ -244,7 +256,6 @@ public final class MainActivity extends AppCompatActivity implements
         tabLayout.setupWithViewPager(pager);
 
         setupSharedPreferences();
-
         handleIntent();
     }
 

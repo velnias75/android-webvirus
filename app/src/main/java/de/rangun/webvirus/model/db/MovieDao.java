@@ -22,7 +22,19 @@
 package de.rangun.webvirus.model.db;
 
 import androidx.room.Dao;
+import androidx.room.Insert;
+import androidx.room.Query;
+import androidx.room.Update;
 
 @Dao
 public interface MovieDao {
+
+    @Query("SELECT * from movies WHERE id = :id LIMIT 1")
+    Movie findById(long id);
+
+    @Update
+    void update(Movie movie);
+
+    @Insert
+    void insert(Movie movie);
 }
