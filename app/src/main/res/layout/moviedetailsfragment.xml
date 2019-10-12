@@ -209,9 +209,12 @@
 
         <Button
             android:id="@+id/openInDB"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
+            android:layout_weight="1"
+            android:ellipsize="middle"
+            android:singleLine="true"
             android:text="@string/open_in_db"
             tools:ignore="ButtonStyle" />
 
@@ -219,6 +222,7 @@
             android:id="@+id/copyURL"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:singleLine="true"
             android:text="@android:string/copyUrl"
             tools:ignore="ButtonStyle" />
 
