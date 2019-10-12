@@ -192,7 +192,7 @@
 
     </androidx.core.widget.NestedScrollView>
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
@@ -205,27 +205,40 @@
             android:layout_height="wrap_content"
             android:background="@android:drawable/btn_dropdown"
             android:dropDownWidth="fill_parent"
+            android:gravity="start|center_vertical"
+            app:layout_constraintBottom_toBottomOf="@+id/openInDB"
+            app:layout_constraintEnd_toStartOf="@+id/openInDB"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/openInDB"
             tools:layout_width="wrap_content" />
 
         <Button
             android:id="@+id/openInDB"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:layout_weight="1"
             android:ellipsize="middle"
+            android:gravity="center"
             android:singleLine="true"
             android:text="@string/open_in_db"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/copyURL"
+            app:layout_constraintStart_toEndOf="@+id/marker"
+            app:layout_constraintTop_toTopOf="parent"
             tools:ignore="ButtonStyle" />
 
         <Button
             android:id="@+id/copyURL"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical|end"
             android:singleLine="true"
             android:text="@android:string/copyUrl"
+            app:layout_constraintBottom_toBottomOf="@+id/openInDB"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/openInDB"
+            app:layout_constraintTop_toTopOf="@+id/openInDB"
             tools:ignore="ButtonStyle" />
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>
