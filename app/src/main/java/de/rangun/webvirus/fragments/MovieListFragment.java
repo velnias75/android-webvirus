@@ -108,7 +108,10 @@ public final class MovieListFragment extends ListFragment {
 
                 for(Movie m: movies) {
                     for(MarkedMovie markedMovie: mm) {
-                        if(markedMovie.m.id() == m.id) markedMovie.marker = m.marker;
+                        if(markedMovie.m.id() == m.id) {
+                            markedMovie.marker = m.marker;
+                            break;
+                        }
                     }
                 }
 
@@ -142,12 +145,13 @@ public final class MovieListFragment extends ListFragment {
             final MarkedMovie m = movies.get(position);
             final View v = super.getView(position, convertView, parent);
 
-            MarkerImageView iv = v.findViewById(R.id.icon);
+            final MarkerImageView iv = v.findViewById(R.id.icon);
 
             if(newMovies) {
                 iv.setVisibility(View.GONE);
             } else {
                 iv.setMarker(m.marker);
+                iv.setPadding(pad8, 0, 0, 0);
             }
 
             final CategoryTextView tv = v.findViewById(R.id.title);
