@@ -28,7 +28,7 @@ import java.lang.ref.WeakReference;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-abstract class AsyncAppDatabaseTask<R extends AsyncAppDatabaseTask.IMovieReceiver>
+public abstract class AsyncAppDatabaseTask<R extends AsyncAppDatabaseTask.IMovieReceiver>
         extends AsyncTask<Object, Void, Movie> {
 
     public interface IMovieReceiver {

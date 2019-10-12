@@ -20,11 +20,32 @@
   ~  Last modified 02.10.19 06:16 by heiko
   -->
 
-<de.rangun.webvirus.widgets.CategoryTextView xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@android:style/TextAppearance.DeviceDefault.Widget.DropDownItem"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:ellipsize="marquee"
-    android:singleLine="true"
-    android:textAlignment="inherit"
-    android:textSize="20sp" />
+    android:orientation="horizontal">
+
+    <de.rangun.webvirus.widgets.MarkerImageView
+        android:id="@+id/icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:contentDescription="Ein Knocnen"
+        app:srcCompat="@drawable/bone" />
+
+    <de.rangun.webvirus.widgets.CategoryTextView
+        android:id="@+id/title"
+        style="@android:style/TextAppearance.DeviceDefault.Widget.DropDownItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="100"
+        android:ellipsize="marquee"
+        android:singleLine="true"
+        android:textAlignment="inherit"
+        android:textSize="20sp"
+        tools:text="ein viel zu langer hirnloser Text, der das Halteproblem NICHT beweist" />
+
+</LinearLayout>

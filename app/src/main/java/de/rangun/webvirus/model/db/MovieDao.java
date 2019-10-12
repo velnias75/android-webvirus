@@ -26,8 +26,13 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
+import java.util.List;
+
 @Dao
 public interface MovieDao {
+
+    @Query("SELECT * from movies")
+    List<Movie> fetchAll();
 
     @Query("SELECT * from movies WHERE id = :id LIMIT 1")
     Movie findById(long id);

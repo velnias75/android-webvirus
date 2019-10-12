@@ -179,6 +179,7 @@ public final class MainActivity extends AppCompatActivity implements
     private ViewPager pager;
 
     private SearchBarFragment sbf;
+    private AppDatabase db;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -215,7 +216,7 @@ public final class MainActivity extends AppCompatActivity implements
 
         toaster = new Toaster(this);
 
-        final AppDatabase db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class,
+        db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class,
                 "movies-db").build();
 
         pager = findViewById(R.id.pager);
@@ -529,7 +530,7 @@ public final class MainActivity extends AppCompatActivity implements
         final List<IMovie> nml = newMoviesList != null ? newMoviesList : new ArrayList<>();
 
         f.setListAdapter(new MovieListFragment.Adapter(this, nml,
-                Objects.requireNonNull(movies).size(), true));
+                Objects.requireNonNull(movies).size(), true, db));
     }
 
     @Override
@@ -540,7 +541,7 @@ public final class MainActivity extends AppCompatActivity implements
 
         if(mlf != null && sbf != null) mlf.setListAdapter(new MovieListFragment.
                 Adapter(this, filteredOrAllMovies(result, movies, sbf),
-                Objects.requireNonNull(movies).size(), false));
+                Objects.requireNonNull(movies).size(), false, db));
     }
 
     private static List<IMovie> filteredOrAllMovies(List<IMovie> input, MovieBKTree movies,

@@ -146,10 +146,7 @@ public final class MovieDetailsFragment extends Fragment
 
         StringBuilder sb = new StringBuilder();
 
-        for(String l: Objects.requireNonNull(m.languages())) {
-            sb.append(l);
-            sb.append(", ");
-        }
+        for(String l: Objects.requireNonNull(m.languages())) sb.append(l).append(", ");
 
         top250.setVisibility(m.top250() ? View.VISIBLE : View.INVISIBLE);
         mid.setText(MainActivity.makeIdString(m.id(), movieCount));

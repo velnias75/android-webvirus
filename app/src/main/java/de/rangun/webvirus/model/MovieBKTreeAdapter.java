@@ -30,6 +30,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -69,7 +70,7 @@ public final class MovieBKTreeAdapter extends ArrayAdapter<String> {
     public MovieBKTreeAdapter(@NonNull Context context, MovieBKTree movies,
                               IFilterResultListener listener) {
 
-        super(context, R.layout.searchsuggestions);
+        super(context, R.layout.searchsuggestions, R.id.title);
 
         this.movies = movies;
         filtered = this.movies.asList();
@@ -92,7 +93,10 @@ public final class MovieBKTreeAdapter extends ArrayAdapter<String> {
                                 @NonNull ViewGroup parent) {
 
         final View v = super.getView(position, convertView, parent);
-        final CategoryTextView tv = (CategoryTextView)v;
+        final ImageView iv = v.findViewById(R.id.icon);
+        final CategoryTextView tv = v.findViewById(R.id.title);
+
+        iv.setVisibility(View.GONE);
 
         if(separatorPos != null && position == separatorPos) {
             tv.setTextColor(Color.GRAY);
