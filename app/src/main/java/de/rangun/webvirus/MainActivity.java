@@ -52,14 +52,10 @@ import androidx.viewpager.widget.ViewPager;
 import com.android.volley.toolbox.StringRequest;
 import com.google.android.material.tabs.TabLayout;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-
-import javax.annotation.Nonnull;
 
 import de.rangun.webvirus.MovieFetcherService.NOTIFICATION;
 import de.rangun.webvirus.fragments.IMovieUpdateRequestListener;
@@ -93,10 +89,10 @@ public final class MainActivity extends AppCompatActivity implements
         private final Context ctx;
         private final Toaster toaster;
 
-        @Nonnull
+        @NonNull
         private final AppDatabase db;
 
-        MoviePagerAdapter(@NonNull Context ctx, Toaster toaster, @Nonnull AppDatabase db,
+        MoviePagerAdapter(@NonNull Context ctx, Toaster toaster, @NonNull AppDatabase db,
                           @NonNull FragmentManager fm) {
 
             super(fm, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
@@ -107,7 +103,7 @@ public final class MainActivity extends AppCompatActivity implements
         }
 
         @Override
-        @NotNull
+        @NonNull
         public Fragment getItem(int position) {
 
             if(position == 0) {

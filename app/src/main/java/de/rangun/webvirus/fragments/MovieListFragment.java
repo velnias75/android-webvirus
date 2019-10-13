@@ -37,6 +37,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.ListFragment;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -63,11 +64,11 @@ public final class MovieListFragment extends ListFragment {
 
         private final static class MarkedMovie {
 
-            final IMovie m;
+            final WeakReference<IMovie> m;
             int marker;
 
             MarkedMovie(IMovie m) {
-                this.m = m;
+                this.m = new WeakReference<>(m);
                 this.marker = 1;
             }
         }
@@ -108,7 +109,7 @@ public final class MovieListFragment extends ListFragment {
 
                 for(Movie m: movies) {
                     for(MarkedMovie markedMovie: mm) {
-                        if(markedMovie.m.id() == m.id) {
+                        if(markedMovie.m.get().id() == m.id) {
                             markedMovie.marker = m.marker;
                             break;
                         }
@@ -158,12 +159,13 @@ public final class MovieListFragment extends ListFragment {
             final int c = Color.parseColor(position % 2 == 0 ? "#CCCCCC" : "#BBBBBB");
 
             tv.setPadding(pad8, pad2, pad8, pad2);
-            tv.setText(MainActivity.makeIdString(m.m.id(), movieCount) + " – " + m.m.title());
-            tv.setTextColorByCategory(m.m.category());
+            tv.setText(MainActivity.makeIdString(m.m.get().id(), movieCount) + " – " +
+                    m.m.get().title());
+            tv.setTextColorByCategory(m.m.get().category());
 
             v.setBackgroundColor(c);
 
-            if(m.m.isNewMovie() && !newMovies) tv.setTypeface(tv.getTypeface(),
+            if(m.m.get().isNewMovie() && !newMovies) tv.setTypeface(tv.getTypeface(),
                     Typeface.BOLD_ITALIC);
 
             return v;

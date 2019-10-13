@@ -26,6 +26,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 import de.rangun.webvirus.R;
@@ -40,7 +41,7 @@ final class MovieProxy extends AbstractMovie {
     private final IMovieProxyObserver observer;
 
     @Nullable
-    private IMovie movie = null;
+    private WeakReference<IMovie> movie = null;
 
     @Nullable
     private final String filename;
@@ -54,45 +55,55 @@ final class MovieProxy extends AbstractMovie {
 
         this.cb = cb;
         this.filename = filename;
-        observer = cb;
+        this.observer = cb;
     }
 
     @Override
-    public Long oid() { return movie == null ? super.oid() : movie.oid(); }
+    public Long oid() { return movie == null || movie.get() == null ? super.oid() :
+            movie.get().oid(); }
 
     @Override
     public String title() {
-        return movie == null ? super.title() : movie.title(); }
+        return movie == null || movie.get() == null ? super.title() : movie.get().title(); }
 
     @Override
     public String durationString() {
-        return movie == null ? super.durationString() : movie.durationString();
+        return movie == null || movie.get() == null ? super.durationString() :
+                movie.get().durationString();
     }
 
     @Override
     public List<String> languages() {
-        return movie == null ? super.languages() : movie.languages();
+        return movie == null || movie.get() == null ? super.languages() : movie.get().languages();
     }
 
     @Override
-    public String disc() { return movie == null ? super.disc() : movie.disc(); }
+    public String disc() {
+        return movie == null || movie.get() == null ? super.disc() : movie.get().disc();
+    }
 
     @Nullable
     @Override
     public String filename(@NonNull Context ctx) {
-        return movie == null ? (filename != null ? filename :
-                ctx.getResources().getString(R.string.no_filename)) : movie.filename(ctx);
+        return movie == null || movie.get() == null ? (filename != null ? filename :
+                ctx.getResources().getString(R.string.no_filename)) : movie.get().filename(ctx);
     }
 
     @Nullable
     @Override
     public String description(@NonNull Context ctx) {
 
-        if(movie == null) {
-            movie = new Movie(this, filename(ctx), cb);
-            if(observer != null) observer.unproxied(this, movie);
+        if(movie == null || movie.get() == null) {
+
+            movie = new WeakReference<>(new Movie(this, filename(ctx), cb));
+
+            final String dsc = movie.get().description(ctx);
+
+            if(observer != null) observer.unproxied(this, movie.get());
+
+            return dsc;
         }
 
-        return movie.description(ctx);
+        return ctx.getString(R.string.no_abstract);
     }
 }

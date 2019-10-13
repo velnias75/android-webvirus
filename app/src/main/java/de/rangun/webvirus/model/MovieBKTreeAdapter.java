@@ -35,8 +35,6 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -87,7 +85,7 @@ public final class MovieBKTreeAdapter extends ArrayAdapter<String> {
         return super.isEnabled(position);
     }
 
-    @NotNull
+    @NonNull
     @Override
     public View getView(int position, @Nullable View convertView,
                                 @NonNull ViewGroup parent) {
