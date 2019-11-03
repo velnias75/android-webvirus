@@ -104,7 +104,7 @@ class BKTree<T> implements Iterable<T> {
 
         final String it = item.toString().toLowerCase();
 
-        int dist = levenshteinDistance(curNode.item().toString().toLowerCase(), it);
+        int dist = damerauLevenshteinDistance(curNode.item().toString().toLowerCase(), it);
 
         while(curNode.containsKey(dist)) {
 
@@ -112,7 +112,7 @@ class BKTree<T> implements Iterable<T> {
 
             curNode = curNode.get(dist);
 
-            dist = levenshteinDistance(Objects.requireNonNull(curNode).item().
+            dist = damerauLevenshteinDistance(Objects.requireNonNull(curNode).item().
                     toString().toLowerCase(), it);
         }
 
@@ -150,7 +150,7 @@ class BKTree<T> implements Iterable<T> {
     private void recursiveSearch(@NonNull _node<T> node, @NonNull List<T> rtn,
                                  @NonNull String word, int d) {
 
-        final int curDist = levenshteinDistance(node.item().toString().toLowerCase(), word);
+        final int curDist = damerauLevenshteinDistance(node.item().toString().toLowerCase(), word);
         final int minDist = curDist - d;
         final int maxDist = curDist + d;
 
@@ -163,32 +163,39 @@ class BKTree<T> implements Iterable<T> {
         }
     }
 
-    private static int levenshteinDistance(@NonNull String first, @NonNull String second) {
+    private static int damerauLevenshteinDistance(@NonNull CharSequence source,
+                                                  @NonNull CharSequence target) {
 
-        if(first.length() == 0) return second.length();
-        if(second.length() == 0) return first.length();
+        final int sourceLength = source.length();
+        final int targetLength = target.length();
 
-        final int lenFirst = first.length();
-        final int lenSecond = second.length();
+        if(sourceLength == 0) return targetLength;
+        if(targetLength == 0) return sourceLength;
 
-        final int[][] d = new int[lenFirst + 1][lenSecond + 1];
+        final int[][] dist = new int[sourceLength + 1][targetLength + 1];
 
-        for(int i = 0; i <= lenFirst; ++i) d[i][0] = i;
+        for(int i = 0; i <= sourceLength; ++i) dist[i][0] = i;
+        for(int j = 0; j <= targetLength; ++j) dist[0][j] = j;
 
-        for(int i = 0; i <= lenSecond; ++i) d[0][i] = i;
+        for(int i = 1; i <= sourceLength; ++i) {
 
-        for(int i = 1; i <= lenFirst; ++i) {
+            for(int j = 1; j <= targetLength; ++j) {
 
-            for(int j = 1; j <= lenSecond; ++j) {
+                final int cost = source.charAt(i - 1) == target.charAt(j - 1) ? 0 : 1;
 
-                int match = (first.charAt(i - 1) == second.charAt(j - 1)) ? 0 : 1;
+                dist[i][j] =
+                        min(min(dist[i - 1][j] + 1, dist[i][j - 1] + 1), dist[i - 1][j - 1] + cost);
 
-                d[i][j] = min(min(d[i - 1][j] + 1, d[i][j - 1] + 1),
-                        d[i - 1][j - 1] + match);
+                if(i > 1 && j > 1 &&
+                        source.charAt(i - 1) == target.charAt(j - 2) &&
+                        source.charAt(i - 2) == target.charAt(j - 1)) {
+
+                    dist[i][j] = min(dist[i][j], dist[i - 2][j - 2] + cost);
+                }
             }
         }
 
-        return d[lenFirst][lenSecond];
+        return dist[sourceLength][targetLength];
     }
 
     @NonNull

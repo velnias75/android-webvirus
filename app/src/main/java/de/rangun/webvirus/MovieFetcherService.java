@@ -195,7 +195,6 @@ public final class MovieFetcherService extends Service
         listener = l;
     }
 
-    @SuppressWarnings("deprecation")
     public void fetchMovies(boolean silent) {
 
         Log.d(TAG, "fetchMovies: trying...");
