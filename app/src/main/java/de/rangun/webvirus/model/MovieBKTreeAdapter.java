@@ -35,6 +35,9 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import org.apache.commons.codec.language.ColognePhonetic;
+import org.apache.commons.codec.language.Soundex;
+
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -54,6 +57,9 @@ public final class MovieBKTreeAdapter extends ArrayAdapter<String> {
     public interface IFilterResultListener {
         void onFilterResultAvailable(List<IMovie> result);
     }
+
+    private final static ColognePhonetic cp = new ColognePhonetic();
+    private final static Soundex se = new Soundex();
 
     private final static Pattern rexSearch = new Pattern("/([^/]+)/",
             REFlags.IGNORE_CASE|REFlags.UNICODE);
@@ -115,7 +121,7 @@ public final class MovieBKTreeAdapter extends ArrayAdapter<String> {
 
     @NonNull
     @Override
-    public String getItem(int position) { return filtered.get(position).toString(); }
+    public String getItem(int position) { return filtered.get(position).title(); }
 
     @Override
     public long getItemId(int position) { return position; }
@@ -208,6 +214,34 @@ public final class MovieBKTreeAdapter extends ArrayAdapter<String> {
                     ((ArrayList<IMovie>)fr.values).trimToSize();
 
                     //noinspection unchecked
+                    if(((ArrayList<IMovie>) fr.values).isEmpty()) {
+
+                        final String cps = cp.colognePhonetic(lowerConstraint);
+                        final String ses = noThrowSoundex(lowerConstraint);
+
+                        boolean firstCologne = false;
+
+                        for(IMovie m: movies) {
+
+                            if(cps.equals(cp.colognePhonetic(m.title().toLowerCase())) ||
+                                    (!ses.isEmpty() &&
+                                            noThrowSoundex(m.title()).equalsIgnoreCase(ses))) {
+
+                                if(!firstCologne) {
+                                    //noinspection unchecked
+                                    ((List<IMovie>)fr.values).add(new DummyMovie(getContext().
+                                            getResources().getString(R.string.colognesuggests)));
+                                    separatorPos = 0;
+                                    firstCologne = true;
+                                }
+
+                                //noinspection unchecked
+                                ((List<IMovie>)fr.values).add(m);
+                            }
+                        }
+                    }
+
+                    //noinspection unchecked
                     fr.count = ((List<IMovie>)fr.values).size();
 
                 } else {
@@ -217,6 +251,15 @@ public final class MovieBKTreeAdapter extends ArrayAdapter<String> {
                 }
 
                 return fr;
+            }
+
+            @NonNull
+            private String noThrowSoundex(@NonNull String str) {
+                try {
+                    return se.soundex(str);
+                } catch(IllegalArgumentException ex) {
+                    return "";
+                }
             }
 
             @Override

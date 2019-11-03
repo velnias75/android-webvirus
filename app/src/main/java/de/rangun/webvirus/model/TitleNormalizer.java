@@ -28,6 +28,8 @@ import jregex.Replacer;
 
 final class TitleNormalizer {
 
+
+
     private final static Replacer richReplacer =
             new Replacer(
                     new Pattern("(\\([^\\)]*\\))|(\\[[^\\]]*\\])|" +

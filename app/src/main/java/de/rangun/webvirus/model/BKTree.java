@@ -78,12 +78,6 @@ class BKTree<T> implements Iterable<T> {
 
     BKTree() {}
 
-// --Commented out by Inspection START (04.10.19 11:53):
-//    BKTree(@NonNull Iterable<T> t) {
-//        addAll(t);
-//    }
-// --Commented out by Inspection STOP (04.10.19 11:53)
-
     public final int size() {
         return size;
     }
@@ -132,12 +126,6 @@ class BKTree<T> implements Iterable<T> {
 
         if(node.children != null) for(_node<T> c: node.children.values()) visitNextNode(c, o, n);
     }
-
-// --Commented out by Inspection START (04.10.19 13:23):
-//    private void addAll(@NonNull Iterable<T> m) {
-//        for(T im: m) add(im);
-//    }
-// --Commented out by Inspection STOP (04.10.19 13:23)
 
     @NonNull
     final List<T> search(@NonNull String word, int d) {
