@@ -42,6 +42,7 @@ abstract class AbstractMovie implements IMovie {
     private final static BiMap<Integer, String> discMap = HashBiMap.create();
 
     private final String title;
+    private final String normalizedTitle;
     private final CanonicalStringList languages;
     private final boolean omu;
     private final long dur_sec;
@@ -70,6 +71,10 @@ abstract class AbstractMovie implements IMovie {
         this.top250 = top250;
         this.oid = oid;
         this.discId = getIdForDisc(disc);
+
+        final String nt = TitleNormalizer.normalize(this.title);
+        this.normalizedTitle = !title.equalsIgnoreCase(nt) ? nt.intern() : null;
+
     }
 
     AbstractMovie(int pos, long id, @NonNull String title, long dur_sec, @NonNull String languages,
@@ -85,8 +90,8 @@ abstract class AbstractMovie implements IMovie {
     }
 
     AbstractMovie(@NonNull IMovie m) throws IllegalArgumentException {
-        this(m.pos(), m.id(), m.title(), m.duration(), new CanonicalStringList(m.languages()), m.disc(),
-                m.category(), m.omu(), m.top250(), m.oid());
+        this(m.pos(), m.id(), m.title(), m.duration(), new CanonicalStringList(m.languages()),
+                m.disc(), m.category(), m.omu(), m.top250(), m.oid());
     }
 
     @Override
@@ -98,6 +103,10 @@ abstract class AbstractMovie implements IMovie {
 
     @Override
     public String title() { return title; }
+
+    private String normalizedTitle() {
+        return normalizedTitle != null ? normalizedTitle : title;
+    }
 
     @Override
     public String durationString() {
@@ -163,5 +172,5 @@ abstract class AbstractMovie implements IMovie {
 
     @NonNull
     @Override
-    public String toString() { return title(); }
+    public String toString() { return normalizedTitle(); }
 }

@@ -179,17 +179,17 @@ class BKTree<T> implements Iterable<T> {
 
         for(int i = 1; i <= sourceLength; ++i) {
 
+            final char sca = source.charAt(i - 1);
+
             for(int j = 1; j <= targetLength; ++j) {
 
-                final int cost = source.charAt(i - 1) == target.charAt(j - 1) ? 0 : 1;
+                final char tca = target.charAt(j - 1);
+                final int cost = sca == tca ? 0 : 1;
 
                 dist[i][j] =
                         min(min(dist[i - 1][j] + 1, dist[i][j - 1] + 1), dist[i - 1][j - 1] + cost);
 
-                if(i > 1 && j > 1 &&
-                        source.charAt(i - 1) == target.charAt(j - 2) &&
-                        source.charAt(i - 2) == target.charAt(j - 1)) {
-
+                if(j > 1 && i > 1 && sca == target.charAt(j - 2) && source.charAt(i - 2) == tca) {
                     dist[i][j] = min(dist[i][j], dist[i - 2][j - 2] + cost);
                 }
             }
