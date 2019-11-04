@@ -41,7 +41,6 @@ import org.apache.commons.codec.language.Soundex;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -138,7 +137,7 @@ public final class MovieBKTreeAdapter extends ArrayAdapter<String> {
 
                 final FilterResults fr = new FilterResults();
 
-                if(constraint != null) {
+                if(constraint != null && constraint.length() > 0) {
 
                     final String  lowerConstraint = constraint.toString().toLowerCase();
                     final boolean isSpecialSearch = MovieBKTree.isSpecialSearch(lowerConstraint);
@@ -170,7 +169,7 @@ public final class MovieBKTreeAdapter extends ArrayAdapter<String> {
 
                         for (IMovie s : movies) {
                             if((isSpecialSearch && lid != null && lid.equals(s.id()))
-                                    || Objects.requireNonNull(s.title()).toLowerCase().
+                                    || MovieBKTree.toLowerCase(s.title().toCharArray()).
                                     contains(lowerConstraint)) {
                                 best.add(s);
                             }
@@ -191,7 +190,7 @@ public final class MovieBKTreeAdapter extends ArrayAdapter<String> {
 
                         for (IMovie s : movies) {
                             Matcher rxMatcher = rexConstraint.
-                                    matcher(Objects.requireNonNull(s.title()).toLowerCase());
+                                    matcher(MovieBKTree.toLowerCase(s.title().toCharArray()));
                             if(rxMatcher.matches()) aux.add(s);
                         }
 

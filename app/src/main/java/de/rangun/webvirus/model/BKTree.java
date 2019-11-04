@@ -33,7 +33,7 @@ import java.util.Objects;
 
 import static java.lang.Math.min;
 
-class BKTree<T> implements Iterable<T> {
+abstract class BKTree<T> implements Iterable<T> {
 
     private final class _node<N> {
 
@@ -96,9 +96,10 @@ class BKTree<T> implements Iterable<T> {
 
         _node<T> curNode = _root;
 
-        final String it = item.toString().toLowerCase();
+        final char[] it = lowerCaseItem(item);
 
-        int dist = damerauLevenshteinDistance(curNode.item().toString().toLowerCase(), it);
+        int dist =
+                damerauLevenshteinDistance(lowerCaseItem(curNode.item()), it);
 
         while(curNode.containsKey(dist)) {
 
@@ -106,8 +107,8 @@ class BKTree<T> implements Iterable<T> {
 
             curNode = curNode.get(dist);
 
-            dist = damerauLevenshteinDistance(Objects.requireNonNull(curNode).item().
-                    toString().toLowerCase(), it);
+            dist = damerauLevenshteinDistance(lowerCaseItem(Objects.requireNonNull(curNode).item()),
+                    it);
         }
 
         curNode.addChild(dist, item);
@@ -130,15 +131,15 @@ class BKTree<T> implements Iterable<T> {
     @NonNull
     final List<T> search(@NonNull String word, int d) {
         ArrayList<T> rtn = new ArrayList<>(size);
-        recursiveSearch(Objects.requireNonNull(_root), rtn, word.toLowerCase(), d);
+        recursiveSearch(Objects.requireNonNull(_root), rtn, lowerCaseWord(word), d);
         rtn.trimToSize();
         return rtn;
     }
 
     private void recursiveSearch(@NonNull _node<T> node, @NonNull List<T> rtn,
-                                 @NonNull String word, int d) {
+                                 @NonNull char[] word, int d) {
 
-        final int curDist = damerauLevenshteinDistance(node.item().toString().toLowerCase(), word);
+        final int curDist = damerauLevenshteinDistance(lowerCaseItem(node.item()), word);
         final int minDist = curDist - d;
         final int maxDist = curDist + d;
 
@@ -151,11 +152,11 @@ class BKTree<T> implements Iterable<T> {
         }
     }
 
-    private static int damerauLevenshteinDistance(@NonNull CharSequence source,
-                                                  @NonNull CharSequence target) {
+    private static int damerauLevenshteinDistance(@NonNull char[] source,
+                                                  @NonNull char[] target) {
 
-        final int sourceLength = source.length();
-        final int targetLength = target.length();
+        final int sourceLength = source.length;
+        final int targetLength = target.length;
 
         if(sourceLength == 0) return targetLength;
         if(targetLength == 0) return sourceLength;
@@ -167,17 +168,17 @@ class BKTree<T> implements Iterable<T> {
 
         for(int i = 1; i <= sourceLength; ++i) {
 
-            final char sca = source.charAt(i - 1);
+            final char sca = source[i - 1];
 
             for(int j = 1; j <= targetLength; ++j) {
 
-                final char tca = target.charAt(j - 1);
+                final char tca = target[j - 1];
                 final int cost = sca == tca ? 0 : 1;
 
                 dist[i][j] =
                         min(min(dist[i - 1][j] + 1, dist[i][j - 1] + 1), dist[i - 1][j - 1] + cost);
 
-                if(j > 1 && i > 1 && sca == target.charAt(j - 2) && source.charAt(i - 2) == tca) {
+                if(j > 1 && i > 1 && sca == target[j - 2] && source[i - 2] == tca) {
                     dist[i][j] = min(dist[i][j], dist[i - 2][j - 2] + cost);
                 }
             }
@@ -233,4 +234,8 @@ class BKTree<T> implements Iterable<T> {
 
         return new _iterator();
     }
+
+    protected abstract char[] lowerCaseItem(T item);
+
+    protected abstract char[] lowerCaseWord(String word);
 }

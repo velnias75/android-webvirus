@@ -23,6 +23,7 @@ package de.rangun.webvirus.model;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.List;
@@ -33,10 +34,15 @@ public interface IMovie extends Comparable<IMovie> {
 
     long id();
 
+    @NonNull
     String title();
+
+    @NonNull
+    String normalizedTitle();
 
     long duration();
 
+    @NonNull
     String durationString();
 
     List<String> languages();

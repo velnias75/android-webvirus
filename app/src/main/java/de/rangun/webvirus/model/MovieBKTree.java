@@ -30,6 +30,7 @@ import jregex.Pattern;
 public final class MovieBKTree extends BKTree<IMovie> {
 
     private final static Pattern idSearch = new Pattern("#(\\d+)");
+    private final static StringBuilder lcSb = new StringBuilder(4096);
 
     static boolean isSpecialSearch(@NonNull String text) {
         return !text.isEmpty() && ('#' == text.charAt(0) && MovieBKTree.idSearch.matches(text));
@@ -47,11 +48,24 @@ public final class MovieBKTree extends BKTree<IMovie> {
 
     MovieBKTree() {}
 
-// --Commented out by Inspection START (04.10.19 11:50):
-//    public MovieBKTree(@NonNull Iterable<IMovie> m) {
-//        super(m);
-//    }
-// --Commented out by Inspection STOP (04.10.19 11:50)
+    static synchronized String toLowerCase(char[] s) {
+
+        lcSb.delete(0, lcSb.length());
+
+        for(char c: s) lcSb.append(Character.toLowerCase(c));
+
+        return lcSb.toString();
+    }
+
+    @Override
+    protected char[] lowerCaseItem(IMovie item) {
+        return lowerCaseWord(item.normalizedTitle());
+    }
+
+    @Override
+    protected char[] lowerCaseWord(String word) {
+        return MovieBKTree.toLowerCase(word.toCharArray()).toCharArray();
+    }
 
     @Nullable
     public IMovie getByMovieId(long id) {

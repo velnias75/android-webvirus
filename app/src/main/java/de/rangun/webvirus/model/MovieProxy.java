@@ -62,10 +62,12 @@ final class MovieProxy extends AbstractMovie {
     public Long oid() { return movie == null || movie.get() == null ? super.oid() :
             movie.get().oid(); }
 
+    @NonNull
     @Override
     public String title() {
         return movie == null || movie.get() == null ? super.title() : movie.get().title(); }
 
+    @NonNull
     @Override
     public String durationString() {
         return movie == null || movie.get() == null ? super.durationString() :

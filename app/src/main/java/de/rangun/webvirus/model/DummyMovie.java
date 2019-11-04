@@ -36,11 +36,11 @@ final class DummyMovie extends AbstractMovie {
 
     @NonNull
     @Override
-    public String filename(Context ctx) { return DUMMY; }
+    public String filename(@NonNull Context ctx) { return DUMMY; }
 
     @NonNull
     @Override
-    public String description(Context ctx) {
+    public String description(@NonNull Context ctx) {
         return DUMMY;
     }
 }

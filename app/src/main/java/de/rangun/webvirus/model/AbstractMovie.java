@@ -101,13 +101,16 @@ abstract class AbstractMovie implements IMovie {
     @Override
     public Long oid() { return oid; }
 
+    @NonNull
     @Override
     public String title() { return title; }
 
-    private String normalizedTitle() {
+    @NonNull
+    public String normalizedTitle() {
         return normalizedTitle != null ? normalizedTitle : title;
     }
 
+    @NonNull
     @Override
     public String durationString() {
         df.setTimeZone(tz);
