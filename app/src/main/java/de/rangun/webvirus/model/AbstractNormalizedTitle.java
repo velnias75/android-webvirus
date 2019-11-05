@@ -16,33 +16,18 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with android-webvirus.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  Last modified 03.10.19 00:22 by heiko
+ *  Last modified 05.11.19 02:02 by heiko
  */
 
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+package de.rangun.webvirus.model;
 
-buildscript {
-    repositories {
-        google()
-        jcenter()
-        
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.2'
-        
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
-    }
-}
+import androidx.annotation.NonNull;
 
-allprojects {
-    repositories {
-        google()
-        jcenter()
-        
-    }
-}
+abstract class AbstractNormalizedTitle implements INormalizedTitle {
 
-task clean(type: Delete) {
-    delete rootProject.buildDir
+    final IMovie movie;
+
+    AbstractNormalizedTitle(@NonNull IMovie movie) {
+        this.movie = movie;
+    }
 }
