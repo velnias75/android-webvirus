@@ -32,7 +32,7 @@ final class TitleNormalizer {
 
     private final static Replacer richReplacer =
             new Replacer(
-                    new Pattern("(\\([^\\)]*\\))|(\\[[^\\]]*\\])|" +
+                    new Pattern("(\\[[^\\]]*\\])|" +
                             "([^\\p{InLatin-1Supplement}\\p{InBasicLatin}]*)|" +
                             "(Original mit Untertitel)"),
                     "", false);

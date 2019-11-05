@@ -132,7 +132,7 @@ public final class MovieFactory {
                     callbackTransfer.movies = new MovieBKTree();
                     final ArrayList<_idCoverMapping> ids = new ArrayList<>(array.length());
 
-                    for (int i = 0; i < array.length(); ++i) {
+                    for(int i = 0; i < array.length(); ++i) {
 
                         try {
 
@@ -157,7 +157,7 @@ public final class MovieFactory {
 
                             ids.add(new _idCoverMapping(mid, oid));
 
-                        } catch (JSONException ex) {
+                        } catch(JSONException ex) {
                             callbackTransfer.error = "JSONException: " + ex.getMessage();
                         }
                     }
