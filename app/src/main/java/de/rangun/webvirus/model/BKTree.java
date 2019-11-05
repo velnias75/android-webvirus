@@ -21,11 +21,12 @@
 
 package de.rangun.webvirus.model;
 
+import android.util.ArrayMap;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +51,7 @@ abstract class BKTree<T> implements Iterable<T> {
 
         void addChild(int key, T item) {
 
-            if(children == null) children = new Hashtable<>();
+            if(children == null) children = new ArrayMap<>();
 
             children.put(key, new _node<>(item));
         }

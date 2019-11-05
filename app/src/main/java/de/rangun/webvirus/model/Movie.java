@@ -36,7 +36,8 @@ final class Movie extends AbstractMovie {
 
     @NonNull
     private final MovieFactory.IMoviesAvailableListener cb;
-    private final String fn;
+    private final IMovieFilename fn;
+
     @Nullable
     private String dsc = null;
 
@@ -46,11 +47,11 @@ final class Movie extends AbstractMovie {
         super(m);
 
         this.cb = cb;
-        this.fn = filename;
+        this.fn = MovieFilenameFactory.instance().createFilename(this, filename);
     }
 
     @Override
-    public String filename(@NonNull Context ctx) { return fn; }
+    public String filename(@NonNull Context ctx) { return fn.fileName(); }
 
     @Override
     public String description(@NonNull Context ctx) {

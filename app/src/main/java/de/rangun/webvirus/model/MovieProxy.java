@@ -44,7 +44,7 @@ final class MovieProxy extends AbstractMovie {
     private WeakReference<IMovie> movie = null;
 
     @Nullable
-    private final String filename;
+    private final IMovieFilename filename;
 
     MovieProxy(MovieFactory.IMoviesAvailableListener cb, int pos, long id, String title,
                long dur_sec, @NonNull String languages, String disc, int category,
@@ -54,8 +54,8 @@ final class MovieProxy extends AbstractMovie {
         super(pos, id, title, dur_sec, languages, disc, category, omu, top250, oid);
 
         this.cb = cb;
-        this.filename = filename;
         this.observer = cb;
+        this.filename = MovieFilenameFactory.instance().createFilename(this, filename);
     }
 
     @Override
@@ -87,7 +87,7 @@ final class MovieProxy extends AbstractMovie {
     @Nullable
     @Override
     public String filename(@NonNull Context ctx) {
-        return movie == null || movie.get() == null ? (filename != null ? filename :
+        return movie == null || movie.get() == null ? (filename != null ? filename.fileName() :
                 ctx.getResources().getString(R.string.no_filename)) : movie.get().filename(ctx);
     }
 
