@@ -16,10 +16,10 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with android-webvirus.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  Last modified 04.10.19 02:02 by heiko
+ *  Last modified 06.11.19 01:17 by heiko
  */
 
-package de.rangun.webvirus.model;
+package de.rangun.webvirus.model.movie;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,6 +27,8 @@ import androidx.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 final class CanonicalStringList {
 
@@ -59,6 +61,7 @@ final class CanonicalStringList {
         return new ArrayList<>(r);
     }
 
+    @SuppressFBWarnings
     private int add(String s) {
 
         if(strings == null) strings = new ArrayList<>();

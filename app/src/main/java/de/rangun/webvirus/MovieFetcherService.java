@@ -50,9 +50,9 @@ import com.android.volley.toolbox.StringRequest;
 
 import java.util.Objects;
 
-import de.rangun.webvirus.model.IMovie;
-import de.rangun.webvirus.model.MovieBKTree;
-import de.rangun.webvirus.model.MovieFactory;
+import de.rangun.webvirus.model.bktree.MovieBKTree;
+import de.rangun.webvirus.model.movie.IMovie;
+import de.rangun.webvirus.model.movie.MovieFactory;
 
 import static com.android.volley.toolbox.Volley.newRequestQueue;
 

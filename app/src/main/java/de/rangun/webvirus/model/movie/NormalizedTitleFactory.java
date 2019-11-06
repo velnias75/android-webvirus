@@ -16,12 +16,14 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with android-webvirus.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  Last modified 05.11.19 01:16 by heiko
+ *  Last modified 06.11.19 01:43 by heiko
  */
 
-package de.rangun.webvirus.model;
+package de.rangun.webvirus.model.movie;
 
 import androidx.annotation.NonNull;
+
+import de.rangun.webvirus.model.movie.util.TitleNormalizer;
 
 final class NormalizedTitleFactory {
 

@@ -16,10 +16,10 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with android-webvirus.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  Last modified 01.10.19 00:48 by heiko
+ *  Last modified 06.11.19 01:13 by heiko
  */
 
-package de.rangun.webvirus.model;
+package de.rangun.webvirus.model.bktree;
 
 import android.util.ArrayMap;
 
@@ -87,7 +87,7 @@ abstract class BKTree<T> implements Iterable<T> {
         return Objects.requireNonNull(_root).item();
     }
 
-    void add(@NonNull T item) {
+    public final void add(@NonNull T item) {
 
         if(_root == null) {
             _root = new _node<>(item);
@@ -117,7 +117,7 @@ abstract class BKTree<T> implements Iterable<T> {
         ++size;
     }
 
-    public void replaceItem(T o, T n) { if(_root != null) visitNextNode(_root, o, n); }
+    public final void replaceItem(T o, T n) { if(_root != null) visitNextNode(_root, o, n); }
 
     private void visitNextNode(_node<T> node, T o, T n) {
 
@@ -130,7 +130,7 @@ abstract class BKTree<T> implements Iterable<T> {
     }
 
     @NonNull
-    final List<T> search(@NonNull String word, int d) {
+    public final List<T> search(@NonNull String word, int d) {
         ArrayList<T> rtn = new ArrayList<>(size);
         recursiveSearch(Objects.requireNonNull(_root), rtn, lowerCaseWord(word), d);
         rtn.trimToSize();
@@ -189,7 +189,7 @@ abstract class BKTree<T> implements Iterable<T> {
     }
 
     @NonNull
-    ArrayList<T> asList() {
+    public final ArrayList<T> asList() {
         final ArrayList<T> l = new ArrayList<>(size);
         for(T t: this) l.add(t);
         return l;
@@ -197,7 +197,7 @@ abstract class BKTree<T> implements Iterable<T> {
 
     @NonNull
     @Override
-    public Iterator<T> iterator() {
+    public final Iterator<T> iterator() {
 
         final class _iterator implements Iterator<T> {
 

@@ -16,26 +16,29 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with android-webvirus.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  Last modified 05.11.19 01:44 by heiko
+ *  Last modified 06.11.19 01:23 by heiko
  */
 
-package de.rangun.webvirus.model;
+package de.rangun.webvirus.model.movie.util;
 
 import androidx.annotation.NonNull;
 
-final class NormalizedTitlePosition extends AbstractNormalizedTitle {
+import jregex.Pattern;
+import jregex.Replacer;
 
-    private final int start;
-    private final int end;
+public final class TitleNormalizer {
 
-    NormalizedTitlePosition(@NonNull IMovie movie, int start, int len) {
+    private final static Replacer richReplacer =
+            new Replacer(
+                    new Pattern("(\\[[^\\]]*\\])|" +
+                            "([^\\p{InLatin-1Supplement}\\p{InBasicLatin}]*)|" +
+                            "(Original mit Untertitel)"),
+                    "", false);
 
-        super(movie);
+    private final static Replacer msReplacer =
+            new Replacer(new Pattern("[\\s]+"), " ", false);
 
-        this.start = start;
-        this.end = len;
+    public static String normalize(@NonNull String str) {
+        return msReplacer.replace(richReplacer.replace(str)).trim();
     }
-
-    @Override
-    public String normalizedTitle() { return movie.title().substring(start, end); }
 }

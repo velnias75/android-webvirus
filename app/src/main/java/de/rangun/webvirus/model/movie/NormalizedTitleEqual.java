@@ -16,11 +16,17 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with android-webvirus.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  Last modified 05.11.19 10:15 by heiko
+ *  Last modified 06.11.19 01:43 by heiko
  */
 
-package de.rangun.webvirus.model;
+package de.rangun.webvirus.model.movie;
 
-interface IMovieFilename {
-    String fileName();
+import androidx.annotation.NonNull;
+
+final class NormalizedTitleEqual extends AbstractNormalizedTitle {
+
+    NormalizedTitleEqual(@NonNull IMovie movie) { super(movie); }
+
+    @Override
+    public String normalizedTitle() { return movie.title(); }
 }

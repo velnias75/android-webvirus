@@ -16,10 +16,10 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with android-webvirus.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  Last modified 02.10.19 10:16 by heiko
+ *  Last modified 05.11.19 07:18 by heiko
  */
 
-package de.rangun.webvirus.model;
+package de.rangun.webvirus.model.movie;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -78,7 +78,7 @@ abstract class AbstractMovie implements IMovie {
     }
 
     AbstractMovie(int pos, long id, @NonNull String title, long dur_sec, @NonNull String languages,
-                  String disc, int category, boolean omu,boolean top250, Long oid)
+                  String disc, int category, boolean omu, boolean top250, Long oid)
             throws IllegalArgumentException {
         this(pos, id, title, dur_sec, new CanonicalStringList(languages), disc, category, omu,
                 top250, oid);

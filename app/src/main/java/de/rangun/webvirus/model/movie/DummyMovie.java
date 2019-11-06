@@ -16,17 +16,31 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with android-webvirus.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  Last modified 09.10.19 02:39 by heiko
+ *  Last modified 06.11.19 00:36 by heiko
  */
 
-package de.rangun.webvirus.model;
+package de.rangun.webvirus.model.movie;
 
-import java.util.Comparator;
+import android.content.Context;
 
-public final class MovieOrderComparator implements Comparator<IMovie> {
+import androidx.annotation.NonNull;
+
+public final class DummyMovie extends AbstractMovie {
+
+    private static final String DUMMY = "";
+
+    public DummyMovie(String title) throws IllegalArgumentException { super(title); }
 
     @Override
-    public int compare(IMovie o1, IMovie o2) {
-        return Integer.compare(o1.pos(), o2.pos());
+    public boolean isDummy() { return true; }
+
+    @NonNull
+    @Override
+    public String filename(@NonNull Context ctx) { return DUMMY; }
+
+    @NonNull
+    @Override
+    public String description(@NonNull Context ctx) {
+        return DUMMY;
     }
 }

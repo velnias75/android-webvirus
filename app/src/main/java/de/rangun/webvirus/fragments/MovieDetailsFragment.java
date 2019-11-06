@@ -51,12 +51,11 @@ import javax.annotation.Nonnull;
 import de.rangun.webvirus.MainActivity;
 import de.rangun.webvirus.R;
 import de.rangun.webvirus.Toaster;
-import de.rangun.webvirus.model.BitmapMemCache;
-import de.rangun.webvirus.model.IMovie;
 import de.rangun.webvirus.model.db.AppDatabase;
 import de.rangun.webvirus.model.db.AsyncMarkerUpdateTask;
 import de.rangun.webvirus.model.db.AsyncMovieFetcherTask;
 import de.rangun.webvirus.model.db.Movie;
+import de.rangun.webvirus.model.movie.IMovie;
 import de.rangun.webvirus.widgets.CategoryTextView;
 
 public final class MovieDetailsFragment extends Fragment

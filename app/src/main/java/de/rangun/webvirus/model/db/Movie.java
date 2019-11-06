@@ -26,7 +26,7 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "movies")
-public class Movie {
+public final class Movie {
 
     @PrimaryKey
     public final long id;

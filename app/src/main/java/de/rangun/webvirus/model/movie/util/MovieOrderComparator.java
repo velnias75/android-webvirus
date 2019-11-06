@@ -16,34 +16,19 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with android-webvirus.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  Last modified 05.11.19 10:16 by heiko
+ *  Last modified 06.11.19 01:23 by heiko
  */
 
-package de.rangun.webvirus.model;
+package de.rangun.webvirus.model.movie.util;
 
-class MovieFilenameFactory {
+import java.util.Comparator;
 
-    private static MovieFilenameFactory ourInstance = null;
+import de.rangun.webvirus.model.movie.IMovie;
 
-    private MovieFilenameFactory() {}
+public final class MovieOrderComparator implements Comparator<IMovie> {
 
-    static MovieFilenameFactory instance() {
-
-        if(ourInstance == null) ourInstance = new MovieFilenameFactory();
-
-        return ourInstance;
-    }
-
-    public IMovieFilename createFilename(IMovie movie, String filename) {
-
-        if(filename != null) {
-
-            final int idx = filename.indexOf(movie.title());
-
-            if(idx != -1) return new MovieFilenameByTitle(movie, filename, idx,
-                    idx + movie.title().length());
-        }
-
-        return new MovieFileNameString(filename);
+    @Override
+    public int compare(IMovie o1, IMovie o2) {
+        return Integer.compare(o1.pos(), o2.pos());
     }
 }

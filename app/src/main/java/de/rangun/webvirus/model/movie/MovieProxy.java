@@ -16,10 +16,10 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with android-webvirus.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  Last modified 01.10.19 03:12 by heiko
+ *  Last modified 06.11.19 01:09 by heiko
  */
 
-package de.rangun.webvirus.model;
+package de.rangun.webvirus.model.movie;
 
 import android.content.Context;
 
@@ -33,7 +33,7 @@ import de.rangun.webvirus.R;
 
 final class MovieProxy extends AbstractMovie {
 
-    interface IMovieProxyObserver {
+    public interface IMovieProxyObserver {
         void unproxied(IMovie oldProxy, IMovie newInstance);
     }
 
@@ -46,7 +46,7 @@ final class MovieProxy extends AbstractMovie {
     @Nullable
     private final IMovieFilename filename;
 
-    MovieProxy(MovieFactory.IMoviesAvailableListener cb, int pos, long id, String title,
+    public MovieProxy(MovieFactory.IMoviesAvailableListener cb, int pos, long id, String title,
                long dur_sec, @NonNull String languages, String disc, int category,
                @Nullable String filename, boolean omu, boolean top250, Long oid)
             throws IllegalArgumentException {

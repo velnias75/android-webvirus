@@ -44,9 +44,9 @@ import java.util.Objects;
 
 import de.rangun.webvirus.MainActivity;
 import de.rangun.webvirus.R;
-import de.rangun.webvirus.model.IMovie;
 import de.rangun.webvirus.model.db.AppDatabase;
 import de.rangun.webvirus.model.db.Movie;
+import de.rangun.webvirus.model.movie.IMovie;
 import de.rangun.webvirus.widgets.CategoryTextView;
 import de.rangun.webvirus.widgets.MarkerImageView;
 

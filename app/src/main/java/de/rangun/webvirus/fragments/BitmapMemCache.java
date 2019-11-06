@@ -16,31 +16,33 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with android-webvirus.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  Last modified 03.11.19 07:15 by heiko
+ *  Last modified 07.10.19 04:37 by heiko
  */
 
-package de.rangun.webvirus.model;
+package de.rangun.webvirus.fragments;
+
+import android.graphics.Bitmap;
+import android.util.LruCache;
 
 import androidx.annotation.NonNull;
 
-import jregex.Pattern;
-import jregex.Replacer;
+import com.android.volley.toolbox.ImageLoader;
 
-final class TitleNormalizer {
+ final class BitmapMemCache extends LruCache<String, Bitmap>
+         implements ImageLoader.ImageCache {
 
+    public BitmapMemCache(int sizeInKiloBytes) { super(sizeInKiloBytes); }
 
+    @Override
+    protected int sizeOf(String key, @NonNull Bitmap bitmap) {
+        return (bitmap.getByteCount() >> 10);
+    }
 
-    private final static Replacer richReplacer =
-            new Replacer(
-                    new Pattern("(\\[[^\\]]*\\])|" +
-                            "([^\\p{InLatin-1Supplement}\\p{InBasicLatin}]*)|" +
-                            "(Original mit Untertitel)"),
-                    "", false);
+    public Bitmap getBitmap(String key) {
+        return get(key);
+    }
 
-    private final static Replacer msReplacer =
-            new Replacer(new Pattern("[\\s]+"), " ", false);
-
-    public static String normalize(@NonNull String str) {
-        return msReplacer.replace(richReplacer.replace(str)).trim();
+    public void putBitmap(String url, Bitmap bitmap) {
+        put(url, bitmap);
     }
 }

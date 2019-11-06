@@ -16,14 +16,15 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with android-webvirus.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  Last modified 02.10.19 06:21 by heiko
+ *  Last modified 06.11.19 01:13 by heiko
  */
 
-package de.rangun.webvirus.model;
+package de.rangun.webvirus.model.bktree;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import de.rangun.webvirus.model.movie.IMovie;
 import jregex.Matcher;
 import jregex.Pattern;
 
@@ -32,12 +33,12 @@ public final class MovieBKTree extends BKTree<IMovie> {
     private final static Pattern idSearch = new Pattern("#(\\d+)");
     private final static StringBuilder lcSb = new StringBuilder(4096);
 
-    static boolean isSpecialSearch(@NonNull String text) {
+    public static boolean isSpecialSearch(@NonNull String text) {
         return !text.isEmpty() && ('#' == text.charAt(0) && MovieBKTree.idSearch.matches(text));
     }
 
     @Nullable
-    static Long extractId(String text) {
+    public static Long extractId(String text) {
 
         final Matcher idMatcher = MovieBKTree.idSearch.matcher(text);
 
@@ -46,9 +47,9 @@ public final class MovieBKTree extends BKTree<IMovie> {
         return null;
     }
 
-    MovieBKTree() {}
+    public MovieBKTree() {}
 
-    static synchronized String toLowerCase(char[] s) {
+    public static synchronized String toLowerCase(char[] s) {
 
         lcSb.delete(0, lcSb.length());
 

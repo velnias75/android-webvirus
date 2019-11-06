@@ -16,57 +16,34 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with android-webvirus.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  Last modified 02.10.19 10:45 by heiko
+ *  Last modified 06.11.19 00:48 by heiko
  */
 
-package de.rangun.webvirus.model;
+package de.rangun.webvirus.model.movie;
 
-import android.content.Context;
+class MovieFilenameFactory {
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+    private static MovieFilenameFactory ourInstance = null;
 
-import java.util.List;
+    private MovieFilenameFactory() {}
 
-public interface IMovie extends Comparable<IMovie> {
+    public static MovieFilenameFactory instance() {
 
-    int pos();
+        if(ourInstance == null) ourInstance = new MovieFilenameFactory();
 
-    long id();
+        return ourInstance;
+    }
 
-    @NonNull
-    String title();
+    public IMovieFilename createFilename(IMovie movie, String filename) {
 
-    @NonNull
-    String normalizedTitle();
+        if(filename != null) {
 
-    long duration();
+            final int idx = filename.indexOf(movie.title());
 
-    @NonNull
-    String durationString();
+            if(idx != -1) return new MovieFilenameByTitle(movie, filename, idx,
+                    idx + movie.title().length());
+        }
 
-    List<String> languages();
-
-    String disc();
-
-    int category();
-
-    @Nullable
-    String filename(Context ctx);
-
-    boolean omu();
-
-    boolean top250();
-
-    @Nullable
-    Long oid();
-
-    @Nullable
-    String description(Context ctx);
-
-    boolean isDummy();
-
-    boolean isNewMovie();
-
-    void setNewMovie(boolean b);
+        return new MovieFileNameString(filename);
+    }
 }

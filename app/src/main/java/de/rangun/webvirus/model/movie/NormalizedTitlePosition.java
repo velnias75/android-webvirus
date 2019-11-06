@@ -16,31 +16,26 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with android-webvirus.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  Last modified 02.10.19 02:53 by heiko
+ *  Last modified 06.11.19 01:43 by heiko
  */
 
-package de.rangun.webvirus.model;
-
-import android.content.Context;
+package de.rangun.webvirus.model.movie;
 
 import androidx.annotation.NonNull;
 
-final class DummyMovie extends AbstractMovie {
+final class NormalizedTitlePosition extends AbstractNormalizedTitle {
 
-    private static final String DUMMY = "";
+    private final int start;
+    private final int end;
 
-    DummyMovie(String title) throws IllegalArgumentException { super(title); }
+    NormalizedTitlePosition(@NonNull IMovie movie, int start, int len) {
 
-    @Override
-    public boolean isDummy() { return true; }
+        super(movie);
 
-    @NonNull
-    @Override
-    public String filename(@NonNull Context ctx) { return DUMMY; }
-
-    @NonNull
-    @Override
-    public String description(@NonNull Context ctx) {
-        return DUMMY;
+        this.start = start;
+        this.end = len;
     }
+
+    @Override
+    public String normalizedTitle() { return movie.title().substring(start, end); }
 }

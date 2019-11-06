@@ -16,17 +16,21 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with android-webvirus.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  Last modified 02.10.19 11:57 by heiko
+ *  Last modified 06.11.19 01:43 by heiko
  */
 
-package de.rangun.webvirus.fragments;
+package de.rangun.webvirus.model.movie;
 
-import androidx.fragment.app.Fragment;
+import androidx.annotation.NonNull;
 
-import de.rangun.webvirus.model.movie.IMovie;
+final class NormalizedTitleString implements INormalizedTitle {
 
-public interface IMovieUpdateRequestListener {
-    void onUpdateMovieByTitleOrId(String text, Fragment f);
-    void onUpdateMovie(IMovie m, Fragment f);
-    void onRequestNewMoviesUpdate(MovieListFragment f);
+    private final String normalizedTitle;
+
+    NormalizedTitleString(@NonNull String normalizedTitle) {
+        this.normalizedTitle = normalizedTitle;
+    }
+
+    @Override
+    public String normalizedTitle() { return this.normalizedTitle; }
 }

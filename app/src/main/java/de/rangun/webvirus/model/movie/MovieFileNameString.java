@@ -16,10 +16,10 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with android-webvirus.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  Last modified 05.11.19 10:34 by heiko
+ *  Last modified 05.11.19 12:10 by heiko
  */
 
-package de.rangun.webvirus.model;
+package de.rangun.webvirus.model.movie;
 
 import androidx.annotation.Nullable;
 

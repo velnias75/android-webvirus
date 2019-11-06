@@ -16,10 +16,10 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with android-webvirus.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  Last modified 02.10.19 10:45 by heiko
+ *  Last modified 06.11.19 01:09 by heiko
  */
 
-package de.rangun.webvirus.model;
+package de.rangun.webvirus.model.movie;
 
 import android.util.Log;
 
@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Objects;
 
+import de.rangun.webvirus.model.bktree.MovieBKTree;
 import de.rangun.webvirus.net.GZipJsonArrayRequest;
 
 public final class MovieFactory {

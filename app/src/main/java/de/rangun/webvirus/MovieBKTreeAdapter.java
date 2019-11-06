@@ -16,10 +16,10 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with android-webvirus.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  Last modified 02.10.19 06:21 by heiko
+ *  Last modified 06.11.19 01:29 by heiko
  */
 
-package de.rangun.webvirus.model;
+package de.rangun.webvirus;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -44,14 +44,17 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import de.rangun.webvirus.R;
+import de.rangun.webvirus.model.bktree.MovieBKTree;
+import de.rangun.webvirus.model.movie.DummyMovie;
+import de.rangun.webvirus.model.movie.IMovie;
+import de.rangun.webvirus.model.movie.util.TitleNormalizer;
 import de.rangun.webvirus.widgets.CategoryTextView;
 import jregex.Matcher;
 import jregex.Pattern;
 import jregex.PatternSyntaxException;
 import jregex.REFlags;
 
-public final class MovieBKTreeAdapter extends ArrayAdapter<String> {
+final class MovieBKTreeAdapter extends ArrayAdapter<String> {
 
     public interface IFilterResultListener {
         void onFilterResultAvailable(List<IMovie> result);

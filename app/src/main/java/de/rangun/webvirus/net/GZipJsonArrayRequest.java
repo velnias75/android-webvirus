@@ -40,6 +40,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
@@ -85,7 +86,7 @@ public abstract class GZipJsonArrayRequest<T> extends JsonArrayRequest {
             final GZIPInputStream gStream =
                     new GZIPInputStream(new ByteArrayInputStream(response.data),
                             response.data.length);
-            final InputStreamReader reader = new InputStreamReader(gStream);
+            final InputStreamReader reader = new InputStreamReader(gStream, StandardCharsets.UTF_8);
             final BufferedReader in = new BufferedReader(reader, 65536);
 
             String read;
@@ -103,7 +104,8 @@ public abstract class GZipJsonArrayRequest<T> extends JsonArrayRequest {
         try {
 
             return Response.
-                    success(customParse(new JSONArray(new String(output.toString().getBytes(),
+                    success(customParse(new JSONArray(new String(output.toString().
+                                    getBytes(StandardCharsets.UTF_8),
                                     HttpHeaderParser.parseCharset(response.headers,
                                             PROTOCOL_CHARSET))), userParam),
                             HttpHeaderParser.parseCacheHeaders(response));

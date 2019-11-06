@@ -16,10 +16,10 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with android-webvirus.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  Last modified 01.10.19 02:31 by heiko
+ *  Last modified 06.11.19 00:49 by heiko
  */
 
-package de.rangun.webvirus.model;
+package de.rangun.webvirus.model.movie;
 
 import android.content.Context;
 import android.util.Log;
@@ -41,7 +41,7 @@ final class Movie extends AbstractMovie {
     @Nullable
     private String dsc = null;
 
-    Movie(@NonNull MovieProxy m, String filename,
+    public Movie(@NonNull MovieProxy m, String filename,
           @NonNull MovieFactory.IMoviesAvailableListener cb) throws IllegalArgumentException {
 
         super(m);

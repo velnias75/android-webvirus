@@ -62,12 +62,11 @@ import de.rangun.webvirus.fragments.IMovieUpdateRequestListener;
 import de.rangun.webvirus.fragments.MovieDetailsFragment;
 import de.rangun.webvirus.fragments.MovieListFragment;
 import de.rangun.webvirus.fragments.SearchBarFragment;
-import de.rangun.webvirus.model.IMovie;
-import de.rangun.webvirus.model.MovieBKTree;
-import de.rangun.webvirus.model.MovieBKTreeAdapter;
-import de.rangun.webvirus.model.MovieFactory;
-import de.rangun.webvirus.model.MovieOrderComparator;
+import de.rangun.webvirus.model.bktree.MovieBKTree;
 import de.rangun.webvirus.model.db.AppDatabase;
+import de.rangun.webvirus.model.movie.IMovie;
+import de.rangun.webvirus.model.movie.MovieFactory;
+import de.rangun.webvirus.model.movie.util.MovieOrderComparator;
 
 import static java.lang.Math.ceil;
 import static java.lang.Math.log;
@@ -535,9 +534,9 @@ public final class MainActivity extends AppCompatActivity implements
         final MovieListFragment mlf = (MovieListFragment)getSupportFragmentManager().
                 findFragmentByTag("android:switcher:" + R.id.pager + ":1");
 
-        if(mlf != null && sbf != null) mlf.setListAdapter(new MovieListFragment.
-                Adapter(this, filteredOrAllMovies(result, movies, sbf),
-                Objects.requireNonNull(movies).size(), false, db));
+        if(movies != null && mlf != null && sbf != null) mlf.setListAdapter(new MovieListFragment.
+                Adapter(this, filteredOrAllMovies(result, movies, sbf), movies.size(),
+                false, db));
     }
 
     private static List<IMovie> filteredOrAllMovies(List<IMovie> input, MovieBKTree movies,
