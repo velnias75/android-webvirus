@@ -66,6 +66,9 @@ public final class MovieDetailsFragment extends Fragment
     private IResumeListener listener;
     private boolean doUpdate = false;
 
+    @NonNull
+    private final BitmapMemCache bmc = new BitmapMemCache(3072);
+
     @Nonnull
     private final AppDatabase db;
 
@@ -196,10 +199,8 @@ public final class MovieDetailsFragment extends Fragment
         });
 
         if (m.oid() != null) {
-
             cov.setImageUrl("https://rangun.de/db/omdb.php?cover-oid=" + m.oid() +
-                            (m.top250() ? "&top250=true" : ""),
-                    new ImageLoader(queue, new BitmapMemCache(3072)));
+                            (m.top250() ? "&top250=true" : ""), new ImageLoader(queue, bmc));
         } else {
             cov.setImageUrl(null, null);
         }
@@ -224,4 +225,6 @@ public final class MovieDetailsFragment extends Fragment
             doUpdate = true;
         }
     }
+
+    public void clearBitmapMemCache() { bmc.evictAll(); }
 }

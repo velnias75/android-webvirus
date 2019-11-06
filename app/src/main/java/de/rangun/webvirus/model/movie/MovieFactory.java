@@ -54,18 +54,19 @@ public final class MovieFactory {
         void newMoviesAvailable(int num);
     }
 
-    private final class CallbackTransfer {
+    private final static class CallbackTransfer {
         String error = null;
         MovieBKTree movies = null;
         Long lid = null;
     }
 
     private static final String TAG = "MovieFactory";
+
     @Nullable
     private static MovieFactory _instance = null;
 
-    private final String URL = "https://rangun.de/db/movies-json.php?order_by=ltitle";
-    //private final String URL = "http://192.168.1.156/~heiko/db/movies-json.php";
+    private final static String URL = "https://rangun.de/db/movies-json.php?order_by=ltitle";
+    //private final static String URL = "http://192.168.1.156/~heiko/db/movies-json.php";
 
     @Nullable
     private IMoviesAvailableListener cb = null;
@@ -128,6 +129,19 @@ public final class MovieFactory {
                         public int compareTo(_idCoverMapping o) {
                             return mid.compareTo(o.mid);
                         }
+
+                        @Override
+                        public boolean equals(Object obj) {
+
+                            if(obj == null) return false;
+                            if(getClass() != obj.getClass()) return false;
+
+                            final _idCoverMapping other = (_idCoverMapping)obj;
+                            return Objects.equals(this.mid, other.mid);
+                        }
+
+                        @Override
+                        public int hashCode() { return mid.hashCode(); }
                     }
 
                     callbackTransfer.movies = new MovieBKTree();

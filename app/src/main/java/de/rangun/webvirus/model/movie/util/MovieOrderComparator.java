@@ -21,11 +21,14 @@
 
 package de.rangun.webvirus.model.movie.util;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 import de.rangun.webvirus.model.movie.IMovie;
 
-public final class MovieOrderComparator implements Comparator<IMovie> {
+public final class MovieOrderComparator implements Comparator<IMovie>, Serializable {
+
+    private static final long serialVersionUID = 1697576161130028002L;
 
     @Override
     public int compare(IMovie o1, IMovie o2) {

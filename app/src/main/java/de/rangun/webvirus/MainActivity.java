@@ -67,6 +67,7 @@ import de.rangun.webvirus.model.db.AppDatabase;
 import de.rangun.webvirus.model.movie.IMovie;
 import de.rangun.webvirus.model.movie.MovieFactory;
 import de.rangun.webvirus.model.movie.util.MovieOrderComparator;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import static java.lang.Math.ceil;
 import static java.lang.Math.log;
@@ -347,6 +348,7 @@ public final class MainActivity extends AppCompatActivity implements
     }
 
     @Override
+    @SuppressFBWarnings
     protected void onStop() {
 
         super.onStop();
@@ -361,6 +363,28 @@ public final class MainActivity extends AppCompatActivity implements
 
             sharedPrefs.edit().putLong("lastMovieIdSeen", currentId).apply();
         }
+    }
+
+    @Override
+    public void onLowMemory() {
+        Log.d(TAG, "onLowMemory()");
+        clearBitmapMemCache();
+        super.onLowMemory();
+    }
+
+    @Override
+    public void onTrimMemory(int level) {
+        Log.d(TAG, "onTrimMemory()");
+        clearBitmapMemCache();
+        super.onTrimMemory(level);
+    }
+
+    private void clearBitmapMemCache() {
+
+        final MovieDetailsFragment mdf = (MovieDetailsFragment) getSupportFragmentManager().
+                findFragmentByTag("android:switcher:" + R.id.pager + ":0");
+
+        if (mdf != null) mdf.clearBitmapMemCache();
     }
 
     @Override
@@ -502,6 +526,7 @@ public final class MainActivity extends AppCompatActivity implements
     }
 
     @Override
+    @SuppressFBWarnings
     public void newMoviesAvailable(int num) {
 
         if(num > 0 && movies != null) {
@@ -580,12 +605,6 @@ public final class MainActivity extends AppCompatActivity implements
     private void setStatus(String txt, @NonNull NOTIFICATION notification) {
         setStatus(txt, Color.GRAY, notification);
     }
-
-// --Commented out by Inspection START (28.09.19 03:48):
-//    private void setStatus(int resource, NOTIFICATION notification) {
-//        setStatus(getString(resource), Color.GRAY, notification);
-//    }
-// --Commented out by Inspection STOP (28.09.19 03:48)
 
     private void setStatus(String txt, int color, @NonNull NOTIFICATION notification) {
         toaster.show(txt, color);

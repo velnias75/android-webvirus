@@ -28,8 +28,7 @@ import androidx.annotation.NonNull;
 
 import com.android.volley.toolbox.ImageLoader;
 
- final class BitmapMemCache extends LruCache<String, Bitmap>
-         implements ImageLoader.ImageCache {
+final class BitmapMemCache extends LruCache<String, Bitmap> implements ImageLoader.ImageCache {
 
     public BitmapMemCache(int sizeInKiloBytes) { super(sizeInKiloBytes); }
 

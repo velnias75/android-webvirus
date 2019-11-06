@@ -32,6 +32,9 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings
 public class autostart extends BroadcastReceiver {
 
     @Override

@@ -162,14 +162,14 @@ public final class CustomAutoCompleteTextView extends AppCompatAutoCompleteTextV
         return super.onTouchEvent(event);
     }
 
-    @Override
+    /*@Override
     protected void finalize() throws Throwable {
         drawableRight = null;
         drawableBottom = null;
         drawableLeft = null;
         drawableTop = null;
         super.finalize();
-    }
+    }*/
 
     public void setDrawableClickListener(DrawableClickListener listener) {
         this.clickListener = listener;

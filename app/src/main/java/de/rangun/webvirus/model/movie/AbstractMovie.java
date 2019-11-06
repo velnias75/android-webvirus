@@ -36,9 +36,6 @@ import java.util.TimeZone;
 abstract class AbstractMovie implements IMovie {
 
     private final static TimeZone tz = TimeZone.getTimeZone("UTC");
-    private final static SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss",
-            Locale.GERMANY);
-
     private final static BiMap<Integer, String> discMap = HashBiMap.create();
 
     private final String title;
@@ -113,7 +110,10 @@ abstract class AbstractMovie implements IMovie {
     @NonNull
     @Override
     public String durationString() {
+
+        final SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss", Locale.GERMANY);
         df.setTimeZone(tz);
+
         return df.format(new Date(this.dur_sec * 1000));
     }
 
