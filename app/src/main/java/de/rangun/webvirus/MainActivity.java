@@ -381,7 +381,7 @@ public final class MainActivity extends AppCompatActivity implements
 
     private void clearBitmapMemCache() {
 
-        final MovieDetailsFragment mdf = (MovieDetailsFragment) getSupportFragmentManager().
+        final MovieDetailsFragment mdf = (MovieDetailsFragment)getSupportFragmentManager().
                 findFragmentByTag("android:switcher:" + R.id.pager + ":0");
 
         if (mdf != null) mdf.clearBitmapMemCache();
