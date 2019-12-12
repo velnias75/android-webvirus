@@ -23,6 +23,8 @@
 
 package de.rangun.webvirus.net;
 
+import android.util.Log;
+
 import androidx.annotation.Nullable;
 
 import com.android.volley.AuthFailureError;
@@ -39,6 +41,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -48,13 +51,15 @@ import java.util.zip.GZIPInputStream;
 public abstract class GZipJsonArrayRequest<T> extends JsonArrayRequest {
 
     private final T userParam;
+    private final OutputStream gzipOut;
 
     public GZipJsonArrayRequest(int method, String url, @Nullable JSONArray jsonRequest,
                                 Response.Listener<JSONArray> listener,
                                 @Nullable Response.ErrorListener errorListener,
-                                T userParam) {
+                                T userParam, OutputStream gzipOut) {
         super(method, url, jsonRequest, listener, errorListener);
         this.userParam = userParam;
+        this.gzipOut = gzipOut;
     }
 
     @Override
@@ -88,6 +93,21 @@ public abstract class GZipJsonArrayRequest<T> extends JsonArrayRequest {
                             response.data.length);
             final InputStreamReader reader = new InputStreamReader(gStream, StandardCharsets.UTF_8);
             final BufferedReader in = new BufferedReader(reader, 65536);
+
+            if(gzipOut != null) {
+
+                try {
+                    gzipOut.write(response.data, 0, response.data.length);
+                } catch(IOException ex) {
+                    Log.w("GZipJsonArrayRequest", ex);
+                } finally {
+                    try {
+                        gzipOut.close();
+                    } catch(IOException ex) {
+                        Log.w("GZipJsonArrayRequest", ex);
+                    }
+                }
+            }
 
             String read;
 

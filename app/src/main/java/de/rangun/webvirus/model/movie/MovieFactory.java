@@ -35,6 +35,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Objects;
@@ -82,8 +84,30 @@ public final class MovieFactory {
         this.cb = cb;
     }
 
+    public void fetchMovies(StringBuilder data, boolean silent) {
+
+        if(cb != null) {
+
+            cb.loading(silent);
+
+            try {
+
+                final CallbackTransfer callbackTransfer = new CallbackTransfer();
+
+                parseJSONArray(callbackTransfer, new JSONArray(new String(data.toString().
+                        getBytes(StandardCharsets.UTF_8))));
+
+                cb.movies(callbackTransfer.movies, callbackTransfer.lid, silent);
+                cb.loaded(callbackTransfer.movies.size(), silent);
+
+            } catch (JSONException ex) {
+                cb.error("sth went wrong");
+            }
+        }
+    }
+
     @SuppressWarnings("UnusedReturnValue")
-    public void fetchMovies(@NonNull RequestQueue q, boolean silent) {
+    public void fetchMovies(@NonNull RequestQueue q, boolean silent, OutputStream gzipOut) {
 
         if(cb != null) {
 
@@ -109,87 +133,11 @@ public final class MovieFactory {
                     cb.error("" + error.networkResponse.statusCode);
                 }
 
-            }, callbackTransfer) {
+            }, callbackTransfer, gzipOut) {
 
                 @Override
                 protected JSONArray customParse(JSONArray array, CallbackTransfer userParam) {
-
-                    final class _idCoverMapping implements Comparable<_idCoverMapping> {
-
-                        final Long mid;
-                        final Long oid;
-
-                        @SuppressWarnings("unused")
-                        private _idCoverMapping(Long mid, Long oid) {
-                            this.mid = mid;
-                            this.oid = oid;
-                        }
-
-                        @Override
-                        public int compareTo(_idCoverMapping o) {
-                            return mid.compareTo(o.mid);
-                        }
-
-                        @Override
-                        public boolean equals(Object obj) {
-
-                            if(obj == null) return false;
-                            if(getClass() != obj.getClass()) return false;
-
-                            final _idCoverMapping other = (_idCoverMapping)obj;
-                            return Objects.equals(this.mid, other.mid);
-                        }
-
-                        @Override
-                        public int hashCode() { return mid.hashCode(); }
-                    }
-
-                    callbackTransfer.movies = new MovieBKTree();
-                    final ArrayList<_idCoverMapping> ids = new ArrayList<>(array.length());
-
-                    for(int i = 0; i < array.length(); ++i) {
-
-                        try {
-
-                            final JSONObject item = array.getJSONObject(i);
-
-                            final long mid = item.getLong("id");
-                            final Long oid = item.isNull("oid") ? null :
-                                    item.getLong("oid");
-
-                            callbackTransfer.movies.add(new MovieProxy(cb,
-                                    i, mid,
-                                    item.getString("title"),
-                                    item.getLong("dur_sec"),
-                                    item.getString("languages"),
-                                    item.getString("disc"),
-                                    item.getInt("category"),
-                                    !item.isNull("filename") ?
-                                            item.getString("filename") : null,
-                                    item.getBoolean("omu"),
-                                    item.getBoolean("top250"),
-                                    oid));
-
-                            ids.add(new _idCoverMapping(mid, oid));
-
-                        } catch(JSONException ex) {
-                            callbackTransfer.error = "JSONException: " + ex.getMessage();
-                        }
-                    }
-
-                    Collections.sort(ids);
-
-                    for (int i = ids.size() - 1; i >= 0; --i) {
-
-                        final _idCoverMapping icm = ids.get(i);
-
-                        if (icm.oid != null) {
-                            callbackTransfer.lid = icm.mid;
-                            break;
-                        }
-                    }
-
-                    return array;
+                    return parseJSONArray(callbackTransfer, array);
                 }
             };
 
@@ -203,5 +151,86 @@ public final class MovieFactory {
             q.add(jsonArrayRequest);
 
         } else Log.d(TAG, "NO IMoviesAvailableListener registered");
+    }
+
+    private JSONArray parseJSONArray(@NonNull CallbackTransfer callbackTransfer,
+                                     @NonNull JSONArray array) {
+
+        final class _idCoverMapping implements Comparable<_idCoverMapping> {
+
+            final Long mid;
+            final Long oid;
+
+            @SuppressWarnings("unused")
+            private _idCoverMapping(Long mid, Long oid) {
+                this.mid = mid;
+                this.oid = oid;
+            }
+
+            @Override
+            public int compareTo(_idCoverMapping o) {
+                return mid.compareTo(o.mid);
+            }
+
+            @Override
+            public boolean equals(Object obj) {
+
+                if(obj == null) return false;
+                if(getClass() != obj.getClass()) return false;
+
+                final _idCoverMapping other = (_idCoverMapping)obj;
+                return Objects.equals(this.mid, other.mid);
+            }
+
+            @Override
+            public int hashCode() { return mid.hashCode(); }
+        }
+
+        callbackTransfer.movies = new MovieBKTree();
+        final ArrayList<_idCoverMapping> ids = new ArrayList<>(array.length());
+
+        for(int i = 0; i < array.length(); ++i) {
+
+            try {
+
+                final JSONObject item = array.getJSONObject(i);
+
+                final long mid = item.getLong("id");
+                final Long oid = item.isNull("oid") ? null :
+                        item.getLong("oid");
+
+                callbackTransfer.movies.add(new MovieProxy(cb,
+                        i, mid,
+                        item.getString("title"),
+                        item.getLong("dur_sec"),
+                        item.getString("languages"),
+                        item.getString("disc"),
+                        item.getInt("category"),
+                        !item.isNull("filename") ?
+                                item.getString("filename") : null,
+                        item.getBoolean("omu"),
+                        item.getBoolean("top250"),
+                        oid));
+
+                ids.add(new _idCoverMapping(mid, oid));
+
+            } catch(JSONException ex) {
+                callbackTransfer.error = "JSONException: " + ex.getMessage();
+            }
+        }
+
+        Collections.sort(ids);
+
+        for (int i = ids.size() - 1; i >= 0; --i) {
+
+            final _idCoverMapping icm = ids.get(i);
+
+            if (icm.oid != null) {
+                callbackTransfer.lid = icm.mid;
+                break;
+            }
+        }
+
+        return array;
     }
 }

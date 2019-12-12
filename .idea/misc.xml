@@ -4,6 +4,7 @@
     <entry_points version="2.0">
       <entry_point TYPE="method" FQNAME="de.rangun.webvirus.model.MovieFactory$2 org.json.JSONArray customParse(org.json.JSONArray array, de.rangun.webvirus.model.MovieFactory.CallbackTransfer userParam)" />
       <entry_point TYPE="method" FQNAME="de.rangun.webvirus.model.movie.MovieFactory$2 org.json.JSONArray customParse(org.json.JSONArray array, de.rangun.webvirus.model.movie.MovieFactory.CallbackTransfer userParam)" />
+      <entry_point TYPE="method" FQNAME="de.rangun.webvirus.model.movie.MovieFactory$1 org.json.JSONArray customParse(org.json.JSONArray array, de.rangun.webvirus.model.movie.MovieFactory.CallbackTransfer userParam)" />
     </entry_points>
     <pattern value="de.rangun.webvirus.model.movie.AbstractMovieFilename" />
     <pattern value="de.rangun.webvirus.model.movie.AbstractMovieFilename" method="AbstractMovieFilename" />

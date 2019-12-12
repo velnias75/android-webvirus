@@ -22,6 +22,8 @@
 package de.rangun.webvirus.model.movie;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -58,21 +60,30 @@ final class Movie extends AbstractMovie {
 
         if(dsc == null) {
 
+            final ConnectivityManager cm =
+                    (ConnectivityManager)ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
+
             Long oid = oid();
 
-            if(oid != null) {
+            if(cm != null) {
 
-                cb.fetchDescription(new StringRequest(Request.Method.GET,
-                        "https://rangun.de/db/omdb.php?cover-oid=" + oid + "&abstract=true",
-                        response -> {
-                            dsc = response;
-                            cb.descriptionAvailable(dsc);
-                        }, error -> Log.d("Movie",
-                        "(description): error:" + error.getMessage())));
+                final NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
 
-                return ctx.getResources().getString(R.string.fetch_abstract);
+                if (oid != null && (activeNetwork != null && activeNetwork.isConnected())) {
 
-            } else dsc = ctx.getResources().getString(R.string.no_abstract);
+                    cb.fetchDescription(new StringRequest(Request.Method.GET,
+                            "https://rangun.de/db/omdb.php?cover-oid=" + oid +
+                                    "&abstract=true",
+                            response -> {
+                                dsc = response;
+                                cb.descriptionAvailable(dsc);
+                            }, error -> Log.d("Movie",
+                            "(description): error:" + error.getMessage())));
+
+                    return ctx.getResources().getString(R.string.fetch_abstract);
+
+                } else dsc = ctx.getResources().getString(R.string.no_abstract);
+            }
         }
 
         return dsc;

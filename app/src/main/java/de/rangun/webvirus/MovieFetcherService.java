@@ -48,7 +48,16 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.StringRequest;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
+import java.util.zip.GZIPInputStream;
 
 import de.rangun.webvirus.model.bktree.MovieBKTree;
 import de.rangun.webvirus.model.movie.IMovie;
@@ -199,21 +208,66 @@ public final class MovieFetcherService extends Service
 
         Log.d(TAG, "fetchMovies: trying...");
 
-        ConnectivityManager cm =
+        final ConnectivityManager cm =
                 (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 
         if(cm != null) {
 
-            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+            final NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
 
-            if (activeNetwork != null && activeNetwork.isConnected()) {
+            FileOutputStream fos = null;
+            final File file = new File(getExternalFilesDir(null),
+                    "schrottfilme.gz");
+
+            if(activeNetwork != null && activeNetwork.isConnected()) {
+
                 Log.d(TAG, "fetchMovies: ok, now lets go to the MovieFactory");
+
+                try {
+                    fos = new FileOutputStream(file);
+                    Log.d(TAG, "writing offline data to: " + file.getAbsolutePath());
+                } catch(FileNotFoundException ex) {
+                    Log.w(TAG, ex);
+                }
+
                 Objects.requireNonNull(MovieFactory.instance()).setOnMoviesAvailableListener(this);
                 Objects.requireNonNull(MovieFactory.instance()).
-                        fetchMovies(Objects.requireNonNull(getQueue()), silent);
-            } else if(!silent) {
-                error(getString(R.string.not_connected));
-            } else Log.d(TAG, "NOT connected yet, hoping for first periodic fetch");
+                        fetchMovies(Objects.requireNonNull(getQueue()), silent, fos);
+
+            } else {
+
+                if(file.exists() && file.length() > 0) {
+
+                    try {
+
+                        final FileInputStream fis = new FileInputStream(file);
+                        final StringBuilder output = new StringBuilder();
+                        final GZIPInputStream gStream = new GZIPInputStream(fis);
+                        final InputStreamReader reader = new InputStreamReader(gStream,
+                                StandardCharsets.UTF_8);
+                        final BufferedReader in = new BufferedReader(reader, 65536);
+
+                        String read;
+
+                        while((read = in.readLine()) != null) { output.append(read); }
+
+                        reader.close();
+                        in.close();
+                        gStream.close();
+                        fis.close();
+
+                        Objects.requireNonNull(MovieFactory.instance()).
+                                setOnMoviesAvailableListener(this);
+                        Objects.requireNonNull(MovieFactory.instance()).fetchMovies(output, silent);
+
+                    } catch(IOException ex) {
+                        Log.w(TAG, ex);
+                    }
+
+                } else if(!silent) {
+                    error(getString(R.string.not_connected));
+                } else Log.d(TAG, "NOT connected yet, hoping for first periodic fetch");
+            }
 
         } else Log.d(TAG, "NO ConnectivityManager!");
     }
