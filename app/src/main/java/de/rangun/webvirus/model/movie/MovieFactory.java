@@ -56,10 +56,10 @@ public final class MovieFactory {
         void newMoviesAvailable(int num);
     }
 
-    private final static class CallbackTransfer {
+    public final static class CallbackTransfer {
         String error = null;
-        MovieBKTree movies = null;
-        Long lid = null;
+        public MovieBKTree movies = null;
+        public Long lid = null;
     }
 
     private static final String TAG = "MovieFactory";
@@ -84,26 +84,22 @@ public final class MovieFactory {
         this.cb = cb;
     }
 
-    public void fetchMovies(StringBuilder data, boolean silent) {
+    public CallbackTransfer fetchMovies(StringBuilder data) {
 
-        if(cb != null) {
+        try {
 
-            cb.loading(silent);
+            final CallbackTransfer callbackTransfer = new CallbackTransfer();
 
-            try {
+            parseJSONArray(callbackTransfer, new JSONArray(new String(data.toString().
+                    getBytes(StandardCharsets.UTF_8))));
 
-                final CallbackTransfer callbackTransfer = new CallbackTransfer();
+            return callbackTransfer;
 
-                parseJSONArray(callbackTransfer, new JSONArray(new String(data.toString().
-                        getBytes(StandardCharsets.UTF_8))));
-
-                cb.movies(callbackTransfer.movies, callbackTransfer.lid, silent);
-                cb.loaded(callbackTransfer.movies.size(), silent);
-
-            } catch (JSONException ex) {
-                cb.error("sth went wrong");
-            }
+        } catch (JSONException ex) {
+            //cb.error("sth went wrong");
         }
+
+        return null;
     }
 
     @SuppressWarnings("UnusedReturnValue")

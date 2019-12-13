@@ -23,6 +23,7 @@
 
 package de.rangun.webvirus.net;
 
+import android.os.AsyncTask;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
@@ -52,6 +53,35 @@ public abstract class GZipJsonArrayRequest<T> extends JsonArrayRequest {
 
     private final T userParam;
     private final OutputStream gzipOut;
+
+    private final static class saveGZIP extends AsyncTask<Void, Void, Void> {
+
+        private final OutputStream gzipOut;
+        private final NetworkResponse response;
+
+        saveGZIP(OutputStream gzipOut, NetworkResponse response) {
+            this.gzipOut  = gzipOut;
+            this.response = response;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+            try {
+                gzipOut.write(response.data, 0, response.data.length);
+            } catch(IOException ex) {
+                Log.w("GZipJsonArrayRequest", ex);
+            } finally {
+                try {
+                    gzipOut.close();
+                } catch(IOException ex) {
+                    Log.w("GZipJsonArrayRequest", ex);
+                }
+            }
+
+            return null;
+        }
+    }
 
     public GZipJsonArrayRequest(int method, String url, @Nullable JSONArray jsonRequest,
                                 Response.Listener<JSONArray> listener,
@@ -94,20 +124,7 @@ public abstract class GZipJsonArrayRequest<T> extends JsonArrayRequest {
             final InputStreamReader reader = new InputStreamReader(gStream, StandardCharsets.UTF_8);
             final BufferedReader in = new BufferedReader(reader, 65536);
 
-            if(gzipOut != null) {
-
-                try {
-                    gzipOut.write(response.data, 0, response.data.length);
-                } catch(IOException ex) {
-                    Log.w("GZipJsonArrayRequest", ex);
-                } finally {
-                    try {
-                        gzipOut.close();
-                    } catch(IOException ex) {
-                        Log.w("GZipJsonArrayRequest", ex);
-                    }
-                }
-            }
+            if(gzipOut != null) (new saveGZIP(gzipOut, response)).execute();
 
             String read;
 

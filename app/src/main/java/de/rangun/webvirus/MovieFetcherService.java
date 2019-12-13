@@ -32,6 +32,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
@@ -141,6 +142,63 @@ public final class MovieFetcherService extends Service
         }
     }
 
+    private final static class OfflineFetchTask extends AsyncTask<File, Void,
+            MovieFactory.CallbackTransfer> {
+
+        private final MovieFactory.IMoviesAvailableListener listener;
+        private final boolean silent;
+
+        OfflineFetchTask(@NonNull MovieFactory.IMoviesAvailableListener listener,
+                         boolean silent) {
+            this.listener = listener;
+            this.silent = silent;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            listener.loading(silent);
+        }
+
+        @Override
+        protected MovieFactory.CallbackTransfer doInBackground(File... files) {
+
+            try {
+
+                final FileInputStream fis = new FileInputStream(files[0]);
+                final StringBuilder output = new StringBuilder();
+                final GZIPInputStream gStream = new GZIPInputStream(fis);
+                final InputStreamReader reader = new InputStreamReader(gStream,
+                        StandardCharsets.UTF_8);
+                final BufferedReader in = new BufferedReader(reader, 65536);
+
+                String read;
+
+                while((read = in.readLine()) != null) { output.append(read); }
+
+                reader.close();
+                in.close();
+                gStream.close();
+                fis.close();
+
+                return Objects.requireNonNull(MovieFactory.instance()).fetchMovies(output);
+
+            } catch(IOException ex) {
+                Log.w(TAG, ex);
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(MovieFactory.CallbackTransfer callbackTransfer) {
+
+            if(callbackTransfer != null) {
+                listener.movies(callbackTransfer.movies, callbackTransfer.lid, silent);
+                listener.loaded(callbackTransfer.movies.size(), silent);
+            }
+        }
+    }
+
     public class MovieFetcherBinder extends Binder {
         @NonNull
         MovieFetcherService getService() {
@@ -237,33 +295,7 @@ public final class MovieFetcherService extends Service
             } else {
 
                 if(file.exists() && file.length() > 0) {
-
-                    try {
-
-                        final FileInputStream fis = new FileInputStream(file);
-                        final StringBuilder output = new StringBuilder();
-                        final GZIPInputStream gStream = new GZIPInputStream(fis);
-                        final InputStreamReader reader = new InputStreamReader(gStream,
-                                StandardCharsets.UTF_8);
-                        final BufferedReader in = new BufferedReader(reader, 65536);
-
-                        String read;
-
-                        while((read = in.readLine()) != null) { output.append(read); }
-
-                        reader.close();
-                        in.close();
-                        gStream.close();
-                        fis.close();
-
-                        Objects.requireNonNull(MovieFactory.instance()).
-                                setOnMoviesAvailableListener(this);
-                        Objects.requireNonNull(MovieFactory.instance()).fetchMovies(output, silent);
-
-                    } catch(IOException ex) {
-                        Log.w(TAG, ex);
-                    }
-
+                    (new OfflineFetchTask(this, silent)).execute(file);
                 } else if(!silent) {
                     error(getString(R.string.not_connected));
                 } else Log.d(TAG, "NOT connected yet, hoping for first periodic fetch");
