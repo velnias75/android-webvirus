@@ -35,7 +35,6 @@ public final class CategoryTextView extends AppCompatTextView {
     private final Context ctx;
 
     public CategoryTextView(@NonNull Context ctx, AttributeSet atts) {
-
         super(ctx, atts);
         this.ctx = ctx;
     }

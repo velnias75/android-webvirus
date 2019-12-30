@@ -69,7 +69,7 @@ android {
         minSdkVersion 23
         targetSdkVersion 29
         versionCode code
-        versionName "0.0 (build: " + code + ")"
+        versionName "0.1 (build: " + (code-2870) + ")"
         signingConfig signingConfigs.debug
         resConfigs "de"
 
@@ -132,7 +132,7 @@ dependencies {
     implementation 'net.sourceforge.jregex:jregex:1.2_01'
     implementation 'androidx.room:room-runtime:2.2.3'
     annotationProcessor 'androidx.room:room-compiler:2.2.3'
-    api 'com.google.guava:guava:28.1-android'
+    api 'com.google.guava:guava:28.2-android'
     debugImplementation 'com.squareup.leakcanary:leakcanary-android-process:2.0'
     compileOnly 'com.github.spotbugs:spotbugs-annotations:4.0.0-beta4'
     spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.10.1'

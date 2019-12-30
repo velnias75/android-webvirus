@@ -22,11 +22,14 @@
 package de.rangun.webvirus.fragments;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,6 +82,8 @@ public final class MovieListFragment extends ListFragment {
 
         private final int pad2;
         private final int pad8;
+
+        private final boolean smallDisplay;
 
         final static class _fetchAll extends AsyncTask<Void, Void, List<Movie>> {
 
@@ -136,6 +141,12 @@ public final class MovieListFragment extends ListFragment {
 
             pad2 = (int)(2 * context.getResources().getDisplayMetrics().density + 0.5f);
             pad8 = (int)(8 * context.getResources().getDisplayMetrics().density + 0.5f);
+
+            final DisplayMetrics displayMetrics = new DisplayMetrics();
+            ((Activity)getContext()).getWindowManager().getDefaultDisplay().
+                    getMetrics(displayMetrics);
+
+            this.smallDisplay = displayMetrics.widthPixels <= 720;
         }
 
         @SuppressLint("SetTextI18n")
@@ -145,7 +156,6 @@ public final class MovieListFragment extends ListFragment {
 
             final MarkedMovie m = movies.get(position);
             final View v = super.getView(position, convertView, parent);
-
             final MarkerImageView iv = v.findViewById(R.id.icon);
 
             if(newMovies) {
@@ -162,6 +172,9 @@ public final class MovieListFragment extends ListFragment {
             tv.setText(MainActivity.makeIdString(m.m.get().id(), movieCount) + " – " +
                     m.m.get().title());
             tv.setTextColorByCategory(m.m.get().category());
+
+            if(smallDisplay)
+                tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14.0f);
 
             v.setBackgroundColor(c);
 

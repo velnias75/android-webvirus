@@ -21,6 +21,7 @@
 
 package de.rangun.webvirus.fragments;
 
+import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -28,6 +29,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -104,13 +107,32 @@ public final class MovieDetailsFragment extends Fragment
         final NetworkImageView cov = fragmentLayout.findViewById(R.id.cover);
         final Spinner mrk = fragmentLayout.findViewById(R.id.marker);
 
-        cov.setDefaultImageResId(R.drawable.nocover);
-        cov.setImageUrl(null, null);
-
         mrk.setAdapter(new MarkerSpinnerAdapter(Objects.requireNonNull(getContext()),
                 R.layout.marker_spinner_row, inflater));
 
         mrk.setSelection(1);
+
+        final DisplayMetrics displayMetrics = new DisplayMetrics();
+        ((Activity)getContext()).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+
+        if(displayMetrics.widthPixels <= 720) {
+
+            fragmentLayout.findViewById(R.id.openInDB).setVisibility(View.GONE);
+
+            ((TextView)fragmentLayout.findViewById(R.id.m_duration)).
+                    setTextSize(TypedValue.COMPLEX_UNIT_SP, 14.0f);
+            ((TextView)fragmentLayout.findViewById(R.id.m_disc)).
+                    setTextSize(TypedValue.COMPLEX_UNIT_SP, 14.0f);
+            ((TextView)fragmentLayout.findViewById(R.id.languages)).
+                    setTextSize(TypedValue.COMPLEX_UNIT_SP, 12.0f);
+            ((TextView)fragmentLayout.findViewById(R.id.filename)).
+                    setTextSize(TypedValue.COMPLEX_UNIT_SP, 12.0f);
+            ((TextView)fragmentLayout.findViewById(R.id.m_abstract)).
+                    setTextSize(TypedValue.COMPLEX_UNIT_SP, 12.0f);
+        }
+
+        cov.setDefaultImageResId(R.drawable.nocover);
+        cov.setImageUrl(null, null);
 
         return fragmentLayout;
     }
