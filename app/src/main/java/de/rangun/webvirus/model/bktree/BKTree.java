@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 by Heiko Schäfer <heiko@rangun.de>
+ * Copyright 2019-2020 by Heiko Schäfer <heiko@rangun.de>
  *
  *  This file is part of android-webvirus.
  *
@@ -16,7 +16,7 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with android-webvirus.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  Last modified 06.11.19 01:13 by heiko
+ *  Last modified 17.02.20 08:28 by heiko
  */
 
 package de.rangun.webvirus.model.bktree;
@@ -36,7 +36,9 @@ import static java.lang.Math.min;
 
 abstract class BKTree<T> implements Iterable<T> {
 
-    private final class _node<N> {
+    public interface INode<T> {}
+
+    private final class _node<N> implements INode<T>{
 
         private T item;
 
@@ -49,11 +51,15 @@ abstract class BKTree<T> implements Iterable<T> {
             return item;
         }
 
-        void addChild(int key, T item) {
+        _node<N> addChild(int key, T item) {
 
             if(children == null) children = new ArrayMap<>();
 
-            children.put(key, new _node<>(item));
+            final _node<N> nn = new _node<>(item);
+
+            children.put(key, nn);
+
+            return nn;
         }
 
         void replace(T newItem) { item = newItem; }
@@ -68,9 +74,6 @@ abstract class BKTree<T> implements Iterable<T> {
             return children == null ? new ArrayList<>() : new ArrayList<>(children.keySet());
         }
 
-        boolean containsKey(int key) {
-            return children != null && children.containsKey(key);
-        }
     }
 
     @Nullable
@@ -87,34 +90,22 @@ abstract class BKTree<T> implements Iterable<T> {
         return Objects.requireNonNull(_root).item();
     }
 
-    public final void add(@NonNull T item) {
+    public final INode<T> createNode(INode<T> p, int d, T item) {
 
         if(_root == null) {
             _root = new _node<>(item);
             ++size;
-            return;
+            return _root;
         }
 
-        _node<T> curNode = _root;
+        _node<T> parent = (_node<T>)p;
 
-        final char[] it = lowerCaseItem(item);
-
-        int dist =
-                damerauLevenshteinDistance(lowerCaseItem(curNode.item()), it);
-
-        while(curNode.containsKey(dist)) {
-
-            if(dist == 0) return;
-
-            curNode = curNode.get(dist);
-
-            dist = damerauLevenshteinDistance(lowerCaseItem(Objects.requireNonNull(curNode).item()),
-                    it);
+        if(parent != null) {
+            ++size;
+            return parent.addChild(d, item);
         }
 
-        curNode.addChild(dist, item);
-
-        ++size;
+        return null;
     }
 
     public final void replaceItem(T o, T n) { if(_root != null) visitNextNode(_root, o, n); }

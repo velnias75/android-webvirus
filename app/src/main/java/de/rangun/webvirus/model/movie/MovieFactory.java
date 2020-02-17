@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 by Heiko Schäfer <heiko@rangun.de>
+ * Copyright 2019-2020 by Heiko Schäfer <heiko@rangun.de>
  *
  *  This file is part of android-webvirus.
  *
@@ -16,7 +16,7 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with android-webvirus.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  Last modified 06.11.19 01:09 by heiko
+ *  Last modified 17.02.20 08:25 by heiko
  */
 
 package de.rangun.webvirus.model.movie;
@@ -31,7 +31,6 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -39,10 +38,12 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 
 import de.rangun.webvirus.model.bktree.MovieBKTree;
-import de.rangun.webvirus.net.GZipJsonArrayRequest;
+import de.rangun.webvirus.net.GZipJsonObjectRequest;
 
 public final class MovieFactory {
 
@@ -62,12 +63,42 @@ public final class MovieFactory {
         public Long lid = null;
     }
 
+    private final class _idCoverMapping implements Comparable<_idCoverMapping> {
+
+        final Long mid;
+        final Long oid;
+
+        @SuppressWarnings("unused")
+        private _idCoverMapping(Long mid, Long oid) {
+            this.mid = mid;
+            this.oid = oid;
+        }
+
+        @Override
+        public int compareTo(_idCoverMapping o) {
+            return mid.compareTo(o.mid);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+
+            if(obj == null) return false;
+            if(getClass() != obj.getClass()) return false;
+
+            final _idCoverMapping other = (_idCoverMapping)obj;
+            return Objects.equals(this.mid, other.mid);
+        }
+
+        @Override
+        public int hashCode() { return mid.hashCode(); }
+    }
+
     private static final String TAG = "MovieFactory";
 
     @Nullable
     private static MovieFactory _instance = null;
 
-    private final static String URL = "https://rangun.de/db/movies-json.php?order_by=ltitle";
+    private final static String URL = "https://rangun.de/db/bktree-json.php?order_by=ltitle";
     //private final static String URL = "http://192.168.1.156/~heiko/db/movies-json.php";
 
     @Nullable
@@ -90,7 +121,7 @@ public final class MovieFactory {
 
             final CallbackTransfer callbackTransfer = new CallbackTransfer();
 
-            parseJSONArray(callbackTransfer, new JSONArray(new String(data.toString().
+            parseJSONObject(callbackTransfer, new JSONObject(new String(data.toString().
                     getBytes(StandardCharsets.UTF_8))));
 
             return callbackTransfer;
@@ -112,8 +143,8 @@ public final class MovieFactory {
             final CallbackTransfer callbackTransfer = new CallbackTransfer();
 
             //noinspection unused
-            GZipJsonArrayRequest<CallbackTransfer> jsonArrayRequest =
-                    new GZipJsonArrayRequest<CallbackTransfer>(Request.Method.GET, URL,
+            GZipJsonObjectRequest<CallbackTransfer> jsonArrayRequest =
+                    new GZipJsonObjectRequest<CallbackTransfer>(Request.Method.GET, URL,
                     null, response -> {
 
                 if (callbackTransfer.error == null) {
@@ -132,8 +163,8 @@ public final class MovieFactory {
             }, callbackTransfer, gzipOut) {
 
                 @Override
-                protected JSONArray customParse(JSONArray array, CallbackTransfer userParam) {
-                    return parseJSONArray(callbackTransfer, array);
+                protected JSONObject customParse(JSONObject jsonObject, CallbackTransfer userParam) {
+                    return parseJSONObject(callbackTransfer, jsonObject);
                 }
             };
 
@@ -149,70 +180,23 @@ public final class MovieFactory {
         } else Log.d(TAG, "NO IMoviesAvailableListener registered");
     }
 
-    private JSONArray parseJSONArray(@NonNull CallbackTransfer callbackTransfer,
-                                     @NonNull JSONArray array) {
-
-        final class _idCoverMapping implements Comparable<_idCoverMapping> {
-
-            final Long mid;
-            final Long oid;
-
-            @SuppressWarnings("unused")
-            private _idCoverMapping(Long mid, Long oid) {
-                this.mid = mid;
-                this.oid = oid;
-            }
-
-            @Override
-            public int compareTo(_idCoverMapping o) {
-                return mid.compareTo(o.mid);
-            }
-
-            @Override
-            public boolean equals(Object obj) {
-
-                if(obj == null) return false;
-                if(getClass() != obj.getClass()) return false;
-
-                final _idCoverMapping other = (_idCoverMapping)obj;
-                return Objects.equals(this.mid, other.mid);
-            }
-
-            @Override
-            public int hashCode() { return mid.hashCode(); }
-        }
+    private JSONObject parseJSONObject(@NonNull CallbackTransfer callbackTransfer,
+                                      @NonNull JSONObject jsonObject) {
 
         callbackTransfer.movies = new MovieBKTree();
-        final ArrayList<_idCoverMapping> ids = new ArrayList<>(array.length());
 
-        for(int i = 0; i < array.length(); ++i) {
+        ArrayList<_idCoverMapping> ids;
 
-            try {
+        try {
+            ids = new ArrayList<>(jsonObject.getInt("size"));
+        } catch(JSONException ex) {
+            ids = new ArrayList<>();
+        }
 
-                final JSONObject item = array.getJSONObject(i);
-
-                final long mid = item.getLong("id");
-                final Long oid = item.isNull("oid") ? null :
-                        item.getLong("oid");
-
-                callbackTransfer.movies.add(new MovieProxy(cb,
-                        i, mid,
-                        item.getString("title"),
-                        item.getLong("dur_sec"),
-                        item.getString("languages"),
-                        item.getString("disc"),
-                        item.getInt("category"),
-                        !item.isNull("filename") ?
-                                item.getString("filename") : null,
-                        item.getBoolean("omu"),
-                        item.getBoolean("top250"),
-                        oid));
-
-                ids.add(new _idCoverMapping(mid, oid));
-
-            } catch(JSONException ex) {
-                callbackTransfer.error = "JSONException: " + ex.getMessage();
-            }
+        try {
+            build(callbackTransfer, jsonObject.getJSONObject("root"), ids);
+        } catch(JSONException ex) {
+            callbackTransfer.error = "JSONException: " + ex.getMessage();
         }
 
         Collections.sort(ids);
@@ -227,6 +211,55 @@ public final class MovieFactory {
             }
         }
 
-        return array;
+        return jsonObject;
+    }
+
+    private void build(@NonNull CallbackTransfer callbackTransfer,
+                       @NonNull JSONObject jsonObject,
+                       @NonNull List<_idCoverMapping> ids) throws JSONException {
+        buildRecursive(null, 0, callbackTransfer, jsonObject, ids);
+    }
+
+    private void buildRecursive(MovieBKTree.INode<IMovie> p, int d,
+                                @NonNull CallbackTransfer callbackTransfer,
+                                @NonNull JSONObject jsonObject,
+                                @NonNull List<_idCoverMapping> ids) throws JSONException {
+
+        final JSONObject item = jsonObject.getJSONObject("item");
+
+        final long mid = item.getLong("id");
+        final Long oid = item.isNull("oid") ? null : item.getLong("oid");
+
+        final MovieBKTree.INode<IMovie> parent =
+                callbackTransfer.movies.createNode(p, d, new MovieProxy(cb,
+                        item.getInt("pos"),
+                        mid,
+                        item.getString("title"),
+                        item.getLong("dur_sec"),
+                        item.getString("languages"),
+                        item.getString("disc"),
+                        item.getInt("category"),
+                        !item.isNull("filename") ? item.getString("filename") : null,
+                        item.getBoolean("omu"),
+                        item.getBoolean("top250"),
+                        oid));
+
+        ids.add(new _idCoverMapping(mid, oid));
+
+        if(!jsonObject.isNull("children")) {
+
+            final JSONObject children = jsonObject.getJSONObject("children");
+            final Iterator<String> keys = children.keys();
+
+            while(keys.hasNext()) {
+
+                String key = keys.next();
+
+                if(children.get(key) instanceof JSONObject) {
+                    buildRecursive(parent, Integer.parseInt(key), callbackTransfer,
+                            (JSONObject)children.get(key), ids);
+                }
+            }
+        }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 by Heiko Schäfer <heiko@rangun.de>
+ * Copyright 2019-2020 by Heiko Schäfer <heiko@rangun.de>
  *
  *  This file is part of android-webvirus.
  *
@@ -16,7 +16,7 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with android-webvirus.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  Last modified 02.10.19 13:57 by heiko
+ *  Last modified 13.12.19 06:47 by heiko
  */
 
 package de.rangun.webvirus;
@@ -273,9 +273,20 @@ public final class MovieFetcherService extends Service
 
             final NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
 
+            final File staleFile = new File(getExternalFilesDir(null),
+                    "schrottfilme.gz");
+
+            if(staleFile.exists()) {
+                if(staleFile.delete()) {
+                    Log.d(TAG,"file deleted: " + staleFile.getAbsolutePath());
+                } else {
+                    Log.d(TAG,"file NOT deleted: " + staleFile.getAbsolutePath());
+                }
+            }
+
             FileOutputStream fos = null;
             final File file = new File(getExternalFilesDir(null),
-                    "schrottfilme.gz");
+                    "schrottfilme.json.gz");
 
             if(activeNetwork != null && activeNetwork.isConnected()) {
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 by Heiko Schäfer <heiko@rangun.de>
+ * Copyright 2019-2020 by Heiko Schäfer <heiko@rangun.de>
  *
  *  This file is part of android-webvirus.
  *
@@ -16,7 +16,7 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with android-webvirus.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  Last modified 02.10.19 11:15 by heiko
+ *  Last modified 07.10.19 04:37 by heiko
  */
 
 package de.rangun.webvirus.fragments;

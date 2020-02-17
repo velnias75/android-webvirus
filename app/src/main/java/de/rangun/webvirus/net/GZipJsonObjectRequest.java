@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 by Heiko Schäfer <heiko@rangun.de>
+ * Copyright 2019-2020 by Heiko Schäfer <heiko@rangun.de>
  *
  *  This file is part of android-webvirus.
  *
@@ -16,7 +16,7 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with android-webvirus.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  Last modified 06.10.19 08:07 by heiko
+ *  Last modified 17.02.20 06:21 by heiko
  */
 
 /* Based on: https://gist.github.com/premnirmal/8526542 */
@@ -33,10 +33,10 @@ import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Response;
 import com.android.volley.toolbox.HttpHeaderParser;
-import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 
-import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -49,7 +49,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
-public abstract class GZipJsonArrayRequest<T> extends JsonArrayRequest {
+public abstract class GZipJsonObjectRequest<T> extends JsonObjectRequest {
 
     private final T userParam;
     private final OutputStream gzipOut;
@@ -70,12 +70,12 @@ public abstract class GZipJsonArrayRequest<T> extends JsonArrayRequest {
             try {
                 gzipOut.write(response.data, 0, response.data.length);
             } catch(IOException ex) {
-                Log.w("GZipJsonArrayRequest", ex);
+                Log.w("GZipJsonObjectRequest", ex);
             } finally {
                 try {
                     gzipOut.close();
                 } catch(IOException ex) {
-                    Log.w("GZipJsonArrayRequest", ex);
+                    Log.w("GZipJsonObjectRequest", ex);
                 }
             }
 
@@ -83,10 +83,10 @@ public abstract class GZipJsonArrayRequest<T> extends JsonArrayRequest {
         }
     }
 
-    public GZipJsonArrayRequest(int method, String url, @Nullable JSONArray jsonRequest,
-                                Response.Listener<JSONArray> listener,
-                                @Nullable Response.ErrorListener errorListener,
-                                T userParam, OutputStream gzipOut) {
+    public GZipJsonObjectRequest(int method, String url, @Nullable JSONObject jsonRequest,
+                                 Response.Listener<JSONObject> listener,
+                                 @Nullable Response.ErrorListener errorListener,
+                                 T userParam, OutputStream gzipOut) {
         super(method, url, jsonRequest, listener, errorListener);
         this.userParam = userParam;
         this.gzipOut = gzipOut;
@@ -100,11 +100,11 @@ public abstract class GZipJsonArrayRequest<T> extends JsonArrayRequest {
     }
 
     @Override
-    protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
+    protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
 
         if(!"gzip".equals(response.headers.get("Content-Encoding"))) {
 
-            final Response<JSONArray> myResponse = super.parseNetworkResponse(response);
+            final Response<JSONObject> myResponse = super.parseNetworkResponse(response);
 
             if(myResponse.isSuccess()) {
                 return Response.success(customParse(myResponse.result, userParam),
@@ -141,7 +141,7 @@ public abstract class GZipJsonArrayRequest<T> extends JsonArrayRequest {
         try {
 
             return Response.
-                    success(customParse(new JSONArray(new String(output.toString().
+                    success(customParse(new JSONObject(new String(output.toString().
                                     getBytes(StandardCharsets.UTF_8),
                                     HttpHeaderParser.parseCharset(response.headers,
                                             PROTOCOL_CHARSET))), userParam),
@@ -153,5 +153,5 @@ public abstract class GZipJsonArrayRequest<T> extends JsonArrayRequest {
     }
 
     @SuppressWarnings({"unused", "EmptyMethod"})
-    protected abstract JSONArray customParse(JSONArray array, T userParam);
+    protected abstract JSONObject customParse(JSONObject jsonObject, T userParam);
 }
