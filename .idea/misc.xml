@@ -13,6 +13,11 @@
     <pattern value="de.rangun.webvirus.model.movie.Movie" method="filename" />
     <pattern value="de.rangun.webvirus.model.movie.Movie" />
     <pattern value="de.rangun.webvirus.model.movie.MovieFactory" method="fetchMovies" />
+    <pattern value="de.rangun.webvirus.model.db.MovieDao" method="fetchAll" />
+    <pattern value="de.rangun.webvirus.model.db.MovieDao" method="findById" />
+    <pattern value="de.rangun.webvirus.model.db.MovieDao" method="insert" />
+    <pattern value="de.rangun.webvirus.model.db.MovieDao" />
+    <pattern value="de.rangun.webvirus.model.db.MovieDao" method="update" />
   </component>
   <component name="NullableNotNullManager">
     <option name="myDefaultNullable" value="androidx.annotation.Nullable" />

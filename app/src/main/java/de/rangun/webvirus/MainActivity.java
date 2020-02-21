@@ -199,8 +199,8 @@ public final class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
 
         final TextView tv = findViewById(R.id.copyright);
-        tv.setText(getString(R.string.copyright, BuildConfig.VERSION_NAME,
-                !BuildConfig.DEBUG ? "" : " [Intelligenzmangel (debug)]"));
+        tv.setText(getString(R.string.copyright, BuildConfig.COPYRIGHT_YEAR,
+                BuildConfig.VERSION_NAME, !BuildConfig.DEBUG ? "" : " [Intelligenzmangel (debug)]"));
 
         onConfigurationChanged(getResources().getConfiguration());
 

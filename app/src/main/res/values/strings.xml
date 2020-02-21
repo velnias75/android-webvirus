@@ -24,7 +24,7 @@
     <string name="fetchURLBase" tools:keep="@string/fetchURLBase">https://rangun.de/db/</string>
     <string name="title">Heikos Schrott- &amp; Rentnerfilme</string>
     <string name="version">✋ Die Zombieboxversion ✋</string>
-    <string name="copyright">© 2019 by Heiko Schäfer – v%1$s%2$s</string>
+    <string name="copyright">© %1$s by Heiko Schäfer – v%2$s%3$s</string>
     <string name="loading_teaser">Eine hirnlose App, exakt – ohne jegliche Hirnleistung – ertippt und erklickt, wie der Prof es vorgelesen hatte!</string>
     <string name="loading_text">Beweise das Halteproblem. Bitte warten …</string>
     <string name="m.title">Movie title here</string>

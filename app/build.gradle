@@ -85,7 +85,9 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
+
         release {
+            buildConfigField "String", "COPYRIGHT_YEAR", "\"" + (new Date().format('yyyy')) + "\""
             debuggable false
             minifyEnabled true
             shrinkResources true
@@ -94,6 +96,7 @@ android {
             signingConfig signingConfigs.debug
         }
         debug {
+            buildConfigField "String", "COPYRIGHT_YEAR", "\"" + (new Date().format('yyyy')) + "\""
             debuggable true
         }
     }
