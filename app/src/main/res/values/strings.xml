@@ -33,8 +33,8 @@
     <string name="cover.desc">TODO</string>
     <string name="m.duration">Länge</string>
     <string name="top250.desc">TODO</string>
-    <string name="movie_abstract">OMDB Kurzbeschreibung</string>
-    <string name="fetch_abstract">"Hole Kurzbeschreibung von OMDB …"</string>
+    <string name="movie_abstract">TMDb Kurzbeschreibung</string>
+    <string name="fetch_abstract">"Hole Kurzbeschreibung von TMDb …"</string>
     <string name="no_abstract">Aufgrund fehlender Intelligenz kann Webvirus keine Kurzbeschreibung für Dich erfinden.</string>
     <string name="searchboxhint">Suchbegriff(e) oder /regulärer Ausdruck/</string>
     <string name="notfound"><b>Du kannst nur nach Schrott- oder Rentnerfilmen suchen. Somit habe ich Deinen hippen Film nicht gefunden.</b></string>

@@ -32,6 +32,9 @@ import androidx.annotation.Nullable;
 import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 import de.rangun.webvirus.R;
 
 final class Movie extends AbstractMovie {
@@ -63,24 +66,31 @@ final class Movie extends AbstractMovie {
             final ConnectivityManager cm =
                     (ConnectivityManager)ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
 
-            Long oid = oid();
-
             if(cm != null) {
 
                 final NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
 
-                if (oid != null && (activeNetwork != null && activeNetwork.isConnected())) {
+                if (activeNetwork != null && activeNetwork.isConnected()) {
 
-                    cb.fetchDescription(new StringRequest(Request.Method.GET,
-                            "https://rangun.de/db/omdb.php?cover-oid=" + oid +
-                                    "&abstract=true",
-                            response -> {
-                                dsc = response;
-                                cb.descriptionAvailable(dsc);
-                            }, error -> Log.d("Movie",
-                            "(description): error:" + error.getMessage())));
+                    try {
 
-                    return ctx.getResources().getString(R.string.fetch_abstract);
+                        cb.fetchDescription(new StringRequest(Request.Method.GET,
+                                "https://rangun.de/db/omdb.php?cover-oid=" +
+                                        "&abstract=true" +
+                                        (tmdb_id() != null ? ("&tmdb_type=" + tmdb_type() +
+                                        "&tmdb_id=" + tmdb_id()) : "&fallback=" +
+                                        URLEncoder.encode(title(), "UTF-8")),
+                                response -> {
+                                    dsc = response;
+                                    cb.descriptionAvailable(dsc);
+                                }, error -> Log.d("Movie",
+                                "(description): error:" + error.getMessage())));
+
+                        return ctx.getResources().getString(R.string.fetch_abstract);
+
+                    } catch(UnsupportedEncodingException ex) {
+                        return ctx.getResources().getString(R.string.no_abstract);
+                    }
 
                 } else dsc = ctx.getResources().getString(R.string.no_abstract);
             }

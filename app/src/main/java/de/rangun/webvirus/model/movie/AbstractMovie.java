@@ -55,9 +55,16 @@ abstract class AbstractMovie implements IMovie {
     @Nullable
     private final Long oid;
 
+    @NonNull
+    private final String tmdb_type;
+
+    @Nullable
+    private final Long tmdb_id;
+
     private AbstractMovie(int pos, long id, @NonNull String title, long dur_sec,
                           @NonNull CanonicalStringList languages, @NonNull String disc,
-                          int category, boolean omu, boolean top250, @Nullable Long oid)
+                          int category, boolean omu, boolean top250, @Nullable Long oid,
+                          @NonNull String tmdb_type, @Nullable Long tmdb_id)
             throws IllegalArgumentException {
 
         this.pos = pos;
@@ -69,26 +76,29 @@ abstract class AbstractMovie implements IMovie {
         this.omu = omu;
         this.top250 = top250;
         this.oid = oid;
+        this.tmdb_type = tmdb_type;
+        this.tmdb_id = tmdb_id;
         this.discId = getIdForDisc(disc);
 
         this.normalizedTitle = NormalizedTitleFactory.instance().createNormalizedTitle(this);
     }
 
     AbstractMovie(int pos, long id, @NonNull String title, long dur_sec, @NonNull String languages,
-                  String disc, int category, boolean omu, boolean top250, Long oid)
+                  String disc, int category, boolean omu, boolean top250, Long oid,
+                  @NonNull String tmdb_type, @Nullable Long tmdb_id)
             throws IllegalArgumentException {
         this(pos, id, title, dur_sec, new CanonicalStringList(languages), disc, category, omu,
-                top250, oid);
+                top250, oid, tmdb_type, tmdb_id);
     }
 
     AbstractMovie(@NonNull String title) throws IllegalArgumentException {
         this(-1, 0L, title, 0L, new CanonicalStringList(), "", -1,
-                false, false, null);
+                false, false, null, "movie", null);
     }
 
     AbstractMovie(@NonNull IMovie m) throws IllegalArgumentException {
         this(m.pos(), m.id(), m.title(), m.duration(), new CanonicalStringList(m.languages()),
-                m.disc(), m.category(), m.omu(), m.top250(), m.oid());
+                m.disc(), m.category(), m.omu(), m.top250(), m.oid(), m.tmdb_type(), m.tmdb_id());
     }
 
     @Override
@@ -97,6 +107,14 @@ abstract class AbstractMovie implements IMovie {
     @Nullable
     @Override
     public Long oid() { return oid; }
+
+    @NonNull
+    @Override
+    public String tmdb_type() { return tmdb_type; }
+
+    @Nullable
+    @Override
+    public Long tmdb_id() { return tmdb_id; }
 
     @NonNull
     @Override

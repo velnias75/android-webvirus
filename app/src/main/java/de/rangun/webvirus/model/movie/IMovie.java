@@ -61,6 +61,12 @@ public interface IMovie extends Comparable<IMovie> {
     @Nullable
     Long oid();
 
+    @NonNull
+    String tmdb_type();
+
+    @Nullable
+    Long tmdb_id();
+
     @Nullable
     String description(Context ctx);
 

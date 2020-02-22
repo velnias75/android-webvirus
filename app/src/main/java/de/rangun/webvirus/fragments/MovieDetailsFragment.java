@@ -47,6 +47,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Objects;
 
 import javax.annotation.Nonnull;
@@ -220,10 +222,13 @@ public final class MovieDetailsFragment extends Fragment
             }
         });
 
-        if (m.oid() != null) {
-            cov.setImageUrl("https://rangun.de/db/omdb.php?cover-oid=" + m.oid() +
-                            (m.top250() ? "&top250=true" : ""), new ImageLoader(queue, bmc));
-        } else {
+        try {
+            cov.setImageUrl("https://rangun.de/db/omdb.php?cover-oid=" +
+                    (m.tmdb_id() != null ? ("&tmdb_type=" + m.tmdb_type() +
+                            "&tmdb_id=" + m.tmdb_id()) : "&fallback=" +
+                            URLEncoder.encode(m.title(), "UTF-8")) +
+                    (m.top250() ? "&top250=true" : ""), new ImageLoader(queue, bmc));
+        } catch(UnsupportedEncodingException e) {
             cov.setImageUrl(null, null);
         }
     }

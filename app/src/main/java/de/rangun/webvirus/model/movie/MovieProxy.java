@@ -48,10 +48,12 @@ final class MovieProxy extends AbstractMovie {
 
     public MovieProxy(MovieFactory.IMoviesAvailableListener cb, int pos, long id, String title,
                long dur_sec, @NonNull String languages, String disc, int category,
-               @Nullable String filename, boolean omu, boolean top250, Long oid)
+               @Nullable String filename, boolean omu, boolean top250, Long oid,
+                      @NonNull String tmdb_type, @Nullable Long tmdb_id)
             throws IllegalArgumentException {
 
-        super(pos, id, title, dur_sec, languages, disc, category, omu, top250, oid);
+        super(pos, id, title, dur_sec, languages, disc, category, omu, top250, oid,
+                tmdb_type, tmdb_id);
 
         this.cb = cb;
         this.observer = cb;

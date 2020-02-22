@@ -229,6 +229,7 @@ public final class MovieFactory {
 
         final long mid = item.getLong("id");
         final Long oid = item.isNull("oid") ? null : item.getLong("oid");
+        final Long tid = item.isNull("tmdb_id") ? null : item.getLong("tmdb_id");
 
         final MovieBKTree.INode<IMovie> parent =
                 callbackTransfer.movies.createNode(p, d, new MovieProxy(cb,
@@ -242,7 +243,9 @@ public final class MovieFactory {
                         !item.isNull("filename") ? item.getString("filename") : null,
                         item.getBoolean("omu"),
                         item.getBoolean("top250"),
-                        oid));
+                        oid,
+                        item.getString("tmdb_type"),
+                        tid));
 
         ids.add(new _idCoverMapping(mid, oid));
 

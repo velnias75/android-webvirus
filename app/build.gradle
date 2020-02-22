@@ -63,13 +63,14 @@ android {
         }
     }
     compileSdkVersion 29
+    //noinspection GradleDependency
     buildToolsVersion "29.0.3"
     defaultConfig {
         applicationId "de.rangun.webvirus"
         minSdkVersion 23
         targetSdkVersion 29
         versionCode code
-        versionName "0.2 (build: " + (code-2990) + ")"
+        versionName "0.3 (build: " + (code-2990) + ")"
         signingConfig signingConfigs.debug
         resConfigs "de"
 
@@ -133,8 +134,8 @@ dependencies {
     implementation 'com.android.support:design:28.0.0'
     implementation 'com.takisoft.fix:preference-v7:28.0.0.0'
     implementation 'net.sourceforge.jregex:jregex:1.2_01'
-    implementation 'androidx.room:room-runtime:2.2.3'
-    annotationProcessor 'androidx.room:room-compiler:2.2.3'
+    implementation 'androidx.room:room-runtime:2.2.4'
+    annotationProcessor 'androidx.room:room-compiler:2.2.4'
     api 'com.google.guava:guava:28.2-android'
     debugImplementation 'com.squareup.leakcanary:leakcanary-android-process:2.2'
     compileOnly 'com.github.spotbugs:spotbugs-annotations:4.0.0'
