@@ -213,7 +213,7 @@ public final class MainActivity extends AppCompatActivity implements
         toaster = new Toaster(this);
 
         db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class,
-                "movies-db").build();
+                "movies-db").addMigrations(AppDatabase.MIGRATION_1_2).build();
 
         pager = findViewById(R.id.pager);
 
@@ -458,7 +458,7 @@ public final class MainActivity extends AppCompatActivity implements
         currentId = m.id();
 
         if(mdf != null && mBound) mdf.setContents(m, mfs.getQueue(),
-                Objects.requireNonNull(movies).size());
+                Objects.requireNonNull(movies).size(), this);
 
         if(sbf != null) sbf.setText(Objects.requireNonNull(m.title()));
     }
@@ -602,7 +602,7 @@ public final class MainActivity extends AppCompatActivity implements
         setStatus(txt, Color.GRAY, NOTIFICATION.NONE);
     }
 
-    private void setStatus(String txt, @NonNull NOTIFICATION notification) {
+    private void setStatus(String txt, @SuppressWarnings("SameParameterValue") @NonNull NOTIFICATION notification) {
         setStatus(txt, Color.GRAY, notification);
     }
 

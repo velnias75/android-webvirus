@@ -23,9 +23,19 @@ package de.rangun.webvirus.model.db;
 
 import androidx.room.Database;
 import androidx.room.RoomDatabase;
+import androidx.room.migration.Migration;
+import androidx.sqlite.db.SupportSQLiteDatabase;
 
-@Database(entities = {Movie.class}, version = 1)
+@Database(entities = {Movie.class}, version = 2)
 public abstract class AppDatabase extends RoomDatabase {
+
+    public static final Migration MIGRATION_1_2 = new Migration(1, 2) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE movies "
+                    + " ADD COLUMN description VARCHAR DEFAULT null");
+        }
+    };
 
     public abstract MovieDao moviesDao();
 }

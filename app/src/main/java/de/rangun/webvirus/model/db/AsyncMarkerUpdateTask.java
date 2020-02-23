@@ -47,7 +47,7 @@ public final class AsyncMarkerUpdateTask<R extends AsyncAppDatabaseTask.IMovieRe
             }
 
         } else {
-            m = new Movie(id, marker);
+            m = new Movie(id, null, marker);
             db.moviesDao().insert(m);
         }
 

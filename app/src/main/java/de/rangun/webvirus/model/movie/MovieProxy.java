@@ -95,13 +95,13 @@ final class MovieProxy extends AbstractMovie {
 
     @Nullable
     @Override
-    public String description(@NonNull Context ctx) {
+    public String description(@NonNull Context ctx, MovieFactory.IMoviesAvailableListener l) {
 
         if(movie == null || movie.get() == null) {
 
             movie = new WeakReference<>(new Movie(this, filename(ctx), cb));
 
-            final String dsc = movie.get().description(ctx);
+            final String dsc = movie.get().description(ctx, l);
 
             if(observer != null) observer.unproxied(this, movie.get());
 

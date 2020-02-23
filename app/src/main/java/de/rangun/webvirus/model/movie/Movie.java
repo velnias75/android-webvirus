@@ -28,6 +28,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.room.Room;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
@@ -36,12 +37,16 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 import de.rangun.webvirus.R;
+import de.rangun.webvirus.model.db.AppDatabase;
+import de.rangun.webvirus.model.db.AsyncDescriptionUpdateTask;
+import de.rangun.webvirus.model.db.AsyncMovieFetcherTask;
 
-final class Movie extends AbstractMovie {
+final class Movie extends AbstractMovie implements AsyncMovieFetcherTask.IMovieReceiver {
 
     @NonNull
-    private final MovieFactory.IMoviesAvailableListener cb;
+    private MovieFactory.IMoviesAvailableListener cb;
     private final IMovieFilename fn;
+    private String no_abstract;
 
     @Nullable
     private String dsc = null;
@@ -59,12 +64,17 @@ final class Movie extends AbstractMovie {
     public String filename(@NonNull Context ctx) { return fn.fileName(); }
 
     @Override
-    public String description(@NonNull Context ctx) {
+    public String description(@NonNull Context ctx, MovieFactory.IMoviesAvailableListener l) {
 
         if(dsc == null) {
 
+            no_abstract = ctx.getResources().getString(R.string.no_abstract);;
+
             final ConnectivityManager cm =
                     (ConnectivityManager)ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+            final AppDatabase db = Room.databaseBuilder(ctx, AppDatabase.class,
+                    "movies-db").build();
 
             if(cm != null) {
 
@@ -83,6 +93,12 @@ final class Movie extends AbstractMovie {
                                 response -> {
                                     dsc = response;
                                     cb.descriptionAvailable(dsc);
+
+                                    (new AsyncDescriptionUpdateTask(this,
+                                            db, id(), dsc)).execute();
+
+                                    int gaga = 1;
+
                                 }, error -> Log.d("Movie",
                                 "(description): error:" + error.getMessage())));
 
@@ -92,10 +108,20 @@ final class Movie extends AbstractMovie {
                         return ctx.getResources().getString(R.string.no_abstract);
                     }
 
-                } else dsc = ctx.getResources().getString(R.string.no_abstract);
+                } else {
+                    dsc = ctx.getResources().getString(R.string.no_abstract);
+                    if(cb == null) cb = l;
+                    (new AsyncMovieFetcherTask<>(this, db, id())).execute();
+                }
             }
         }
 
         return dsc;
+    }
+
+    @Override
+    public void onMovieReceived(@Nullable de.rangun.webvirus.model.db.Movie movie) {
+        dsc = movie.dsc == null ? no_abstract : movie.dsc;
+        if(cb != null) cb.descriptionAvailable(dsc);
     }
 }

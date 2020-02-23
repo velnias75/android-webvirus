@@ -68,7 +68,7 @@ public interface IMovie extends Comparable<IMovie> {
     Long tmdb_id();
 
     @Nullable
-    String description(Context ctx);
+    String description(Context ctx, MovieFactory.IMoviesAvailableListener l);
 
     boolean isDummy();
 

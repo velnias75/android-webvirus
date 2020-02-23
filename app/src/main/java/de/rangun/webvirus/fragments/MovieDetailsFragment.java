@@ -61,6 +61,7 @@ import de.rangun.webvirus.model.db.AsyncMarkerUpdateTask;
 import de.rangun.webvirus.model.db.AsyncMovieFetcherTask;
 import de.rangun.webvirus.model.db.Movie;
 import de.rangun.webvirus.model.movie.IMovie;
+import de.rangun.webvirus.model.movie.MovieFactory;
 import de.rangun.webvirus.widgets.CategoryTextView;
 
 public final class MovieDetailsFragment extends Fragment
@@ -152,7 +153,8 @@ public final class MovieDetailsFragment extends Fragment
         if(v != null) v.setVisibility(visibility);
     }
 
-    public final void setContents(@NonNull IMovie m, RequestQueue queue, int movieCount) {
+    public final void setContents(@NonNull IMovie m, RequestQueue queue, int movieCount,
+        MovieFactory.IMoviesAvailableListener cb) {
 
         (new AsyncMovieFetcherTask<>(this, db, m.id())).execute();
 
@@ -182,7 +184,7 @@ public final class MovieDetailsFragment extends Fragment
         lan.setText(sb.toString().substring(0, sb.toString().length() - 2));
         fin.setText(m.filename(getContext()));
         cat.setCategoryText(m.category());
-        abs.setText(m.description(getContext()));
+        abs.setText(m.description(getContext(), cb));
 
         mrk.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 

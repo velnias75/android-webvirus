@@ -23,10 +23,11 @@ package de.rangun.webvirus.model.db;
 
 import android.os.AsyncTask;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import java.lang.ref.WeakReference;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 abstract class AsyncAppDatabaseTask<R extends AsyncAppDatabaseTask.IMovieReceiver>
         extends AsyncTask<Object, Void, Movie> {
@@ -35,15 +36,15 @@ abstract class AsyncAppDatabaseTask<R extends AsyncAppDatabaseTask.IMovieReceive
         void onMovieReceived(@Nullable Movie movie);
     }
 
-    @Nonnull
+    @NonNull
     private final WeakReference<R> weakReceiver;
 
-    @Nonnull
+    @NonNull
     final AppDatabase db;
 
     final long id;
 
-    AsyncAppDatabaseTask(@Nonnull R receiver, @Nonnull AppDatabase db, long id) {
+    AsyncAppDatabaseTask(@NonNull R receiver, @NonNull AppDatabase db, long id) {
 
         weakReceiver = new WeakReference<>(receiver);
         this.db = db;

@@ -40,7 +40,7 @@ public final class DummyMovie extends AbstractMovie {
 
     @NonNull
     @Override
-    public String description(@NonNull Context ctx) {
+    public String description(@NonNull Context ctx, MovieFactory.IMoviesAvailableListener l) {
         return DUMMY;
     }
 }
