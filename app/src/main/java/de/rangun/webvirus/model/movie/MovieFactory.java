@@ -66,13 +66,17 @@ public final class MovieFactory {
     private final class _idCoverMapping implements Comparable<_idCoverMapping> {
 
         final Long mid;
-        final Long oid;
+        private final Long oid;
+        private final Long tid;
 
         @SuppressWarnings("unused")
-        private _idCoverMapping(Long mid, Long oid) {
+        private _idCoverMapping(Long mid, Long oid, Long tid) {
             this.mid = mid;
             this.oid = oid;
+            this.tid = tid;
         }
+
+        public Long id() { return tid != null ? tid : oid; }
 
         @Override
         public int compareTo(_idCoverMapping o) {
@@ -205,7 +209,7 @@ public final class MovieFactory {
 
             final _idCoverMapping icm = ids.get(i);
 
-            if (icm.oid != null) {
+            if (icm.id() != null) {
                 callbackTransfer.lid = icm.mid;
                 break;
             }
@@ -247,7 +251,7 @@ public final class MovieFactory {
                         item.getString("tmdb_type"),
                         tid));
 
-        ids.add(new _idCoverMapping(mid, oid));
+        ids.add(new _idCoverMapping(mid, oid, tid));
 
         if(!jsonObject.isNull("children")) {
 

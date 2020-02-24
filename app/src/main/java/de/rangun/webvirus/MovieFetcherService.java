@@ -340,14 +340,15 @@ public final class MovieFetcherService extends Service
 
         if(movies.size() > lastMovieCount) {
 
-            final Long oid = Objects.requireNonNull(movies.getByMovieId(latestCoverId)).oid();
+            final Long tid = Objects.requireNonNull(movies.getByMovieId(latestCoverId)).tmdb_id();
+            final String ttp = Objects.requireNonNull(movies.getByMovieId(latestCoverId)).tmdb_type();
             final int lmc = movies.size() - lastMovieCount;
 
             lastMovieCount = movies.size();
 
-            if(oid != null) {
+            if(tid != null) {
                 Objects.requireNonNull(getQueue()).add(new ImageRequest(
-                        "https://rangun.de/db/omdb.php?cover-oid=" + oid,
+                        "https://rangun.de/db/omdb.php?cover-oid=&tmdb_type=" + ttp + "&tmdb_id=" + tid,
                         bitmap -> notifyInternal(getString(R.string.new_movies,
                                 lmc),
                                 NOTIFICATION.NEW,
