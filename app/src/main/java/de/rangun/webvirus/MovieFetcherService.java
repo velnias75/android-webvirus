@@ -70,6 +70,7 @@ public final class MovieFetcherService extends Service
         implements MovieFactory.IMoviesAvailableListener {
 
     private static final String TAG = "MovieFetcherService";
+    private static final String OFFLINE_FILENAME = "schrottfilme.json.gz";
 
     private static final String CHANNEL_DEFAULT = "de.rangun.webvirus.notifications.default";
     private static final String CHANNEL_HIGH = "de.rangun.webvirus.notifications.high";
@@ -272,7 +273,6 @@ public final class MovieFetcherService extends Service
         if(cm != null) {
 
             final NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-
             final File staleFile = new File(getExternalFilesDir(null),
                     "schrottfilme.gz");
 
@@ -285,8 +285,7 @@ public final class MovieFetcherService extends Service
             }
 
             FileOutputStream fos = null;
-            final File file = new File(getExternalFilesDir(null),
-                    "schrottfilme.json.gz");
+            final File file = new File(getExternalFilesDir(null), OFFLINE_FILENAME);
 
             if(activeNetwork != null && activeNetwork.isConnected()) {
 

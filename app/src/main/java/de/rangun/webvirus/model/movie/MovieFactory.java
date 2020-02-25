@@ -63,7 +63,7 @@ public final class MovieFactory {
         public Long lid = null;
     }
 
-    private final class _idCoverMapping implements Comparable<_idCoverMapping> {
+    private static final class _idCoverMapping implements Comparable<_idCoverMapping> {
 
         final Long mid;
         private final Long oid;
@@ -76,7 +76,7 @@ public final class MovieFactory {
             this.tid = tid;
         }
 
-        public Long id() { return tid != null ? tid : oid; }
+        Long id() { return tid != null ? tid : oid; }
 
         @Override
         public int compareTo(_idCoverMapping o) {

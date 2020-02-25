@@ -68,7 +68,7 @@ final class Movie extends AbstractMovie implements AsyncMovieFetcherTask.IMovieR
 
         if(dsc == null) {
 
-            no_abstract = ctx.getResources().getString(R.string.no_abstract);;
+            no_abstract = ctx.getResources().getString(R.string.no_abstract);
 
             final ConnectivityManager cm =
                     (ConnectivityManager)ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -94,10 +94,8 @@ final class Movie extends AbstractMovie implements AsyncMovieFetcherTask.IMovieR
                                     dsc = response;
                                     cb.descriptionAvailable(dsc);
 
-                                    (new AsyncDescriptionUpdateTask(this,
+                                    (new AsyncDescriptionUpdateTask<>(this,
                                             db, id(), dsc)).execute();
-
-                                    int gaga = 1;
 
                                 }, error -> Log.d("Movie",
                                 "(description): error:" + error.getMessage())));
@@ -110,6 +108,7 @@ final class Movie extends AbstractMovie implements AsyncMovieFetcherTask.IMovieR
 
                 } else {
                     dsc = ctx.getResources().getString(R.string.no_abstract);
+                    //noinspection ConstantConditions
                     if(cb == null) cb = l;
                     (new AsyncMovieFetcherTask<>(this, db, id())).execute();
                 }
@@ -119,9 +118,10 @@ final class Movie extends AbstractMovie implements AsyncMovieFetcherTask.IMovieR
         return dsc;
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public void onMovieReceived(@Nullable de.rangun.webvirus.model.db.Movie movie) {
-        dsc = movie.dsc == null ? no_abstract : movie.dsc;
+        dsc = movie != null && movie.dsc != null ? movie.dsc : no_abstract;
         if(cb != null) cb.descriptionAvailable(dsc);
     }
 }

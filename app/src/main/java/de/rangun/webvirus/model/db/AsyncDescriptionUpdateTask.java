@@ -43,7 +43,7 @@ public final class AsyncDescriptionUpdateTask<R extends AsyncAppDatabaseTask.IMo
 
         if(m != null) {
 
-            if(m.dsc != dsc) {
+            if(!m.dsc.equals(dsc)) {
                 m.dsc = dsc;
                 db.moviesDao().update(m);
             }

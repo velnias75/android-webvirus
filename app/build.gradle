@@ -63,8 +63,7 @@ android {
         }
     }
     compileSdkVersion 29
-    //noinspection GradleDependency
-    buildToolsVersion "29.0.3"
+    buildToolsVersion '29.0.3'
     defaultConfig {
         applicationId "de.rangun.webvirus"
         minSdkVersion 23
