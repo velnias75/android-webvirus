@@ -16,29 +16,37 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with android-webvirus.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  Last modified 11.10.19 15:33 by heiko
+ *  Last modified 08.03.20 01:50 by heiko
  */
 
 package de.rangun.webvirus.fragments;
 
+import android.app.Dialog;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.preference.Preference;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.DialogFragment;
 
-import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat;
+import java.util.Objects;
 
-import de.rangun.webvirus.BuildConfig;
-import de.rangun.webvirus.R;
+public final class AlertError extends DialogFragment {
 
-public class SettingsFragment extends PreferenceFragmentCompat {
+    private final String msg;
 
+    public AlertError(@NonNull String msg) {
+        this.msg = msg;
+    }
+
+    @NonNull
     @Override
-    public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
-        setPreferencesFromResource(R.xml.settings, rootKey);
+    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
 
-        final Preference p = getPreferenceScreen().findPreference("debugPrefs");
+        final AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getActivity()));
 
-        if(p != null) p.setVisible("a_hirnlos".equals(BuildConfig.FLAVOR));
+        builder.setMessage(msg);
+
+        return builder.create();
     }
 }

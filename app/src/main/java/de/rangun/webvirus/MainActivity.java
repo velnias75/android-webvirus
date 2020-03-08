@@ -21,6 +21,7 @@
 
 package de.rangun.webvirus;
 
+import android.accounts.AccountManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -41,6 +42,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -58,6 +60,7 @@ import java.util.List;
 import java.util.Objects;
 
 import de.rangun.webvirus.MovieFetcherService.NOTIFICATION;
+import de.rangun.webvirus.fragments.AlertError;
 import de.rangun.webvirus.fragments.IMovieUpdateRequestListener;
 import de.rangun.webvirus.fragments.MovieDetailsFragment;
 import de.rangun.webvirus.fragments.MovieListFragment;
@@ -80,6 +83,7 @@ public final class MainActivity extends AppCompatActivity implements
         SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String TAG = "MainActivity";
+    private static final int CHOOSE_ORDER_MAIL_REQUEST = 1;
     private static final double LN10 = log(10);
 
     private static final class MoviePagerAdapter extends FragmentPagerAdapter {
@@ -299,6 +303,45 @@ public final class MainActivity extends AppCompatActivity implements
         if(!bindService(intent, connection,
                 Context.BIND_AUTO_CREATE|Context.BIND_NOT_FOREGROUND)) {
             Log.d(TAG, "Couldn't bind to MovieFetcherService");
+        }
+
+        final SharedPreferences sharedPrefs =
+                PreferenceManager.getDefaultSharedPreferences(this);
+
+        if(!sharedPrefs.contains("order_mail") ||
+                sharedPrefs.getString("order_mail", null) == null) {
+
+            final Intent accIntent = AccountManager.newChooseAccountIntent(null,
+                    null, null, //new String[]{"com.google"},
+                    getResources().getString(R.string.choose_order_mail),
+                    null, null, null);
+            startActivityForResult(accIntent, CHOOSE_ORDER_MAIL_REQUEST);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == CHOOSE_ORDER_MAIL_REQUEST) {
+            if(resultCode == RESULT_OK) {
+
+                final String accName = Objects.requireNonNull(Objects.requireNonNull(data).getExtras()).getString(AccountManager.KEY_ACCOUNT_NAME);
+
+                if(android.util.Patterns.EMAIL_ADDRESS.matcher(Objects.requireNonNull(accName)).matches()) {
+
+                    final SharedPreferences sharedPrefs =
+                            PreferenceManager.getDefaultSharedPreferences(this);
+
+                    sharedPrefs.edit().putString("order_mail", accName).apply();
+
+                } else {
+                    final DialogFragment newFragment =
+                            new AlertError(getResources().getString(R.string.invalid_order_mail, accName));
+                    newFragment.show(getSupportFragmentManager(), "invalid_mail_alert");
+                }
+            }
         }
     }
 

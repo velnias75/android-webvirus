@@ -39,7 +39,7 @@
     <string name="searchboxhint">Suchbegriff(e) oder /regulärer Ausdruck/</string>
     <string name="notfound"><b>Du kannst nur nach Schrott- oder Rentnerfilmen suchen. Somit habe ich Deinen hippen Film nicht gefunden.</b></string>
     <string name="loading">Lade hirnlose Schrott- oder Rentnerfilme …</string>
-    <string name="loaded">%1$d hirnlose Schrott- oder Rentnerfilme geladen.</string>
+    <string name="loaded" tools:ignore="PluralsCandidate">%1$d hirnlose Schrott- oder Rentnerfilme geladen.</string>
     <string name="not_connected">Facebook und Google mögen es können, aber Webvirus fehlt die Intelligenz <b>OHNE</b> Internetverbindung Daten aus dem Internet zu laden.</string>
     <string name="no_filename">Video-DVD</string>
     <string name="categoryAny">Alle Videos</string>
@@ -52,7 +52,7 @@
     <string name="rexsuggests">hirnlose Rentnerfilmvorschläge vom unbewiesenen Halteproblem</string>
     <string name="reload">Lade hirnlose Rentnerfilme neu</string>
     <string name="network_error">hirnloser Fähler: <b>%1$s</b></string>
-    <string name="new_movies">%1$d neue hirnlose Schrott- bzw. Rentnerfilme sind leider verfügbar 😭</string>
+    <string name="new_movies" tools:ignore="PluralsCandidate">%1$d neue hirnlose Schrott- bzw. Rentnerfilme sind leider verfügbar 😭</string>
     <string name="notification_default_name">Allgemeine Logik</string>
     <string name="notification_default_desc">Es wird nur die Logik der Allgemeinheit benötigt</string>
     <string name="notification_high_name">Promotion in Informatik</string>
@@ -71,4 +71,6 @@
     <string name="settings">hirnlose Einstellungen</string>
     <string name="settings_title">Informatikdiplombereich</string>
     <string name="fetching">Mangels jeglicher Intelligenz muss ich eben nachsehen, ob neue Schrott- bzw. Rentnerfilm da sind 😭</string>
+    <string name="choose_order_mail">Deine eMail-Adresse für zukünftige hirnlose Schrott- &amp; Rentnerfilmbestellungen:</string>
+    <string name="invalid_order_mail">&quot;%1$s&quot; ist sicher ein hippes Konto, nur kann Webvirus - mangels jeglicher Intelligenz - damit keine hirnlosen Schrott- bzw. Rentnerfilmbestellungen bearbeiten.</string>
 </resources>

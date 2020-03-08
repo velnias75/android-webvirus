@@ -64,6 +64,13 @@
             android:summary="App in hippen giftgrün einfärben?"
             android:title="isToxicGreen" />
 
+        <de.rangun.webvirus.widgets.TextEditTextPreference
+            android:inputType="textEmailAddress"
+            android:key="order_mail"
+            android:defaultValue="@null"
+            android:title="order_mail"
+            android:summary="eMail-Adresse für Bestellungen: %s" />
+
     </com.takisoft.fix.support.v7.preference.PreferenceCategory>
 
 </PreferenceScreen>
