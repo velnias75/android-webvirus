@@ -26,12 +26,16 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Build;
@@ -122,13 +126,9 @@ public final class MovieFetcherService extends Service
             this.duration = duration;
         }
 
-        int getId() {
-            return id;
-        }
+        int getId() { return id; }
 
-        int getPriority() {
-            return prio;
-        }
+        int getPriority() { return prio; }
 
         int getIcon() {
             return icon;
@@ -430,6 +430,17 @@ public final class MovieFetcherService extends Service
 
         if(bm != null) builder.setLargeIcon(bm);
 
+        if(notification.getPriority() == NotificationCompat.PRIORITY_HIGH) {
+            //final Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            final Uri alarmSound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" +
+                    getPackageName() + "/" + R.raw.aargh_catherine);
+
+            builder.setDefaults(NotificationCompat.DEFAULT_ALL
+                    &~NotificationCompat.DEFAULT_SOUND);
+
+            builder.setSound(alarmSound, AudioManager.STREAM_ALARM);
+        }
+
         return builder.build();
     }
 
@@ -460,7 +471,15 @@ public final class MovieFetcherService extends Service
                 final NotificationChannel channel2 = new NotificationChannel(CHANNEL_HIGH,
                         getString(R.string.notification_high_name),
                         NotificationManager.IMPORTANCE_HIGH);
+
+                final Uri alarmSound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" +
+                        getPackageName() + "/" + R.raw.aargh_catherine);
+                final AudioAttributes aatt = (new AudioAttributes.Builder()).
+                        setUsage(AudioAttributes.USAGE_NOTIFICATION).
+                        build();
+
                 channel2.setDescription(getString(R.string.notification_high_desc));
+                channel2.setSound(alarmSound, aatt);
                 notificationManager.createNotificationChannel(channel2);
 
                 final NotificationChannel channel3 = new NotificationChannel(CHANNEL_MIN,
