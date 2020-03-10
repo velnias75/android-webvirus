@@ -54,8 +54,8 @@
                 android:contentDescription="@string/cover.desc"
                 android:maxWidth="150dp"
                 android:scaleType="fitStart"
-                app:layout_constraintBottom_toTopOf="@id/m.abstract"
-                app:layout_constraintEnd_toStartOf="@+id/m.id"
+                app:layout_constraintBottom_toTopOf="@id/m_abstract"
+                app:layout_constraintEnd_toStartOf="@+id/m_id"
                 app:layout_constraintHorizontal_chainStyle="spread_inside"
                 app:layout_constraintHorizontal_weight="1"
                 app:layout_constraintStart_toStartOf="parent"
@@ -65,7 +65,7 @@
                 tools:layout_width="150dp" />
 
             <TextView
-                android:id="@+id/m.id"
+                android:id="@+id/m_id"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -85,11 +85,11 @@
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/top250.desc"
                 android:foregroundGravity="right"
-                app:layout_constraintBottom_toBottomOf="@+id/m.id"
+                app:layout_constraintBottom_toBottomOf="@+id/m_id"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_weight="2"
-                app:layout_constraintStart_toEndOf="@+id/m.id"
-                app:layout_constraintTop_toTopOf="@id/m.id"
+                app:layout_constraintStart_toEndOf="@+id/m_id"
+                app:layout_constraintTop_toTopOf="@id/m_id"
                 app:srcCompat="@drawable/top250" />
 
             <de.rangun.webvirus.widgets.CategoryTextView
@@ -105,11 +105,11 @@
                 android:textStyle="bold"
                 app:autoSizeTextType="uniform"
                 app:layout_constraintEnd_toEndOf="@id/top250"
-                app:layout_constraintStart_toStartOf="@+id/m.id"
-                app:layout_constraintTop_toBottomOf="@id/m.id" />
+                app:layout_constraintStart_toStartOf="@+id/m_id"
+                app:layout_constraintTop_toBottomOf="@id/m_id" />
 
             <TextView
-                android:id="@+id/m.duration"
+                android:id="@+id/m_duration"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="bottom"
@@ -121,7 +121,7 @@
                 app:layout_constraintTop_toBottomOf="@id/title" />
 
             <TextView
-                android:id="@+id/m.disc"
+                android:id="@+id/m_disc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="bottom"
@@ -129,7 +129,7 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="@android:color/black"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/m.duration" />
+                app:layout_constraintTop_toTopOf="@id/m_duration" />
 
             <TextView
                 android:id="@+id/languages"
@@ -140,8 +140,8 @@
                 android:textColor="@android:color/black"
                 app:layout_constraintEnd_toStartOf="@+id/filename"
                 app:layout_constraintHorizontal_weight="4"
-                app:layout_constraintStart_toStartOf="@+id/m.duration"
-                app:layout_constraintTop_toBottomOf="@+id/m.duration"
+                app:layout_constraintStart_toStartOf="@+id/m_duration"
+                app:layout_constraintTop_toBottomOf="@+id/m_duration"
                 tools:text="Lange Liste von Sprachen" />
 
             <TextView
@@ -152,7 +152,7 @@
                 android:singleLine="true"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 android:textColor="@android:color/black"
-                app:layout_constraintEnd_toEndOf="@+id/m.disc"
+                app:layout_constraintEnd_toEndOf="@+id/m_disc"
                 app:layout_constraintHorizontal_weight="2"
                 app:layout_constraintStart_toEndOf="@+id/languages"
                 app:layout_constraintTop_toTopOf="@+id/languages"
@@ -167,13 +167,13 @@
                 android:textColor="@color/categoryAny"
                 app:autoSizeMaxTextSize="18sp"
                 app:autoSizeTextType="uniform"
-                app:layout_constraintBottom_toTopOf="@+id/m.abstract"
+                app:layout_constraintBottom_toTopOf="@+id/m_abstract"
                 app:layout_constraintEnd_toEndOf="@+id/filename"
                 app:layout_constraintStart_toStartOf="@+id/languages"
                 app:layout_constraintTop_toBottomOf="@+id/languages" />
 
             <TextView
-                android:id="@+id/m.abstract"
+                android:id="@+id/m_abstract"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
