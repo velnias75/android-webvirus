@@ -126,7 +126,7 @@ public final class MovieFactory {
             final CallbackTransfer callbackTransfer = new CallbackTransfer();
 
             parseJSONObject(callbackTransfer, new JSONObject(new String(data.toString().
-                    getBytes(StandardCharsets.UTF_8))));
+                    getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8)));
 
             return callbackTransfer;
 

@@ -52,6 +52,7 @@ import de.rangun.webvirus.model.db.Movie;
 import de.rangun.webvirus.model.movie.IMovie;
 import de.rangun.webvirus.widgets.CategoryTextView;
 import de.rangun.webvirus.widgets.MarkerImageView;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public final class MovieListFragment extends ListFragment {
 
@@ -110,11 +111,12 @@ public final class MovieListFragment extends ListFragment {
             }
 
             @Override
+            @SuppressFBWarnings
             protected void onPostExecute(List<Movie> movies) {
 
                 for(Movie m: movies) {
                     for(MarkedMovie markedMovie: mm) {
-                        if(markedMovie.m.get().id() == m.id) {
+                        if(m.id == markedMovie.m.get().id()) {
                             markedMovie.marker = m.marker;
                             break;
                         }
@@ -169,16 +171,20 @@ public final class MovieListFragment extends ListFragment {
             final int c = Color.parseColor(position % 2 == 0 ? "#CCCCCC" : "#BBBBBB");
 
             tv.setPadding(pad8, pad2, pad8, pad2);
-            tv.setText(MainActivity.makeIdString(m.m.get().id(), movieCount) + " – " +
-                    m.m.get().title());
-            tv.setTextColorByCategory(m.m.get().category());
+
+            final IMovie mm = m.m.get();
+
+            if(mm != null) {
+                tv.setText(MainActivity.makeIdString(mm.id(), movieCount) + " – " + mm.title());
+                tv.setTextColorByCategory(mm.category());
+            }
 
             if(smallDisplay)
                 tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14.0f);
 
             v.setBackgroundColor(c);
 
-            if(m.m.get().isNewMovie() && !newMovies) tv.setTypeface(tv.getTypeface(),
+            if(mm != null && (mm.isNewMovie() && !newMovies)) tv.setTypeface(tv.getTypeface(),
                     Typeface.BOLD_ITALIC);
 
             return v;

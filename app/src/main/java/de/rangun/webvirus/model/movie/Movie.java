@@ -43,7 +43,6 @@ import de.rangun.webvirus.model.db.AsyncMovieFetcherTask;
 
 final class Movie extends AbstractMovie implements AsyncMovieFetcherTask.IMovieReceiver {
 
-    @NonNull
     private MovieFactory.IMoviesAvailableListener cb;
     private final IMovieFilename fn;
     private String no_abstract;
@@ -108,7 +107,6 @@ final class Movie extends AbstractMovie implements AsyncMovieFetcherTask.IMovieR
 
                 } else {
                     dsc = ctx.getResources().getString(R.string.no_abstract);
-                    //noinspection ConstantConditions
                     if(cb == null) cb = l;
                     (new AsyncMovieFetcherTask<>(this, db, id())).execute();
                 }
@@ -118,7 +116,6 @@ final class Movie extends AbstractMovie implements AsyncMovieFetcherTask.IMovieR
         return dsc;
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Override
     public void onMovieReceived(@Nullable de.rangun.webvirus.model.db.Movie movie) {
         dsc = movie != null && movie.dsc != null ? movie.dsc : no_abstract;

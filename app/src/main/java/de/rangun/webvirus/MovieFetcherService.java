@@ -67,6 +67,7 @@ import java.util.zip.GZIPInputStream;
 import de.rangun.webvirus.model.bktree.MovieBKTree;
 import de.rangun.webvirus.model.movie.IMovie;
 import de.rangun.webvirus.model.movie.MovieFactory;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import static com.android.volley.toolbox.Volley.newRequestQueue;
 
@@ -263,6 +264,7 @@ public final class MovieFetcherService extends Service
         listener = l;
     }
 
+    @SuppressFBWarnings
     public void fetchMovies(boolean silent) {
 
         Log.d(TAG, "fetchMovies: trying...");
@@ -339,8 +341,9 @@ public final class MovieFetcherService extends Service
 
         if(movies.size() > lastMovieCount) {
 
-            final Long tid = Objects.requireNonNull(movies.getByMovieId(latestCoverId)).tmdb_id();
-            final String ttp = Objects.requireNonNull(movies.getByMovieId(latestCoverId)).tmdb_type();
+            final IMovie latestCoverMovie = movies.getByMovieId(latestCoverId);
+            final Long tid = latestCoverMovie != null ? latestCoverMovie.tmdb_id() : null;
+            final String ttp = latestCoverMovie != null ? latestCoverMovie.tmdb_type() : null;
             final int lmc = movies.size() - lastMovieCount;
 
             lastMovieCount = movies.size();

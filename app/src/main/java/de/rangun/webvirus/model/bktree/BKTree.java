@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import static java.lang.Math.min;
 
 abstract class BKTree<T> implements Iterable<T> {
@@ -128,6 +130,7 @@ abstract class BKTree<T> implements Iterable<T> {
         return rtn;
     }
 
+    @SuppressFBWarnings
     private void recursiveSearch(@NonNull _node<T> node, @NonNull List<T> rtn,
                                  @NonNull char[] word, int d) {
 

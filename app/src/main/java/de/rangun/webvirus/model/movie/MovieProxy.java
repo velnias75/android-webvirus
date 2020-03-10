@@ -30,6 +30,7 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 
 import de.rangun.webvirus.R;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 final class MovieProxy extends AbstractMovie {
 
@@ -61,33 +62,39 @@ final class MovieProxy extends AbstractMovie {
     }
 
     @Override
+    @SuppressFBWarnings
     public Long oid() { return movie == null || movie.get() == null ? super.oid() :
             movie.get().oid(); }
 
     @NonNull
     @Override
+    @SuppressFBWarnings
     public String title() {
         return movie == null || movie.get() == null ? super.title() : movie.get().title(); }
 
     @NonNull
     @Override
+    @SuppressFBWarnings
     public String durationString() {
         return movie == null || movie.get() == null ? super.durationString() :
                 movie.get().durationString();
     }
 
     @Override
+    @SuppressFBWarnings
     public List<String> languages() {
         return movie == null || movie.get() == null ? super.languages() : movie.get().languages();
     }
 
     @Override
+    @SuppressFBWarnings
     public String disc() {
         return movie == null || movie.get() == null ? super.disc() : movie.get().disc();
     }
 
     @Nullable
     @Override
+    @SuppressFBWarnings
     public String filename(@NonNull Context ctx) {
         return movie == null || movie.get() == null ? (filename != null ? filename.fileName() :
                 ctx.getResources().getString(R.string.no_filename)) : movie.get().filename(ctx);
@@ -100,12 +107,16 @@ final class MovieProxy extends AbstractMovie {
         if(movie == null || movie.get() == null) {
 
             movie = new WeakReference<>(new Movie(this, filename(ctx), cb));
+            final IMovie mg = movie.get();
 
-            final String dsc = movie.get().description(ctx, l);
+            if(mg != null) {
 
-            if(observer != null) observer.unproxied(this, movie.get());
+                final String dsc = mg.description(ctx, l);
 
-            return dsc;
+                if (observer != null) observer.unproxied(this, mg);
+
+                return dsc;
+            }
         }
 
         return ctx.getString(R.string.no_abstract);
