@@ -366,7 +366,7 @@ public final class MovieFetcherService extends Service
                                 "&tmdb_id=" + tid,
                         bitmap -> notifyInternal(getString(R.string.new_movies, lmc),
                                 NOTIFICATION.NEW,
-                                bitmap, silent ? null : pendingIntent),
+                                bitmap, pendingIntent),
                         getResources().getDimensionPixelSize(android.R.dimen.
                                 notification_large_icon_width),
                         getResources().getDimensionPixelSize(android.R.dimen.
@@ -375,8 +375,9 @@ public final class MovieFetcherService extends Service
                         error -> notifyInternal(getString(R.string.new_movies,
                                 lmc),
                                 NOTIFICATION.NEW, null, null)));
+
             } else notifyInternal(getString(R.string.new_movies, lmc),
-                    NOTIFICATION.NEW, null, silent ? null : pendingIntent);
+                    NOTIFICATION.NEW, null, pendingIntent);
 
             sharedPrefs.edit().putInt("lastMovieCount", lastMovieCount).apply();
 

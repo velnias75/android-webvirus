@@ -296,9 +296,20 @@ public final class MainActivity extends AppCompatActivity implements
             }
 
         } else if(getIntent().getExtras() != null &&
+                getIntent().getExtras().get("requestCode") instanceof Integer &&
                 getIntent().getExtras().getInt("requestCode") == SHOW_NEW_MOVIES_REQUEST) {
 
             showTabOnStartup = 2;
+
+            if(pager != null && pager.getVisibility() == View.VISIBLE) {
+                switchTabOnStartup();
+            }
+
+        } else if(getIntent().getExtras() != null &&
+                getIntent().getExtras().get("requestCode") instanceof String &&
+                "showMovieList".equals(getIntent().getExtras().getString("requestCode"))) {
+
+            showTabOnStartup = 1;
 
             if(pager != null && pager.getVisibility() == View.VISIBLE) {
                 switchTabOnStartup();
@@ -554,6 +565,10 @@ public final class MainActivity extends AppCompatActivity implements
     private void switchTabOnStartup() {
 
         switch(showTabOnStartup) {
+            case 1:
+                sbf.setText("");
+                pager.setCurrentItem(1);
+                break;
             case 2:
                 pager.setCurrentItem(2);
                 break;

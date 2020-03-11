@@ -16,38 +16,26 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with android-webvirus.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  Last modified 09.12.19 00:36 by heiko
+ *  Last modified 11.03.20 03:36 by heiko
  */
 
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+package de.rangun.webvirus;
 
-buildscript {
-    repositories {
-        google()
-        jcenter()
-        
+import android.content.Intent;
+import android.os.Bundle;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+public final class ShortcutActivity extends AppCompatActivity {
+
+    protected void onCreate(Bundle savedInstanceState) {
+
+        super.onCreate(savedInstanceState);
+
+        final Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtras(getIntent());
+
+        startActivity(intent);
+        finish();
     }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:3.6.1'
-        classpath 'com.github.zellius:android-shortcut-gradle-plugin:0.1.2'
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
-    }
-}
-
-plugins {
-    id "com.github.spotbugs" version "2.0.1"
-}
-
-allprojects {
-    repositories {
-        google()
-        jcenter()
-        
-    }
-}
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
 }
