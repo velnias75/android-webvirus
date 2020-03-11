@@ -72,7 +72,7 @@ android {
         minSdkVersion 23
         targetSdkVersion 29
         versionCode code
-        versionName "0.3 (build: " + (code-2990) + ")"
+        versionName "0.4 (build: " + (code-3440) + ")"
         signingConfig signingConfigs.debug
         resConfigs "de"
 
