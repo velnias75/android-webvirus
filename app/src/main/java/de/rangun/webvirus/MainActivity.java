@@ -84,7 +84,10 @@ public final class MainActivity extends AppCompatActivity implements
 
     private static final String TAG = "MainActivity";
     private static final int CHOOSE_ORDER_MAIL_REQUEST = 1;
+    public  static final int SHOW_NEW_MOVIES_REQUEST   = 2;
     private static final double LN10 = log(10);
+
+    private int showTabOnStartup = 0;
 
     private static final class MoviePagerAdapter extends FragmentPagerAdapter {
 
@@ -240,7 +243,7 @@ public final class MainActivity extends AppCompatActivity implements
                 sbf.setShowDropdown(position == 0);
                 sbf.setEnabled(position != 2);
 
-                if (position == 2) {
+                if(position == 2) {
 
                     final SharedPreferences sharedPrefs =
                             PreferenceManager.getDefaultSharedPreferences(ctx);
@@ -290,6 +293,15 @@ public final class MainActivity extends AppCompatActivity implements
                                 findFragmentByTag("android:switcher:" + R.id.pager + ":0"));
                     }
                 }
+            }
+
+        } else if(getIntent().getExtras() != null &&
+                getIntent().getExtras().getInt("requestCode") == SHOW_NEW_MOVIES_REQUEST) {
+
+            showTabOnStartup = 2;
+
+            if(pager != null && pager.getVisibility() == View.VISIBLE) {
+                switchTabOnStartup();
             }
         }
     }
@@ -535,6 +547,19 @@ public final class MainActivity extends AppCompatActivity implements
 
         updateRequested((MovieDetailsFragment)getSupportFragmentManager().
                 findFragmentByTag("android:switcher:" + R.id.pager + ":0"));
+
+        switchTabOnStartup();
+    }
+
+    private void switchTabOnStartup() {
+
+        switch(showTabOnStartup) {
+            case 2:
+                pager.setCurrentItem(2);
+                break;
+        }
+
+        showTabOnStartup = 0;
     }
 
     public static String makeIdString(long num, int base) {

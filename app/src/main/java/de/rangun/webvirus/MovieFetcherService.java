@@ -47,6 +47,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.app.TaskStackBuilder;
 import androidx.preference.PreferenceManager;
 
 import com.android.volley.RequestQueue;
@@ -342,19 +343,30 @@ public final class MovieFetcherService extends Service
         if(movies.size() > lastMovieCount) {
 
             final IMovie latestCoverMovie = movies.getByMovieId(latestCoverId);
-            final Long tid = latestCoverMovie != null ? latestCoverMovie.tmdb_id() : null;
+            final Long   tid = latestCoverMovie != null ? latestCoverMovie.tmdb_id() : null;
             final String ttp = latestCoverMovie != null ? latestCoverMovie.tmdb_type() : null;
-            final int lmc = movies.size() - lastMovieCount;
+            final int    lmc = movies.size() - lastMovieCount;
 
             lastMovieCount = movies.size();
 
+            final Intent intent = new Intent(this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            intent.putExtra("requestCode", MainActivity.SHOW_NEW_MOVIES_REQUEST);
+            final TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+            stackBuilder.addNextIntentWithParentStack(intent);
+
+            final PendingIntent pendingIntent =
+                    stackBuilder.getPendingIntent(0,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+
             if(tid != null) {
+
                 Objects.requireNonNull(getQueue()).add(new ImageRequest(
-                        "https://rangun.de/db/omdb.php?cover-oid=&tmdb_type=" + ttp + "&tmdb_id=" + tid,
-                        bitmap -> notifyInternal(getString(R.string.new_movies,
-                                lmc),
+                        "https://rangun.de/db/omdb.php?cover-oid=&tmdb_type=" + ttp +
+                                "&tmdb_id=" + tid,
+                        bitmap -> notifyInternal(getString(R.string.new_movies, lmc),
                                 NOTIFICATION.NEW,
-                                bitmap, silent),
+                                bitmap, silent ? null : pendingIntent),
                         getResources().getDimensionPixelSize(android.R.dimen.
                                 notification_large_icon_width),
                         getResources().getDimensionPixelSize(android.R.dimen.
@@ -362,9 +374,9 @@ public final class MovieFetcherService extends Service
                         ImageView.ScaleType.FIT_START, Bitmap.Config.RGB_565,
                         error -> notifyInternal(getString(R.string.new_movies,
                                 lmc),
-                                NOTIFICATION.NEW, null, silent)));
+                                NOTIFICATION.NEW, null, null)));
             } else notifyInternal(getString(R.string.new_movies, lmc),
-                    NOTIFICATION.NEW, null, silent);
+                    NOTIFICATION.NEW, null, silent ? null : pendingIntent);
 
             sharedPrefs.edit().putInt("lastMovieCount", lastMovieCount).apply();
 
@@ -405,16 +417,11 @@ public final class MovieFetcherService extends Service
     }
 
     public void notify(String txt, @NonNull NOTIFICATION notification) {
-        notifyInternal(txt, notification, null, false);
+        notifyInternal(txt, notification, null, null);
     }
 
     private Notification notificationBuilder(String txt, @NonNull NOTIFICATION notification,
-                                             Bitmap bm, boolean tap) {
-
-        final Intent intent = new Intent(this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        final PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
-                intent, 0);
+                                             Bitmap bm, PendingIntent tapIntent) {
 
         final NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(this,
@@ -429,12 +436,11 @@ public final class MovieFetcherService extends Service
             builder.setTimeoutAfter(notification.getDuration());
         }
 
-        if(tap) builder.setContentIntent(pendingIntent);
+        if(tapIntent != null) builder.setContentIntent(tapIntent);
 
         if(bm != null) builder.setLargeIcon(bm);
 
         if(notification.getPriority() == NotificationCompat.PRIORITY_HIGH) {
-            //final Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             final Uri alarmSound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" +
                     getPackageName() + "/" + R.raw.aargh_catherine);
 
@@ -448,13 +454,13 @@ public final class MovieFetcherService extends Service
     }
 
     private void notifyInternal(String txt, @NonNull NOTIFICATION notification, Bitmap bm,
-                                boolean tap) {
+                                PendingIntent tapIntent) {
 
         final NotificationManagerCompat notificationManager =
                 NotificationManagerCompat.from(this);
 
         notificationManager.notify(notification.getId(),
-                notificationBuilder(txt, notification, bm, tap));
+                notificationBuilder(txt, notification, bm, tapIntent));
     }
 
     private void createNotificationChannel() {
