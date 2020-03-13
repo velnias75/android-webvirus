@@ -84,6 +84,7 @@
                     android:pathPrefix="/db/video/" />
             </intent-filter>
 
+            <!--suppress AndroidDomInspection -->
             <meta-data android:name="android.app.shortcuts" android:resource="@xml/shortcuts" />
 
         </activity>

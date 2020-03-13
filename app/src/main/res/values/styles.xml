@@ -30,6 +30,12 @@
     </style>
 
     <style
+        name="AppTheme.CoverZoomDialog"
+        parent="AppTheme">
+        <item name="android:background">#000000</item>
+    </style>
+
+    <style
         name="AppTheme.ToxicGreen"
         parent="AppTheme">
         <item name="android:backgroundTint">#EEFFEE</item>

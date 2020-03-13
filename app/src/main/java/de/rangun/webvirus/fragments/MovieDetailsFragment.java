@@ -22,6 +22,7 @@
 package de.rangun.webvirus.fragments;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -34,6 +35,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -51,8 +53,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Objects;
 
-import javax.annotation.Nonnull;
-
 import de.rangun.webvirus.MainActivity;
 import de.rangun.webvirus.R;
 import de.rangun.webvirus.Toaster;
@@ -65,7 +65,8 @@ import de.rangun.webvirus.model.movie.MovieFactory;
 import de.rangun.webvirus.widgets.CategoryTextView;
 
 public final class MovieDetailsFragment extends Fragment
-        implements AsyncMovieFetcherTask.IMovieReceiver {
+        implements AsyncMovieFetcherTask.IMovieReceiver,
+        View.OnLongClickListener{
 
     private final Toaster toaster;
 
@@ -75,10 +76,13 @@ public final class MovieDetailsFragment extends Fragment
     @NonNull
     private final BitmapMemCache bmc = new BitmapMemCache(3072);
 
-    @Nonnull
+    @NonNull
     private final AppDatabase db;
 
-    public MovieDetailsFragment(Toaster toaster, @Nonnull AppDatabase db) {
+    private IMovie currentMovie = null;
+    private RequestQueue currentQueue = null;
+
+    public MovieDetailsFragment(Toaster toaster, @NonNull AppDatabase db) {
         this.toaster = toaster;
         this.db = db;
     }
@@ -156,6 +160,9 @@ public final class MovieDetailsFragment extends Fragment
     public final void setContents(@NonNull IMovie m, RequestQueue queue, int movieCount,
         MovieFactory.IMoviesAvailableListener cb) {
 
+        currentMovie = m;
+        currentQueue = queue;
+
         (new AsyncMovieFetcherTask<>(this, db, m.id())).execute();
 
         final View top250 = Objects.requireNonNull(getView()).findViewById(R.id.top250);
@@ -225,14 +232,55 @@ public final class MovieDetailsFragment extends Fragment
         });
 
         try {
-            cov.setImageUrl("https://rangun.de/db/omdb.php?cover-oid=" +
-                    (m.tmdb_id() != null ? ("&tmdb_type=" + m.tmdb_type() +
-                            "&tmdb_id=" + m.tmdb_id()) : "&fallback=" +
-                            URLEncoder.encode(m.title(), "UTF-8")) +
-                    (m.top250() ? "&top250=true" : ""), new ImageLoader(queue, bmc));
+            cov.setImageUrl(buildCoverUrl(m), new ImageLoader(queue, bmc));
         } catch(UnsupportedEncodingException e) {
             cov.setImageUrl(null, null);
         }
+
+        cov.setOnLongClickListener(this);
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+
+        final Dialog dlg = new Dialog(Objects.requireNonNull(getActivity()));
+        dlg.setContentView(R.layout.coverzoom);
+
+        final WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+
+        lp.copyFrom(Objects.requireNonNull(dlg.getWindow()).getAttributes());
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+        lp.height = WindowManager.LayoutParams.MATCH_PARENT;
+
+        final NetworkImageView zoomedCover = dlg.findViewById(R.id.zoomed_cover);
+
+        try {
+
+            if(currentMovie != null && currentQueue != null) {
+
+                zoomedCover.setImageUrl(buildCoverUrl(currentMovie),
+                        new ImageLoader(currentQueue, bmc));
+
+                dlg.show();
+                dlg.getWindow().setAttributes(lp);
+
+            } else {
+                throw new UnsupportedEncodingException();
+            }
+
+        } catch(UnsupportedEncodingException e) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private String buildCoverUrl(@NonNull IMovie m) throws UnsupportedEncodingException {
+        return "https://rangun.de/db/omdb.php?cover-oid=" +
+                (m.tmdb_id() != null ? ("&tmdb_type=" + m.tmdb_type() +
+                        "&tmdb_id=" + m.tmdb_id()) : "&fallback=" +
+                        URLEncoder.encode(m.title(), "UTF-8")) +
+                (m.top250() ? "&top250=true" : "");
     }
 
     @Override
