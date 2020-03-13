@@ -232,7 +232,7 @@ public final class MovieDetailsFragment extends Fragment
         });
 
         try {
-            cov.setImageUrl(buildCoverUrl(m), new ImageLoader(queue, bmc));
+            cov.setImageUrl(buildCoverUrl(m, true), new ImageLoader(queue, bmc));
         } catch(UnsupportedEncodingException e) {
             cov.setImageUrl(null, null);
         }
@@ -258,7 +258,7 @@ public final class MovieDetailsFragment extends Fragment
 
             if(currentMovie != null && currentQueue != null) {
 
-                zoomedCover.setImageUrl(buildCoverUrl(currentMovie),
+                zoomedCover.setImageUrl(buildCoverUrl(currentMovie, false),
                         new ImageLoader(currentQueue, bmc));
 
                 dlg.show();
@@ -275,12 +275,13 @@ public final class MovieDetailsFragment extends Fragment
         return true;
     }
 
-    private String buildCoverUrl(@NonNull IMovie m) throws UnsupportedEncodingException {
+    private String buildCoverUrl(@NonNull IMovie m, boolean scaled)
+            throws UnsupportedEncodingException {
         return "https://rangun.de/db/omdb.php?cover-oid=" +
                 (m.tmdb_id() != null ? ("&tmdb_type=" + m.tmdb_type() +
                         "&tmdb_id=" + m.tmdb_id()) : "&fallback=" +
                         URLEncoder.encode(m.title(), "UTF-8")) +
-                (m.top250() ? "&top250=true" : "");
+                (m.top250() ? "&top250=true" : "") + (scaled ? "&scaled=" : "");
     }
 
     @Override

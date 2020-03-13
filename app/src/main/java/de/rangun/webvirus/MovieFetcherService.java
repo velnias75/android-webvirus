@@ -362,7 +362,7 @@ public final class MovieFetcherService extends Service
             if(tid != null) {
 
                 Objects.requireNonNull(getQueue()).add(new ImageRequest(
-                        "https://rangun.de/db/omdb.php?cover-oid=&tmdb_type=" + ttp +
+                        "https://rangun.de/db/omdb.php?cover-oid=&scaled=&&tmdb_type=" + ttp +
                                 "&tmdb_id=" + tid,
                         bitmap -> notifyInternal(getString(R.string.new_movies, lmc),
                                 NOTIFICATION.NEW,

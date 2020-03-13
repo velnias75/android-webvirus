@@ -85,7 +85,7 @@ final class Movie extends AbstractMovie implements AsyncMovieFetcherTask.IMovieR
 
                         cb.fetchDescription(new StringRequest(Request.Method.GET,
                                 "https://rangun.de/db/omdb.php?cover-oid=" +
-                                        "&abstract=true" +
+                                        "&scaled=&abstract=true" +
                                         (tmdb_id() != null ? ("&tmdb_type=" + tmdb_type() +
                                         "&tmdb_id=" + tmdb_id()) : "&fallback=" +
                                         URLEncoder.encode(title(), "UTF-8")),
