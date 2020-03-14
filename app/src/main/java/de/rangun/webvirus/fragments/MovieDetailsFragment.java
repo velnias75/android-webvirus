@@ -35,6 +35,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -63,6 +64,8 @@ import de.rangun.webvirus.model.db.Movie;
 import de.rangun.webvirus.model.movie.IMovie;
 import de.rangun.webvirus.model.movie.MovieFactory;
 import de.rangun.webvirus.widgets.CategoryTextView;
+
+import static android.content.res.Configuration.ORIENTATION_LANDSCAPE;
 
 public final class MovieDetailsFragment extends Fragment
         implements AsyncMovieFetcherTask.IMovieReceiver,
@@ -231,6 +234,8 @@ public final class MovieDetailsFragment extends Fragment
             }
         });
 
+        cov.setErrorImageResId(R.drawable.nocover);
+
         try {
             cov.setImageUrl(buildCoverUrl(m, true), new ImageLoader(queue, bmc));
         } catch(UnsupportedEncodingException e) {
@@ -244,15 +249,16 @@ public final class MovieDetailsFragment extends Fragment
     public boolean onLongClick(View v) {
 
         final Dialog dlg = new Dialog(Objects.requireNonNull(getActivity()));
+
         dlg.setContentView(R.layout.coverzoom);
 
-        final WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-
-        lp.copyFrom(Objects.requireNonNull(dlg.getWindow()).getAttributes());
-        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
-        lp.height = WindowManager.LayoutParams.MATCH_PARENT;
-
+        final int o = getActivity().getResources().getConfiguration().orientation;
         final NetworkImageView zoomedCover = dlg.findViewById(R.id.zoomed_cover);
+        final View root = dlg.findViewById(R.id.root);
+
+        if(root != null) root.setOnClickListener(v1 -> dlg.dismiss());
+
+        zoomedCover.setErrorImageResId(R.drawable.hirnlos);
 
         try {
 
@@ -262,7 +268,23 @@ public final class MovieDetailsFragment extends Fragment
                         new ImageLoader(currentQueue, bmc));
 
                 dlg.show();
-                dlg.getWindow().setAttributes(lp);
+                Objects.requireNonNull(dlg.getWindow()).
+                        setBackgroundDrawableResource(android.R.color.black);
+
+                WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                final Window window = dlg.getWindow();
+
+                lp.copyFrom(Objects.requireNonNull(window).getAttributes());
+
+                if(o == ORIENTATION_LANDSCAPE) {
+                    lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+                    lp.height = WindowManager.LayoutParams.MATCH_PARENT;
+                } else {
+                    lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+                    lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                }
+
+                window.setAttributes(lp);
 
             } else {
                 throw new UnsupportedEncodingException();

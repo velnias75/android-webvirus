@@ -21,34 +21,33 @@
   -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
     style="@style/AppTheme.CoverZoomDialog"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:gravity="center"
-    android:orientation="horizontal">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <ProgressBar
         android:id="@+id/progressBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_height="72dp"
         android:layout_centerInParent="true"
         android:indeterminate="true"
         android:indeterminateDrawable="@drawable/progress_hip" />
 
-    <com.android.volley.toolbox.NetworkImageView
+    <de.rangun.webvirus.widgets.ProportionalNetworkImageView
         android:id="@+id/zoomed_cover"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="20dp"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
         android:adjustViewBounds="true"
         android:contentDescription="@string/cover.desc"
-        android:scaleType="fitCenter"
         tools:background="@drawable/nocover"
-        tools:visibility="invisible"/>
+        tools:visibility="invisible" />
 
 </RelativeLayout>

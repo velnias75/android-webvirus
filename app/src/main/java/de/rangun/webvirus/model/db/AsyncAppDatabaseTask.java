@@ -58,4 +58,9 @@ abstract class AsyncAppDatabaseTask<R extends AsyncAppDatabaseTask.IMovieReceive
 
         if(recv != null) recv.onMovieReceived(movie);
     }
+
+    @Override
+    protected void finalize() {
+        db.close();
+    }
 }
