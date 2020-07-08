@@ -282,7 +282,7 @@ public final class MainActivity extends AppCompatActivity implements
 
             if(lps != null) {
 
-                final Long mid = Long.parseLong(lps);
+                final long mid = Long.parseLong(lps);
 
                 if(mid > 0L) {
 
