@@ -253,7 +253,7 @@ public final class MovieFactory {
 
         ids.add(new _idCoverMapping(mid, oid, tid));
 
-        if(!jsonObject.isNull("children")) {
+        if(!jsonObject.isNull("children") && jsonObject.optJSONObject("children") != null) {
 
             final JSONObject children = jsonObject.getJSONObject("children");
             final Iterator<String> keys = children.keys();
