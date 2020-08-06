@@ -25,4 +25,4 @@
 -mergeinterfacesaggressively
 
 -dontwarn   java.lang.ClassValue
--keep class java.lang.ClassValue { *; }
+#-keep class java.lang.ClassValue { *; }
